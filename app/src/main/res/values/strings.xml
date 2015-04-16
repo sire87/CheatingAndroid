@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">CheatingAndroid</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">LÜGEN</string>
+    <string name="action_settings">Eigenschaften</string>
+    <string name="player_name">Spielername</string>
+    <string name="create_match">Spiel erstellen</string>
+    <string name="join_match">Spiel beitreten</string>
 </resources>
