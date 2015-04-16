@@ -1,12 +1,19 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    /** not sure */
+    public final static String EXTRA_MESSAGE = "com.aause2s15.gruppe3.cheatingandroid";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,5 +42,36 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /** called when the user clicks the create match button */
+    public void createMatch(View view) {
+        Intent intent = new Intent(this, CreateMatchActivity.class);
+        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        String message = editText.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+
+        if (!message.isEmpty()){
+            startActivity(intent);
+        }
+
+        else {
+            Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void joinMatch(View view) {
+        Intent intent = new Intent(this, JoinMatchActivity.class);
+        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        String message = editText.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+
+        if (!message.isEmpty()){
+            startActivity(intent);
+        }
+
+        else {
+            Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
+        }
     }
 }

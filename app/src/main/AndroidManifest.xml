@@ -16,6 +16,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CreateMatchActivity"
+            android:label="@string/title_activity_create_match"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
+        </activity>
+        <activity
+            android:name=".JoinMatchActivity"
+            android:label="@string/title_activity_join_match"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
+        </activity>
+        <activity
+            android:name=".MatchActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_match"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/FullscreenTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

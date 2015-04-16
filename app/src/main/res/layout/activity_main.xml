@@ -12,7 +12,7 @@
         android:inputType="textPersonName"
         android:hint="@string/player_name"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/textPlayerName"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -20,25 +20,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_match"
-        android:id="@+id/button"
-        android:layout_below="@+id/editText"
-        android:layout_centerHorizontal="true"/>
+        android:id="@+id/buttonCreateMatch"
+        android:layout_below="@+id/textPlayerName"
+        android:layout_centerHorizontal="true"
+        android:onClick="createMatch"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/join_match"
-        android:id="@+id/button2"
-        android:layout_below="@+id/button"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button"/>
+        android:id="@+id/buttonJoinMatch"
+        android:layout_below="@+id/buttonCreateMatch"
+        android:layout_alignLeft="@+id/buttonCreateMatch"
+        android:layout_alignStart="@+id/buttonCreateMatch"
+        android:onClick="joinMatch"/>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/button2" />
+        android:layout_below="@+id/buttonJoinMatch" />
 
     <ImageView
         android:layout_width="35dp"
