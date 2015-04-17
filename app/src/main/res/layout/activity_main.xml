@@ -40,7 +40,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/buttonJoinMatch" />
+        android:layout_below="@+id/buttonJoinMatch"
+        android:id="@+id/imageView2" />
 
     <ImageView
         android:layout_width="35dp"
@@ -48,6 +49,19 @@
         android:src="@drawable/aau"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:id="@+id/imageView" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spielregeln"
+        android:id="@+id/Spielregeln_Button"
+        android:layout_below="@+id/buttonJoinMatch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="rules"/>
+
 
 </RelativeLayout>

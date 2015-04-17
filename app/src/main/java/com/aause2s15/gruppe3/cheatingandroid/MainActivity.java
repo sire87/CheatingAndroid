@@ -74,4 +74,10 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
         }
     }
+    public void rules (View view){
+        Intent intent = new Intent(this, RulesActivity.class);
+        startActivity(intent);
+    }
+
+
 }
