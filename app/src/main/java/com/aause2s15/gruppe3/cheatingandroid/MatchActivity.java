@@ -4,6 +4,12 @@ import com.aause2s15.gruppe3.cheatingandroid.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.ImageView;
 
 
 /**
@@ -36,7 +43,7 @@ public class MatchActivity extends Activity {
      * If set, will toggle the system UI visibility upon interaction. Otherwise,
      * will show the system UI visibility upon interaction.
      */
-    private static final boolean TOGGLE_ON_CLICK = true;
+    private static final boolean TOGGLE_ON_CLICK = false;
 
     /**
      * The flags to pass to {@link SystemUiHider#getInstance}.
@@ -53,6 +60,10 @@ public class MatchActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_match);
+
+        // TEST
+        // setContentView(new CardView(this));
+
         setupActionBar();
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -188,5 +199,26 @@ public class MatchActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    // TEST
+    private static class CardView extends ImageView {
+
+        public CardView(Context context) {
+            super(context);
+            setFocusable(true);
+        }
+
+        protected void onDraw (Canvas canvas) {
+            Paint paint = new Paint();
+            canvas.drawColor(Color.GREEN);
+
+            paint.setFilterBitmap(true);
+            Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(), R.drawable.cards);
+            Bitmap croppedBmp = Bitmap.createBitmap(bitmapOrg, 0, 0, bitmapOrg.getWidth() / 2, bitmapOrg.getHeight());
+            int h = bitmapOrg.getHeight();
+            canvas.drawBitmap(croppedBmp, 10, 10 + h, paint);
+
+        }
     }
 }

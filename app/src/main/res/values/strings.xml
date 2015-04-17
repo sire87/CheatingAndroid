@@ -7,8 +7,6 @@
     <string name="start_match">Testspiel starten</string>
     <string name="title_activity_create_match">LÜGEN - Spiel erstellen</string>
     <string name="title_activity_join_match">LÜGEN - Spiel beitreten</string>
-
-        <string name="title_activity_match">MatchActivity</string>
+    <string name="title_activity_match">LÜGEN - Spiel</string>
     <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

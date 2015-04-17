@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 
@@ -13,7 +14,7 @@ public class JoinMatchActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_join_match);
+        // setContentView(R.layout.activity_join_match);
 
         // get the message from the intent
         Intent intent = getIntent();
@@ -26,6 +27,10 @@ public class JoinMatchActivity extends ActionBarActivity {
 
         // Set the text view as the activity layout
         setContentView(textView);
+
+        // code below does not work as expected
+        // ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(200,200);
+        // addContentView(textView, params);
     }
 
 

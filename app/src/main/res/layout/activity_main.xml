@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="@string/player_name"
+        android:text="@string/player_name"
         android:ems="10"
         android:id="@+id/textPlayerName"
         android:layout_alignParentTop="true"
