@@ -61,7 +61,7 @@
         android:onClick="rules"
         android:layout_marginRight="17dp"
         android:layout_marginEnd="17dp"
-        android:background="@color/primaryColor"
+        android:background="#ff08bac6"
         android:layout_toLeftOf="@+id/imageView"
 
         android:layout_alignTop="@+id/imageView"
