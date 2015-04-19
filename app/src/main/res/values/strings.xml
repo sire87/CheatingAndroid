@@ -7,8 +7,11 @@
     <string name="start_match">Testspiel starten</string>
     <string name="title_activity_create_match">LÜGEN - Spiel erstellen</string>
     <string name="title_activity_join_match">LÜGEN - Spiel beitreten</string>
-
-        <string name="title_activity_match">MatchActivity</string>
+    <string name="rules">"Jeder bekommt gleichviele Karten und hält sie verdeckt auf der Hand. Dann wird entschieden wer anfängt (per Zufallsgenerator). Dieser Spieler nennt nun eine oder mehrere Karten, also welche Art von Karte es ist (Bube, König…) und jeder Spieler muss nun reihum (beginnend mit dem Ausrufer) eine oder mehrere seiner Karten dieser Art verdeckt auf einen Stapel in der Mitte legen. Wenn man keine Karte dieser Farbe hat (oder sie nicht legen will) kann man 'lügen' und eine falsche Karte hinlegen. Wird es vom nachfolgenden Spieler geglaubt geht es normal weiter. Glaubt er es seinem Vorgänger aber nicht, kann er die Karte umdrehen, um zu prüfen ob der Spieler gelogen hat. War die Farbe richtig bekommt der Misstrauische alle Karten, war die Farbe jedoch falsch, bekommt der Lügende alle Karten. Wer als Erstes keine Karten mehr hat, hat verloren. Spieler werden via Bluetooth gesucht und danach kann man auswählen mit wem man ein Spiel starten will. Sind die Spieler ausgesucht, beginnt automatisch ein Spiel. Ist ein Spieler längere Zeit inaktiv, bekommt er nach Ablauf einer gewissen Zeit alle Karten als Strafe angehängt."</string>
+    <string name="title_activity_match">MatchActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_rules">RulesActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>
