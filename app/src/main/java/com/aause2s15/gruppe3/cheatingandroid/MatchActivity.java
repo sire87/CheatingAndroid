@@ -189,4 +189,8 @@ public class MatchActivity extends Activity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    public void test() {
+
+    }
 }
