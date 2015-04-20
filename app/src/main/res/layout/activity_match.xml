@@ -7,9 +7,9 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
     <ImageView
-        android:layout_width="61dp"
-        android:layout_height="90dp"
-        android:id="@+id/fullscreen_content"
+        android:layout_width="69dp"
+        android:layout_height="100dp"
+        android:id="@+id/fixedCard"
         android:layout_gravity="center"
         android:src="@drawable/card_56"/>
 
@@ -28,9 +28,16 @@
             <Button android:id="@+id/drawCard" style="?metaButtonBarButtonStyle"
                 android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:text="@string/dummy_button"
-                android:onClick="drawCard"/>
+                android:onClick="drawCards"/>
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/drawnCardContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="left|bottom"
+            android:foregroundGravity="top"></RelativeLayout>
 
     </FrameLayout>
 

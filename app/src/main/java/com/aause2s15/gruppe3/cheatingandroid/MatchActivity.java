@@ -3,6 +3,7 @@ package com.aause2s15.gruppe3.cheatingandroid;
 import com.aause2s15.gruppe3.cheatingandroid.util.SystemUiHider;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -60,7 +62,7 @@ public class MatchActivity extends Activity {
         setupActionBar();
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(R.id.fullscreen_content);
+        final View contentView = findViewById(R.id.fixedCard);
 
         // Set up an instance of SystemUiHider to control the system UI for
         // this activity.
@@ -195,20 +197,40 @@ public class MatchActivity extends Activity {
     }
 
     // for testing purposes only
-    public void drawCard(View view) {
+    public void drawCards(View view) {
         CardDeck cardDeck = new CardDeck();
 
         Random random = new Random();
         int i = random.nextInt(51); // check: is 0-51 ?
+        // will crash when index out of bound
 
-        String drawnCardType = cardDeck.getCardDeck()[i].getType();
-        String drawnCardValue = cardDeck.getCardDeck()[i].getValue();
+        // String drawnCardType = cardDeck.getCardDeck()[i].getType();
+        // String drawnCardValue = cardDeck.getCardDeck()[i].getValue();
 
         // toasting drawn card
-        Toast.makeText(this, "Du hast folgende Karte gezogen: "+drawnCardType+" "+drawnCardValue, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "Du hast folgende Karte gezogen: "+drawnCardType+" "+drawnCardValue, Toast.LENGTH_SHORT).show();
 
         // refresh card image
-        ImageView imageView = (ImageView) findViewById(R.id.fullscreen_content);
-        imageView.setImageResource(cardDeck.getCardDeck()[i].getImage());
+        // ImageView imageView = (ImageView) findViewById(R.id.fixedCard);
+        // imageView.setImageResource(cardDeck.getCardDeck()[i].getImage());
+
+        // spawn new card images
+        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
+
+        ImageView newCard = new ImageView(this);
+        newCard.setImageResource(cardDeck.getCardDeck()[i].getImage());
+        newCard.setPadding(0,0,0,0);
+
+        ImageView newCard2 = new ImageView(this);
+        newCard2.setImageResource(cardDeck.getCardDeck()[i+1].getImage());
+        newCard2.setPadding(60,0,0,0);
+
+        ImageView newCard3 = new ImageView(this);
+        newCard3.setImageResource(cardDeck.getCardDeck()[i+2].getImage());
+        newCard3.setPadding(120,0,0,0);
+
+        viewGroup.addView(newCard);
+        viewGroup.addView(newCard2);
+        viewGroup.addView(newCard3);
     }
 }
