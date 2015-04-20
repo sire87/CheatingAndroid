@@ -199,10 +199,17 @@ public class MatchActivity extends Activity {
     // for testing purposes only
     public void drawCards(View view) {
         CardDeck cardDeck = new CardDeck();
+        cardDeck.shuffle();
+        cardDeck.shuffle();
+        cardDeck.shuffle();
 
         Random random = new Random();
-        int i = random.nextInt(51); // check: is 0-51 ?
-        // will crash when index out of bound
+        int i = random.nextInt(51);
+
+        // prevent crash when index out of bound
+        if (i>49) {
+            i=0;
+        }
 
         // String drawnCardType = cardDeck.getCardDeck()[i].getType();
         // String drawnCardValue = cardDeck.getCardDeck()[i].getValue();

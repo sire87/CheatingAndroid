@@ -1,5 +1,7 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import java.util.Random;
+
 /**
  * Created by Simon on 20.04.2015.
  */
@@ -69,10 +71,21 @@ public class CardDeck {
     }
 
     public Card[] getCardDeck() {
+
         return this.cardDeck;
     }
 
     public void shuffle() {
-        // TO DO
+        int index;
+        Card temp;
+        Random random = new Random();
+
+        for (int i = this.cardDeck.length-1; i>0; i--) {
+            index = random.nextInt(i+1);
+            temp = this.cardDeck[index];
+            this.cardDeck[index] = this.cardDeck[i];
+            this.cardDeck[i] = temp;
+        }
+
     }
 }
