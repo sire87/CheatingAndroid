@@ -68,6 +68,10 @@ public class CardDeck {
         cardDeck[51] = new Card("Pik","König",R.drawable.card_52);
     }
 
+    public Card[] getCardDeck() {
+        return this.cardDeck;
+    }
+
     public void shuffle() {
         // TO DO
     }

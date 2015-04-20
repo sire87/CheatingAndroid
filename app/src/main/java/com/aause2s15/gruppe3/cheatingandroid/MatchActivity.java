@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.Toast;
+
+import java.util.Random;
 
 
 /**
@@ -115,7 +118,7 @@ public class MatchActivity extends Activity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.drawCard).setOnTouchListener(mDelayHideTouchListener);
     }
 
     @Override
@@ -188,5 +191,22 @@ public class MatchActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    // for testing purposes only
+    public void drawCard(View view) {
+        CardDeck cardDeck = new CardDeck();
+
+        Random random = new Random();
+        int i = random.nextInt(51); // check: is 0-51 ?
+
+        String drawnCardType = cardDeck.getCardDeck()[i].getType();
+        String drawnCardValue = cardDeck.getCardDeck()[i].getValue();
+
+        // toasting drawn card
+        Toast.makeText(this, "Du hast folgende Karte gezogen: "+drawnCardType+" "+drawnCardValue, Toast.LENGTH_SHORT).show();
+
+        // still to do: refresh card image
+
     }
 }
