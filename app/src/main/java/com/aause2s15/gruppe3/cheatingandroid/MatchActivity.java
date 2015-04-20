@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -206,7 +207,8 @@ public class MatchActivity extends Activity {
         // toasting drawn card
         Toast.makeText(this, "Du hast folgende Karte gezogen: "+drawnCardType+" "+drawnCardValue, Toast.LENGTH_SHORT).show();
 
-        // still to do: refresh card image
-
+        // refresh card image
+        ImageView imageView = (ImageView) findViewById(R.id.fullscreen_content);
+        imageView.setImageResource(cardDeck.getCardDeck()[i].getImage());
     }
 }
