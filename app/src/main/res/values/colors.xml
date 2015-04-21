@@ -3,6 +3,8 @@
     <item name="primaryColor" type="color">#8BC34A</item>
     <item name="primaryColorDark" type="color">#689F38</item>
     <item name="accentColor" type="color">#FF5722</item>
+    <item name="aauColorLight" type="color">#469BC3</item>
+    <item name="aauColorDark" type="color">#336C82</item>
 
     <color name="black_overlay">#66000000</color>
 </resources>

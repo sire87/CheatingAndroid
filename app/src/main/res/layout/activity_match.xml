@@ -12,7 +12,6 @@
         android:id="@+id/fixedCard"
         android:layout_gravity="top|right"
         android:layout_marginTop="50dp"
-        android:layout_marginRight="50dp"
         android:src="@drawable/card_56"/>
 
     <!-- This FrameLayout insets its children based on system windows using
@@ -39,17 +38,19 @@
         <RelativeLayout
             android:id="@+id/drawnCardContainer"
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="left|bottom"
+            android:layout_height="240px"
+            android:layout_gravity="bottom"
+            android:clipChildren="false"
             android:layout_marginBottom="50dp"
-            android:foregroundGravity="top"></RelativeLayout>
+            android:foregroundGravity="top"/>
 
         <RelativeLayout
             android:id="@+id/drawnCardContainer2"
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="left|top"
-            android:foregroundGravity="top"></RelativeLayout>
+            android:layout_height="240px"
+            android:layout_gravity="top"
+            android:clipChildren="false"
+            android:foregroundGravity="top"/>
 
     </FrameLayout>
 

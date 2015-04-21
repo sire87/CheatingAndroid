@@ -5,7 +5,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 
@@ -23,6 +22,8 @@ public class JoinMatchActivity extends ActionBarActivity {
         // create the text view
         TextView textView = new TextView(this);
         textView.setTextSize(24);
+
+        textView.setBackgroundColor(getResources().getColor(R.color.primaryColor));
         textView.setText("Hallo " + message + ",\n\nleider steht diese Funktion momentan noch nicht zur Verfügung.");
 
         // Set the text view as the activity layout

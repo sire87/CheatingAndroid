@@ -133,7 +133,7 @@ public class MatchActivity extends Activity implements View.OnClickListener{
 
 
         // INITIALISING CARD DECK
-        this.cardDeck = new CardDeck();
+        this.cardDeck = new CardDeck(this);
         this.cardDeck.shuffle(5);
 
         // INITIALISING PLAYER
@@ -143,28 +143,23 @@ public class MatchActivity extends Activity implements View.OnClickListener{
         }
 
         // DISPLAYING PLAYER CARDS
-        int offsetLeft = 0;
-        int count = 0;
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
+        viewGroup.setClipChildren(false);
+        float offset = 0;
 
         Iterator iterator = this.player1.getPlayerCards().iterator();
+
         while (iterator.hasNext()) {
+
             Card currentPlayerCard = (Card) iterator.next();
-            ImageView displayCard = new ImageView(this);
-            displayCard.setImageResource(currentPlayerCard.getImage());
-            displayCard.setPadding(offsetLeft, 0, 0, 0);
-            offsetLeft = offsetLeft+40;
 
-            // making cards clickable
-            // only last card added via loop is clickable though :-(
-            // issue with id?
-            displayCard.setId(count+100);
-            count++;
-            displayCard.setClickable(true);
-            displayCard.setOnClickListener(this);
+            currentPlayerCard.getImageView().setClickable(true);
+            currentPlayerCard.getImageView().setOnClickListener(this);
+            currentPlayerCard.getImageView().setX(offset);
 
-            viewGroup.addView(displayCard);
-            // to do: sort ImageViews of ViewGroup (maybe have to clear first and add then)
+            offset = offset+40;
+
+            viewGroup.addView(currentPlayerCard.getImageView());
         }
     }
 
@@ -249,15 +244,12 @@ public class MatchActivity extends Activity implements View.OnClickListener{
             Card currentCard = this.cardDeck.drawTopCard();
 
             ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer2);
+            viewGroup.setClipChildren(false);
 
-            ImageView displayCard = new ImageView(this);
-            displayCard.setImageResource(currentCard.getImage());
-            displayCard.setPadding(0, 0, 0, 0);
+            currentCard.getImageView().setClickable(true);
+            currentCard.getImageView().setOnClickListener(this);
 
-            displayCard.setClickable(true);
-            displayCard.setOnClickListener(this);
-
-            viewGroup.addView(displayCard);
+            viewGroup.addView(currentCard.getImageView());
         }
         else {
             ImageView displayCardDeck = (ImageView) findViewById(R.id.fixedCard);
@@ -269,18 +261,13 @@ public class MatchActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
-        int id = v.getId();
-        Toast.makeText(this, "Du hast auf die Karte mit folgender ID gedrückt: "+id, Toast.LENGTH_SHORT).show();
-
         if (this.highlightedCard !=null) {
-            this.highlightedCard.setPadding(this.highlightedCard.getPaddingLeft(),
-            this.highlightedCard.getPaddingTop(),this.highlightedCard.getPaddingRight(),
-                    this.highlightedCard.getPaddingBottom()-20);
-            v.setPadding(v.getPaddingLeft(),v.getPaddingTop(),v.getPaddingRight(),v.getPaddingBottom()+20);
+            this.highlightedCard.setY(this.highlightedCard.getY()+40);
+            v.setY(v.getY()-40);
             this.highlightedCard = v;
         }
         else {
-            v.setPadding(v.getPaddingLeft(),v.getPaddingTop(),v.getPaddingRight(),v.getPaddingBottom()+20);
+            v.setY(v.getY()-40);
             this.highlightedCard = v;
         }
     }
