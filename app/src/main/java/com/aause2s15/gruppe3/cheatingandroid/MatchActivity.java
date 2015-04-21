@@ -24,7 +24,7 @@ import java.util.Iterator;
  *
  * @see SystemUiHider
  */
-public class MatchActivity extends Activity {
+public class MatchActivity extends Activity implements View.OnClickListener{
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -58,6 +58,9 @@ public class MatchActivity extends Activity {
 
     // PLAYER FOR ACTIVITY
     private Player player1;
+
+    // FOCUSED VIEW
+    private View highlightedCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +144,7 @@ public class MatchActivity extends Activity {
 
         // DISPLAYING PLAYER CARDS
         int offsetLeft = 0;
+        int count = 0;
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
 
         Iterator iterator = this.player1.getPlayerCards().iterator();
@@ -148,9 +152,19 @@ public class MatchActivity extends Activity {
             Card currentPlayerCard = (Card) iterator.next();
             ImageView displayCard = new ImageView(this);
             displayCard.setImageResource(currentPlayerCard.getImage());
-            displayCard.setPadding(offsetLeft,0,0,0);
+            displayCard.setPadding(offsetLeft, 0, 0, 0);
             offsetLeft = offsetLeft+40;
+
+            // making cards clickable
+            // only last card added via loop is clickable though :-(
+            // issue with id?
+            displayCard.setId(count+100);
+            count++;
+            displayCard.setClickable(true);
+            displayCard.setOnClickListener(this);
+
             viewGroup.addView(displayCard);
+            // to do: sort ImageViews of ViewGroup (maybe have to clear first and add then)
         }
     }
 
@@ -240,12 +254,34 @@ public class MatchActivity extends Activity {
             displayCard.setImageResource(currentCard.getImage());
             displayCard.setPadding(0, 0, 0, 0);
 
+            displayCard.setClickable(true);
+            displayCard.setOnClickListener(this);
+
             viewGroup.addView(displayCard);
         }
         else {
             ImageView displayCardDeck = (ImageView) findViewById(R.id.fixedCard);
             displayCardDeck.setImageResource(0);
             Toast.makeText(this, "Keine Karten im Deck übrig", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        int id = v.getId();
+        Toast.makeText(this, "Du hast auf die Karte mit folgender ID gedrückt: "+id, Toast.LENGTH_SHORT).show();
+
+        if (this.highlightedCard !=null) {
+            this.highlightedCard.setPadding(this.highlightedCard.getPaddingLeft(),
+            this.highlightedCard.getPaddingTop(),this.highlightedCard.getPaddingRight(),
+                    this.highlightedCard.getPaddingBottom()-20);
+            v.setPadding(v.getPaddingLeft(),v.getPaddingTop(),v.getPaddingRight(),v.getPaddingBottom()+20);
+            this.highlightedCard = v;
+        }
+        else {
+            v.setPadding(v.getPaddingLeft(),v.getPaddingTop(),v.getPaddingRight(),v.getPaddingBottom()+20);
+            this.highlightedCard = v;
         }
     }
 }
