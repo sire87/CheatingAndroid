@@ -8,10 +8,12 @@ import java.util.Random;
 public class CardDeck {
 
     private Card[] cardDeck;
+    private int currentIndex;
 
     public CardDeck() {
 
         cardDeck = new Card[52];
+        currentIndex = 51;
 
         cardDeck[0] = new Card("Kreuz","Ass",R.drawable.card_01);
         cardDeck[1] = new Card("Kreuz","2",R.drawable.card_02);
@@ -75,17 +77,31 @@ public class CardDeck {
         return this.cardDeck;
     }
 
-    public void shuffle() {
+    public int getCurrentIndex() {
+
+        return this.currentIndex;
+    }
+
+    public void shuffle(int count) {
         int index;
         Card temp;
         Random random = new Random();
 
-        for (int i = this.cardDeck.length-1; i>0; i--) {
-            index = random.nextInt(i+1);
-            temp = this.cardDeck[index];
-            this.cardDeck[index] = this.cardDeck[i];
-            this.cardDeck[i] = temp;
+        for (int c = count; c>0; c--) {
+            for (int i = this.cardDeck.length-1; i>0; i--) {
+                index = random.nextInt(i+1);
+                temp = this.cardDeck[index];
+                this.cardDeck[index] = this.cardDeck[i];
+                this.cardDeck[i] = temp;
+            }
         }
-
     }
+
+    public Card drawTopCard() {
+
+            Card topCard = this.getCardDeck()[currentIndex];
+            this.currentIndex--;
+            return topCard;
+    }
+
 }
