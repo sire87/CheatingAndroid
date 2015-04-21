@@ -10,7 +10,9 @@
         android:layout_width="69dp"
         android:layout_height="100dp"
         android:id="@+id/fixedCard"
-        android:layout_gravity="center"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="50dp"
         android:src="@drawable/card_56"/>
 
     <!-- This FrameLayout insets its children based on system windows using
@@ -26,8 +28,10 @@
             tools:ignore="UselessParent">
 
             <Button android:id="@+id/drawCard" style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:text="@string/dummy_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dummy_button"
                 android:onClick="drawCards"/>
 
         </LinearLayout>
@@ -37,6 +41,14 @@
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_gravity="left|bottom"
+            android:layout_marginBottom="50dp"
+            android:foregroundGravity="top"></RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/drawnCardContainer2"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="left|top"
             android:foregroundGravity="top"></RelativeLayout>
 
     </FrameLayout>

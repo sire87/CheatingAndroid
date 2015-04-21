@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.Iterator;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -53,6 +55,9 @@ public class MatchActivity extends Activity {
 
     // CARD DECK FOR ACTIVITY
     private CardDeck cardDeck;
+
+    // PLAYER FOR ACTIVITY
+    private Player player1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +132,26 @@ public class MatchActivity extends Activity {
         // INITIALISING CARD DECK
         this.cardDeck = new CardDeck();
         this.cardDeck.shuffle(5);
+
+        // INITIALISING PLAYER
+        this.player1 = new Player("Player 1");
+        for (int i = 0; i <13; i++) {
+            this.player1.drawCard(this.cardDeck);
+        }
+
+        // DISPLAYING PLAYER CARDS
+        int offsetLeft = 0;
+        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
+
+        Iterator iterator = this.player1.getPlayerCards().iterator();
+        while (iterator.hasNext()) {
+            Card currentPlayerCard = (Card) iterator.next();
+            ImageView displayCard = new ImageView(this);
+            displayCard.setImageResource(currentPlayerCard.getImage());
+            displayCard.setPadding(offsetLeft,0,0,0);
+            offsetLeft = offsetLeft+40;
+            viewGroup.addView(displayCard);
+        }
     }
 
     @Override
@@ -201,6 +226,7 @@ public class MatchActivity extends Activity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    // for testing purposes of various methods
     public void drawCards(View view) {
 
         int topCardIndex = this.cardDeck.getCurrentIndex();
@@ -208,7 +234,7 @@ public class MatchActivity extends Activity {
         if (topCardIndex>=0) {
             Card currentCard = this.cardDeck.drawTopCard();
 
-            ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
+            ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer2);
 
             ImageView displayCard = new ImageView(this);
             displayCard.setImageResource(currentCard.getImage());
@@ -217,6 +243,8 @@ public class MatchActivity extends Activity {
             viewGroup.addView(displayCard);
         }
         else {
+            ImageView displayCardDeck = (ImageView) findViewById(R.id.fixedCard);
+            displayCardDeck.setImageResource(0);
             Toast.makeText(this, "Keine Karten im Deck übrig", Toast.LENGTH_SHORT).show();
         }
     }
