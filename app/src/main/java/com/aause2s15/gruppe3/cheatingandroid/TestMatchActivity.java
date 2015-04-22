@@ -1,7 +1,5 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,15 +10,18 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener {
 
-    // CARDDECK, PLAYER, SELECTED CARD
+    // CARDDECK, PLAYER, SELECTED CARD, STACKED CARDS
     private CardDeck cardDeck;
     private Player player1;
     private View selectedCard;
+    private ArrayList<Card> stackedCards;
+    private boolean cardFlipped;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         // INITIALISING CARD DECK
         this.cardDeck = new CardDeck(this);
         this.cardDeck.shuffle(5);
+
+        // INITIALSISNG STACK
+        this.stackedCards = new ArrayList<>(10);
 
         // INITIALISING PLAYER
         this.player1 = new Player("Player 1");
@@ -97,9 +101,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
             viewGroup.setClipChildren(false);
 
-            currentCard.getImageView().setClickable(true);
-            currentCard.getImageView().setOnClickListener(this);
-
             viewGroup.addView(currentCard.getImageView());
         }
         else {
@@ -115,7 +116,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         if (this.selectedCard != null) {
 
             String selectedCardTag = this.selectedCard.getTag().toString();
-            Toast.makeText(this, "Du spielst folgende Karte: "+selectedCardTag, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Du spielst folgende Karte: "+selectedCardTag, Toast.LENGTH_SHORT).show();
 
             Iterator iterator = this.player1.getPlayerCards().iterator();
 
@@ -125,19 +126,47 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 if (currentPlayerCard.getTag().equals(selectedCardTag)) {
                     Card chosenCard = currentPlayerCard;
                     this.player1.playCard(chosenCard);
+                    this.stackedCards.add(chosenCard);
                     ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
                     viewGroup.removeView(this.selectedCard);
                     this.selectedCard = null;
                     break;
                 }
             }
+
+            int index = this.stackedCards.size() - 1;
+            Card testcard = this.stackedCards.get(index);
+            ImageView imgStackedCard = testcard.getImageView();
+            imgStackedCard.setX(0);
+            imgStackedCard.setY(0);
+            imgStackedCard.setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            imgStackedCard.setClickable(false);
+            imgStackedCard.setImageResource(R.drawable.card_56);
+            this.selectedCard = null;
+
+            Toast.makeText(this, "Du hast folgende Karte abgelegt: "+testcard.getTag(), Toast.LENGTH_SHORT).show();
+            ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
+            stackedCardsContainer.addView(imgStackedCard);
+        }
+    }
+
+    public void flipCard(View view) {
+
+        if (!cardFlipped) {
+
+            int index = this.stackedCards.size() - 1;
+            Card flippedCard = this.stackedCards.get(index);
+            ImageView imgFlippedCard = flippedCard.getImageView();
+            // imgFlippedCard.setX(imgFlippedCard.getX()+20);
+            imgFlippedCard.setImageResource(flippedCard.getImage());
         }
     }
 
     @Override
     public void onClick(View v) {
 
-        Toast.makeText(this, "Du spielst folgende Karte: "+v.getId(), Toast.LENGTH_SHORT).show();
+        // for testing purposes
+        // Toast.makeText(this, "Du spielst folgende Karte: "+v.getId(), Toast.LENGTH_SHORT).show();
 
         if (this.selectedCard !=null) {
             this.selectedCard.setY(this.selectedCard.getY()+40);

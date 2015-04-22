@@ -19,6 +19,7 @@ public class Card {
         this.value = value;
         this.tag = type+" "+value;
         this.image = image;
+
         this.imgView = new ImageView(context);
         this.imgView.setImageResource(this.image);
         this.imgView.setX(0);
@@ -32,6 +33,10 @@ public class Card {
 
     public ImageView getImageView() {
         return this.imgView;
+    }
+
+    public int getImage() {
+        return this.image;
     }
 
     public String getTag() {
