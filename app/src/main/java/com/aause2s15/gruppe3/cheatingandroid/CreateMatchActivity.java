@@ -52,12 +52,10 @@ public class CreateMatchActivity extends ActionBarActivity {
         this.serverThread = new Thread(new ServerThread());
         this.serverThread.start();
 
-        final ListView listview = (ListView) findViewById(R.id.listView);
 
         adapter=new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 listItems);
-        listview.setAdapter(adapter);
     }
 
 
@@ -86,8 +84,9 @@ public class CreateMatchActivity extends ActionBarActivity {
     /**
      * Called when the user clicks the start test match button
      */
-    public void startMatch(View view) {
-        Intent intent = new Intent(this, MatchActivity.class);
+
+    public void startTestMatch(View view) {
+        Intent intent = new Intent(this, TestMatchActivity.class);
         startActivity(intent);
     }
 

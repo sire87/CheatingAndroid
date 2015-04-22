@@ -36,30 +36,20 @@
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
-            android:name=".MatchActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_match"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/FullscreenTheme" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
-        </activity>
-        <activity
-            android:name=".util.RulesActivity"
-            android:label="@string/title_activity_rules"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
-        </activity>
-        <activity
             android:name=".RulesActivity"
             android:label="@string/title_activity_rules"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
+        </activity>
+        <activity
+            android:name=".TestMatchActivity"
+            android:label="@string/title_activity_test_match"
+            android:parentActivityName=".CreateMatchActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.CreateMatchActivity" />
         </activity>
     </application>
 
