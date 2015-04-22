@@ -10,12 +10,14 @@ public class Card {
 
     private String type;
     private String value;
+    private String tag;
     private int image;
     private ImageView imgView;
 
     public Card(Context context, String type, String value, int image) {
         this.type = type;
         this.value = value;
+        this.tag = type+" "+value;
         this.image = image;
         this.imgView = new ImageView(context);
         this.imgView.setImageResource(this.image);
@@ -24,18 +26,16 @@ public class Card {
         this.imgView.setAdjustViewBounds(true);
         this.imgView.setMaxHeight(200);
         this.imgView.setMaxWidth(200);
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public String getValue() {
-        return this.value;
+        this.imgView.setTag(this.tag);
+        this.imgView.setId(this.image);
     }
 
     public ImageView getImageView() {
         return this.imgView;
+    }
+
+    public String getTag() {
+        return this.tag;
     }
 
     public void setX(float x) {

@@ -1,5 +1,7 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -107,8 +109,35 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
     }
 
+    // remove card from player
+    public void playCard(View view) {
+
+        if (this.selectedCard != null) {
+
+            String selectedCardTag = this.selectedCard.getTag().toString();
+            Toast.makeText(this, "Du spielst folgende Karte: "+selectedCardTag, Toast.LENGTH_SHORT).show();
+
+            Iterator iterator = this.player1.getPlayerCards().iterator();
+
+            while (iterator.hasNext()) {
+
+                Card currentPlayerCard = (Card) iterator.next();
+                if (currentPlayerCard.getTag().equals(selectedCardTag)) {
+                    Card chosenCard = currentPlayerCard;
+                    this.player1.playCard(chosenCard);
+                    ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
+                    viewGroup.removeView(this.selectedCard);
+                    this.selectedCard = null;
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     public void onClick(View v) {
+
+        Toast.makeText(this, "Du spielst folgende Karte: "+v.getId(), Toast.LENGTH_SHORT).show();
 
         if (this.selectedCard !=null) {
             this.selectedCard.setY(this.selectedCard.getY()+40);

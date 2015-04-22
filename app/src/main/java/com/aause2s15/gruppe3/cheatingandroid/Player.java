@@ -21,6 +21,10 @@ public class Player {
         this.playerCards.add(currentCard);
     }
 
+    public void playCard(Card playedCard) {
+        this.playerCards.remove(playedCard);
+    }
+
     public ArrayList<Card> getPlayerCards() {
         return this.playerCards;
     }

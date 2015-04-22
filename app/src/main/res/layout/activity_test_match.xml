@@ -53,6 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Karte ablegen"
+        android:onClick="playCard"
         android:id="@+id/playCard"
         android:layout_above="@+id/playerCardContainer"
         android:layout_centerHorizontal="true" />
