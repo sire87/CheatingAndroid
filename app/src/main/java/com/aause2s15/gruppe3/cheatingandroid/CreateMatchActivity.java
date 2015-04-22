@@ -52,10 +52,13 @@ public class CreateMatchActivity extends ActionBarActivity {
         this.serverThread = new Thread(new ServerThread());
         this.serverThread.start();
 
+        final ListView listview = (ListView) findViewById(R.id.listView);
 
         adapter=new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 listItems);
+
+        listview.setAdapter(adapter);
     }
 
 
