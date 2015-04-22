@@ -40,6 +40,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         // INITIALSISNG STACK
         this.stackedCards = new ArrayList<>(10);
+        this.cardFlipped = false;
 
         // INITIALISING PLAYER
         this.player1 = new Player("Player 1");
@@ -160,6 +161,12 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             // imgFlippedCard.setX(imgFlippedCard.getX()+20);
             imgFlippedCard.setImageResource(flippedCard.getImage());
         }
+    }
+
+    public void pickUpCards(View view) {
+        // TO DO:
+        // move all the items from stacked cards to player cards
+        Toast.makeText(this, "geht noch nicht", Toast.LENGTH_SHORT).show();
     }
 
     @Override
