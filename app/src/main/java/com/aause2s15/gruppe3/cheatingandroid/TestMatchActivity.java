@@ -1,6 +1,5 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
-import android.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,7 +18,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // CARDDECK, PLAYER, SELECTED CARD
     private CardDeck cardDeck;
     private Player player1;
-    private View highlightedCard;
+    private View selectedCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,14 +110,17 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     @Override
     public void onClick(View v) {
 
-        if (this.highlightedCard !=null) {
-            this.highlightedCard.setY(this.highlightedCard.getY()+40);
+        if (this.selectedCard !=null) {
+            this.selectedCard.setY(this.selectedCard.getY()+40);
+            ((ImageView) this.selectedCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             v.setY(v.getY()-40);
-            this.highlightedCard = v;
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
+            this.selectedCard = v;
         }
         else {
             v.setY(v.getY()-40);
-            this.highlightedCard = v;
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
+            this.selectedCard = v;
         }
     }
 }
