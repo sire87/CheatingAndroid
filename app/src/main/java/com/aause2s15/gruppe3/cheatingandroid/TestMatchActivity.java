@@ -1,5 +1,7 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -161,7 +163,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // flip top card of stack
     public void flipCard(View view) {
 
-        if (!cardFlipped) {
+        if (!cardFlipped && this.stackedCards.size()>0) {
 
             int index = this.stackedCards.size() - 1;
             Card flippedCard = this.stackedCards.get(index);
@@ -173,7 +175,17 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 Toast.makeText(this, "Du hast eine korrekte Karte gespielt!", Toast.LENGTH_SHORT).show();
             }
             else {
-                Toast.makeText(this, "Du hast hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle("LÜGNER!");
+                alertDialog.setMessage("Du hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK - Ich gelobe Besserung!",
+                        new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                });
+                alertDialog.show();
                 pickUpCards(null);
             }
         }
