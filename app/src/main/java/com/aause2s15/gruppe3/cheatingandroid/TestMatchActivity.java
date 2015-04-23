@@ -1,5 +1,6 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 
@@ -95,7 +97,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // move card from player to stack
-    // TODO: find reason why last card causes app to crash
     public void playCard(View view) {
 
         if (this.selectedCard != null) {
@@ -150,12 +151,30 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
     }
 
-    // TODO: move all cards from stack to player
+    // move all cards from stack to player
+    // TODO: find out why this only works once
     public void pickUpCards(View view) {
-        Toast.makeText(this, "geht noch nicht", Toast.LENGTH_SHORT).show();
+
+        ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
+        stackedCardsContainer.removeAllViews();
+
+        Iterator iterator = this.stackedCards.iterator();
+
+        while (iterator.hasNext()) {
+            Card currentStackedCard = (Card) iterator.next();
+            this.player1.addCard(currentStackedCard);
+            currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
+            stackedCardsContainer.removeView(currentStackedCard.getImageView());
+        }
+
+        renderCards();
+
+        while (iterator.hasNext()) {
+            Card currentStackedCard = (Card) iterator.next();
+            this.stackedCards.remove(currentStackedCard);
+        }
     }
 
-    // render player cards
     public void renderCards() {
 
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);

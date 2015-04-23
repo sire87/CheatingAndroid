@@ -6,7 +6,7 @@ import android.widget.ImageView;
 /**
  * Created by Simon on 20.04.2015.
  */
-public class Card {
+public class Card implements Comparable<Card> {
 
     private String type;
     private String value;
@@ -47,4 +47,8 @@ public class Card {
         this.imgView.setX(x);
     }
 
+    @Override
+    public int compareTo(Card another) {
+        return this.image - another.getImage();
+    }
 }

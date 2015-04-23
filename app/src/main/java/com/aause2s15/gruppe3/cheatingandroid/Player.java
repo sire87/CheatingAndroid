@@ -1,6 +1,7 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Simon on 21.04.2015.
@@ -19,6 +20,12 @@ public class Player {
         cardDeck.drawTopCard();
         Card currentCard = cardDeck.drawTopCard();
         this.playerCards.add(currentCard);
+        this.sortPlayerCards();
+    }
+
+    public void addCard(Card card) {
+        this.playerCards.add(card);
+        this.sortPlayerCards();
     }
 
     public void playCard(Card playedCard) {
@@ -27,6 +34,10 @@ public class Player {
 
     public ArrayList<Card> getPlayerCards() {
         return this.playerCards;
+    }
+
+    public void sortPlayerCards() {
+        Collections.sort(this.playerCards);
     }
 
 }
