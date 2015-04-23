@@ -38,7 +38,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         this.cardDeck = new CardDeck(this);
         this.cardDeck.shuffle(5);
 
-        // INITIALSISNG STACK
+        // INITIALISING STACK
         this.stackedCards = new ArrayList<>(10);
         this.cardFlipped = false;
 
@@ -48,25 +48,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             this.player1.drawCard(this.cardDeck);
         }
 
-        // DISPLAYING PLAYER CARDS
-        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
-        viewGroup.setClipChildren(false);
-        float offset = 0;
-
-        Iterator iterator = this.player1.getPlayerCards().iterator();
-
-        while (iterator.hasNext()) {
-
-            Card currentPlayerCard = (Card) iterator.next();
-
-            currentPlayerCard.getImageView().setClickable(true);
-            currentPlayerCard.getImageView().setOnClickListener(this);
-            currentPlayerCard.getImageView().setX(offset);
-
-            offset = offset+40;
-
-            viewGroup.addView(currentPlayerCard.getImageView());
-        }
+        // RENDERING PLAYER CARDS
+        renderCards();
     }
 
     @Override
@@ -91,7 +74,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         return super.onOptionsItemSelected(item);
     }
 
-    // for testing purposes of various methods
+    // draw card from card deck
     public void drawCards(View view) {
 
         int topCardIndex = this.cardDeck.getCurrentIndex();
@@ -111,7 +94,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
     }
 
-    // remove card from player
+    // move card from player to stack
+    // TODO: find reason why last card causes app to crash
     public void playCard(View view) {
 
         if (this.selectedCard != null) {
@@ -135,6 +119,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 }
             }
 
+            renderCards();
+
             int index = this.stackedCards.size() - 1;
             Card testcard = this.stackedCards.get(index);
             ImageView imgStackedCard = testcard.getImageView();
@@ -151,6 +137,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
     }
 
+    // flip top card of stack
     public void flipCard(View view) {
 
         if (!cardFlipped) {
@@ -163,10 +150,42 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
     }
 
+    // TODO: move all cards from stack to player
     public void pickUpCards(View view) {
-        // TO DO:
-        // move all the items from stacked cards to player cards
         Toast.makeText(this, "geht noch nicht", Toast.LENGTH_SHORT).show();
+    }
+
+    // render player cards
+    public void renderCards() {
+
+        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
+        viewGroup.setClipChildren(false);
+        viewGroup.removeAllViews();
+
+        float offset = 0;
+        float moveX = 100;
+
+        if (this.player1.getPlayerCards().size()>0) {
+            moveX = 600 / this.player1.getPlayerCards().size();
+            if (moveX > 100) {
+                moveX = 100;
+            }
+        }
+
+        Iterator iterator = this.player1.getPlayerCards().iterator();
+
+        while (iterator.hasNext()) {
+
+            Card currentPlayerCard = (Card) iterator.next();
+
+            currentPlayerCard.getImageView().setClickable(true);
+            currentPlayerCard.getImageView().setOnClickListener(this);
+            currentPlayerCard.getImageView().setX(offset);
+
+            offset = offset + moveX;
+
+            viewGroup.addView(currentPlayerCard.getImageView());
+        }
     }
 
     @Override
