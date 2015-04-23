@@ -49,6 +49,14 @@ public class Card implements Comparable<Card> {
         return this.order;
     }
 
+    public String getType() {
+        return this.type;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
     @Override
     public int compareTo(Card another) {
         return this.order - another.getOrder();
