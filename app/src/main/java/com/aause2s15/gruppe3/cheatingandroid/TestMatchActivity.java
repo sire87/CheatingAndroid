@@ -1,7 +1,13 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,7 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener {
+public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
     // CARDDECK, PLAYER, SELECTED CARD, STACKED CARDS
     private CardDeck cardDeck;
@@ -24,6 +30,11 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     private boolean cardFlipped;
     private Card currentCard;
     private Card flippedCard;
+    private SensorManager senSensorManager;
+    private Sensor senAccelerometer;
+    private long lastUpdate = 0;
+    private float last_x, last_y, last_z;
+    private static final int SHAKE_THRESHOLD = 1600;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +46,11 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_test_match);
+
+        // INITIALISING ACCELEROMETER
+        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
 
         // INITIALISING CARD DECK
         this.cardDeck = new CardDeck(this);
@@ -98,7 +114,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // move card from player to stack
-    public void playCard(View view) {
+    public void playCard(View view)     {
 
         if (this.selectedCard != null) {
 
@@ -134,9 +150,10 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             this.selectedCard = null;
 
             // Toast.makeText(this, "Du hast folgende Karte abgelegt: "+testcard.getTag(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
             ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
             stackedCardsContainer.addView(imgStackedCard);
+            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass diese Karte nicht korrekt ist!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -178,13 +195,13 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle("LÜGNER!");
                 alertDialog.setMessage("Du hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK - Ich gelobe Besserung!",
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ich gelobe Besserung!",
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                });
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
                 alertDialog.show();
                 pickUpCards(null);
             }
@@ -263,5 +280,51 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
             this.selectedCard = v;
         }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        Sensor mySensor = sensorEvent.sensor;
+
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
+
+            long curTime = System.currentTimeMillis();
+
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(300);
+                    flipCard(null);
+                }
+
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    protected void onPause() {
+        super.onPause();
+        senSensorManager.unregisterListener(this);
+    }
+
+    protected void onResume() {
+        super.onResume();
+        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 }
