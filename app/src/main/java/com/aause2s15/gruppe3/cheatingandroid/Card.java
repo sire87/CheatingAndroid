@@ -27,8 +27,8 @@ public class Card implements Comparable<Card> {
         this.imgView.setX(0);
         this.imgView.setY(0);
         this.imgView.setAdjustViewBounds(true);
-        this.imgView.setMaxHeight(200);
-        this.imgView.setMaxWidth(200);
+        this.imgView.setMaxHeight(160);
+        this.imgView.setMaxWidth(160);
         this.imgView.setTag(this.tag);
         this.imgView.setId(this.image);
     }

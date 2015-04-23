@@ -17,7 +17,6 @@ public class Player {
     }
 
     public void drawCard(CardDeck cardDeck) {
-        cardDeck.drawTopCard();
         Card currentCard = cardDeck.drawTopCard();
         this.playerCards.add(currentCard);
         this.sortPlayerCards();

@@ -10,6 +10,7 @@ import android.hardware.SensorManager;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 1600;
+    private static final int playerCards = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         // INITIALISING PLAYER
         this.player1 = new Player("Player 1");
-        for (int i = 0; i <13; i++) {
+        for (int i = 0; i <this.playerCards; i++) {
             this.player1.drawCard(this.cardDeck);
         }
 
@@ -118,6 +120,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         if (this.selectedCard != null) {
 
+            // this.selectedCard.setY(this.selectedCard.getY()+40);
+
             String selectedCardTag = this.selectedCard.getTag().toString();
             // Toast.makeText(this, "Du spielst folgende Karte: "+selectedCardTag, Toast.LENGTH_SHORT).show();
 
@@ -153,7 +157,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             // Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
             ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
             stackedCardsContainer.addView(imgStackedCard);
-            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass diese Karte nicht korrekt ist!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -195,7 +199,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle("LÜGNER!");
                 alertDialog.setMessage("Du hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ich gelobe Besserung!",
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -222,12 +226,11 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 Card currentStackedCard = (Card) iterator.next();
                 this.player1.addCard(currentStackedCard);
                 currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
+                currentStackedCard.getImageView().setY(currentStackedCard.getImageView().getY()+40);
                 stackedCardsContainer.removeView(currentStackedCard.getImageView());
                 iterator.remove();
-                // Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
+                renderCards();
             }
-
-            renderCards();
         }
     }
 
@@ -238,13 +241,16 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         viewGroup.setClipChildren(false);
         viewGroup.removeAllViews();
 
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int maxWidth = displayMetrics.widthPixels;
+
         float offset = 0;
-        float moveX = 100;
+        float moveX = 80;
 
         if (this.player1.getPlayerCards().size()>0) {
-            moveX = 600 / this.player1.getPlayerCards().size();
-            if (moveX > 100) {
-                moveX = 100;
+            moveX = (maxWidth-160) / this.player1.getPlayerCards().size();
+            if (moveX > 80) {
+                moveX = 80;
             }
         }
 

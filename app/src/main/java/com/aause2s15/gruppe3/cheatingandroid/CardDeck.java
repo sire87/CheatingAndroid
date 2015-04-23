@@ -15,7 +15,7 @@ public class CardDeck {
     public CardDeck(Context context) {
 
         cardDeck = new Card[52];
-        currentIndex = 51;
+        this.currentIndex = this.cardDeck.length-1;
 
         cardDeck[0] = new Card(context, "Kreuz","Ass",R.drawable.card_01,13);
         cardDeck[1] = new Card(context, "Kreuz","2",R.drawable.card_02,1);
@@ -74,11 +74,6 @@ public class CardDeck {
         cardDeck[51] = new Card(context, "Pik","König",R.drawable.card_52,38);
     }
 
-    public Card[] getCardDeck() {
-
-        return this.cardDeck;
-    }
-
     public int getCurrentIndex() {
 
         return this.currentIndex;
@@ -101,7 +96,7 @@ public class CardDeck {
 
     public Card drawTopCard() {
 
-            Card topCard = this.getCardDeck()[currentIndex];
+            Card topCard = this.cardDeck[this.currentIndex];
             this.currentIndex--;
             return topCard;
     }

@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +23,7 @@
         </activity>
         <activity
             android:name=".CreateMatchActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_create_match"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -30,6 +32,7 @@
         </activity>
         <activity
             android:name=".JoinMatchActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_join_match"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -38,6 +41,7 @@
         </activity>
         <activity
             android:name=".RulesActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_rules"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -46,6 +50,7 @@
         </activity>
         <activity
             android:name=".TestMatchActivity"
+            android:screenOrientation="landscape"
             android:label="@string/title_activity_test_match"
             android:parentActivityName=".CreateMatchActivity" >
             <meta-data
