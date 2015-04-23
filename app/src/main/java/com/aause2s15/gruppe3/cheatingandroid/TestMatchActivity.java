@@ -132,7 +132,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             imgStackedCard.setImageResource(R.drawable.card_56);
             this.selectedCard = null;
 
-            Toast.makeText(this, "Du hast folgende Karte abgelegt: "+testcard.getTag(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Du hast folgende Karte abgelegt: "+testcard.getTag(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
             ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
             stackedCardsContainer.addView(imgStackedCard);
         }
@@ -152,26 +153,25 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // move all cards from stack to player
-    // TODO: find out why this only works once
     public void pickUpCards(View view) {
 
-        ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
-        stackedCardsContainer.removeAllViews();
+        if (this.stackedCards.size()>0) {
 
-        Iterator iterator = this.stackedCards.iterator();
+            ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
+            stackedCardsContainer.removeAllViews();
 
-        while (iterator.hasNext()) {
-            Card currentStackedCard = (Card) iterator.next();
-            this.player1.addCard(currentStackedCard);
-            currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
-            stackedCardsContainer.removeView(currentStackedCard.getImageView());
-        }
+            Iterator iterator = this.stackedCards.iterator();
 
-        renderCards();
+            while (iterator.hasNext()) {
+                Card currentStackedCard = (Card) iterator.next();
+                this.player1.addCard(currentStackedCard);
+                currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
+                stackedCardsContainer.removeView(currentStackedCard.getImageView());
+                iterator.remove();
+                // Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
+            }
 
-        while (iterator.hasNext()) {
-            Card currentStackedCard = (Card) iterator.next();
-            this.stackedCards.remove(currentStackedCard);
+            renderCards();
         }
     }
 
