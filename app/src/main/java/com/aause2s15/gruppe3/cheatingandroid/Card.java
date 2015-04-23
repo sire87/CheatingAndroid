@@ -13,12 +13,14 @@ public class Card implements Comparable<Card> {
     private String tag;
     private int image;
     private ImageView imgView;
+    private int order;
 
-    public Card(Context context, String type, String value, int image) {
+    public Card(Context context, String type, String value, int image, int order) {
         this.type = type;
         this.value = value;
         this.tag = type+" "+value;
         this.image = image;
+        this.order = order;
 
         this.imgView = new ImageView(context);
         this.imgView.setImageResource(this.image);
@@ -43,12 +45,12 @@ public class Card implements Comparable<Card> {
         return this.tag;
     }
 
-    public void setX(float x) {
-        this.imgView.setX(x);
+    public int getOrder() {
+        return this.order;
     }
 
     @Override
     public int compareTo(Card another) {
-        return this.image - another.getImage();
+        return this.order - another.getOrder();
     }
 }
