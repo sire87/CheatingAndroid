@@ -23,13 +23,12 @@ import java.util.Iterator;
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
-    // CARDDECK, PLAYER, SELECTED CARD, STACKED CARDS
     private CardDeck cardDeck;
     private Player player1;
     private View selectedCard;
     private ArrayList<Card> stackedCards;
     private boolean cardFlipped;
-    private Card currentCard;
+    private Card calledCard;
     private Card flippedCard;
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -106,7 +105,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             viewGroup.setClipChildren(false);
 
             viewGroup.addView(currentCard.getImageView());
-            this.currentCard = currentCard;
+            this.calledCard = currentCard;
         }
         else {
             ((ImageView)findViewById(R.id.cardDeckImage)).setImageResource(0);
@@ -122,7 +121,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             // this.selectedCard.setY(this.selectedCard.getY()+40);
 
             String selectedCardTag = this.selectedCard.getTag().toString();
-            // Toast.makeText(this, "Du spielst folgende Karte: "+selectedCardTag, Toast.LENGTH_SHORT).show();
 
             Iterator iterator = this.player1.getPlayerCards().iterator();
 
@@ -132,6 +130,13 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 if (currentPlayerCard.getTag().equals(selectedCardTag)) {
                     Card chosenCard = currentPlayerCard;
                     this.player1.playCard(chosenCard);
+
+                    if (this.stackedCards.size() == 0) {
+                        Toast.makeText(this, selectedCardTag + " wurde angesagt!", Toast.LENGTH_SHORT).show();
+                        this.calledCard = chosenCard;
+                        ((ImageView)findViewById(R.id.calledCard)).setImageResource(this.calledCard.getImage());
+                    }
+
                     this.stackedCards.add(chosenCard);
                     ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
                     viewGroup.removeView(this.selectedCard);
@@ -141,7 +146,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             }
 
             renderCards();
-
             int index = this.stackedCards.size() - 1;
             Card testcard = this.stackedCards.get(index);
             ImageView imgStackedCard = testcard.getImageView();
@@ -151,9 +155,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             imgStackedCard.setClickable(false);
             imgStackedCard.setImageResource(R.drawable.card_56);
             this.selectedCard = null;
-
-            // Toast.makeText(this, "Du hast folgende Karte abgelegt: "+testcard.getTag(), Toast.LENGTH_SHORT).show();
-            // Toast.makeText(this, "Stack Size: "+this.stackedCards.size(), Toast.LENGTH_SHORT).show();
             ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
             stackedCardsContainer.addView(imgStackedCard);
             Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
@@ -163,12 +164,12 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // check if flippedCard matches drawn card
     public boolean validCard() {
 
-        if (this.currentCard != null) {
+        if (this.calledCard != null) {
 
             String valueFlippedCard = this.flippedCard.getValue();
-            String valueCurrentCard = this.currentCard.getValue();
+            String valueCurrentCard = this.calledCard.getValue();
             String typeFlippedCard = this.flippedCard.getType();
-            String typeCurrentCard = this.currentCard.getType();
+            String typeCurrentCard = this.calledCard.getType();
 
             if (valueFlippedCard.equals(valueCurrentCard) || typeFlippedCard.equals(typeCurrentCard)) {
                 return true;
@@ -219,6 +220,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
             stackedCardsContainer.removeAllViews();
 
+            this.calledCard = null;
+            ((ImageView)findViewById(R.id.calledCard)).setImageResource(R.drawable.card_56);
+
             Iterator iterator = this.stackedCards.iterator();
 
             while (iterator.hasNext()) {
@@ -235,6 +239,11 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
     // render player cards
     public void renderCards() {
+
+        // TODO: show valid cards if this.stackedCards.size()>0
+        // idea: show them on the right (vertically), make play card only clickable, when a card was called
+        // attention: must be unique ids (adapt CardDeck and Card class to ensure that!)
+        // attention: must adapt onClick(View v): different handling for call cards
 
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
         viewGroup.setClipChildren(false);
