@@ -109,8 +109,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             this.currentCard = currentCard;
         }
         else {
-            ImageView displayCardDeck = (ImageView) findViewById(R.id.cardDeckImage);
-            displayCardDeck.setImageResource(0);
+            ((ImageView)findViewById(R.id.cardDeckImage)).setImageResource(0);
             Toast.makeText(this, "Keine Karten im Deck übrig", Toast.LENGTH_SHORT).show();
         }
     }
@@ -274,13 +273,20 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // called when card is clicked
     public void onClick(View v) {
 
-        if (this.selectedCard !=null) {
+        if (this.selectedCard == v) {
+            this.selectedCard.setY(this.selectedCard.getY()+40);
+            ((ImageView) this.selectedCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            this.selectedCard = null;
+        }
+
+        else if (this.selectedCard != null) {
             this.selectedCard.setY(this.selectedCard.getY()+40);
             ((ImageView) this.selectedCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             v.setY(v.getY()-40);
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
             this.selectedCard = v;
         }
+
         else {
             v.setY(v.getY()-40);
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));

@@ -51,18 +51,17 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/imageView3" />
+        android:id="@+id/cardDeckImage" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Vergleichskarte ziehen"
-        android:id="@+id/cardDeckImage"
         android:onClick="drawCards"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imageView3"
-        android:layout_toStartOf="@+id/imageView3" />
+        android:layout_toLeftOf="@+id/cardDeckImage"
+        android:layout_toStartOf="@+id/cardDeckImage" />
 
 
 </RelativeLayout>
