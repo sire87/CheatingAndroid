@@ -19,11 +19,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
     private CardDeck cardDeck;
+    private CardDeck callableCards;
     private Player player1;
     private View selectedCard;
     private ArrayList<Card> stackedCards;
@@ -54,7 +56,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
 
         // INITIALISING CARD DECK
-        this.cardDeck = new CardDeck(this);
+        this.callableCards = new CardDeck(this,0);
+        this.cardDeck = new CardDeck(this,1);
         this.cardDeck.shuffle(5);
 
         // INITIALISING STACK
@@ -94,7 +97,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // draw card from card deck
-    public void drawCards(View view) {
+/*    public void drawCards(View view) {
 
         int topCardIndex = this.cardDeck.getCurrentIndex();
 
@@ -108,10 +111,10 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             this.calledCard = currentCard;
         }
         else {
-            ((ImageView)findViewById(R.id.cardDeckImage)).setImageResource(0);
-            Toast.makeText(this, "Keine Karten im Deck übrig", Toast.LENGTH_SHORT).show();
+            // ((ImageView)findViewById(R.id.cardDeckImage)).setImageResource(0);
+            // Toast.makeText(this, "Keine Karten im Deck übrig", Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
     // move card from player to stack
     public void playCard(View view)     {
@@ -250,8 +253,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         viewGroup.removeAllViews();
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int maxWidth = displayMetrics.widthPixels;
-
+        int maxWidth = displayMetrics.widthPixels-200;
         float offset = 0;
         float moveX = 80;
 
@@ -275,6 +277,46 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             offset = offset + moveX;
 
             viewGroup.addView(currentPlayerCard.getImageView());
+        }
+
+        renderCallableCards();
+    }
+
+    public void renderCallableCards() {
+
+        if (this.calledCard != null) {
+
+            if (this.stackedCards.size()>0) {
+
+                Card[] tempCardDeck = this.callableCards.getCardDeck();
+                ArrayList<Card> storeCallableCards = new ArrayList<>(15);
+
+                for (int i=0; i<tempCardDeck.length-1; i++) {
+                    if (!tempCardDeck[i].getTag().equals(this.calledCard.getTag()) && (
+                            tempCardDeck[i].getValue().equals(this.calledCard.getValue()) ||
+                                    tempCardDeck[i].getType().equals(this.calledCard.getType()))) {
+
+                        tempCardDeck[i].getImageView().setY(0);
+                        storeCallableCards.add(tempCardDeck[i]);
+                    }
+                }
+
+                ViewGroup callableCardContainer = (ViewGroup) findViewById(R.id.callableCardContainer);
+                callableCardContainer.removeAllViews();
+                int offsetY = 0;
+                int moveY = 40;
+
+                Collections.sort(storeCallableCards);
+                Iterator iterator = storeCallableCards.iterator();
+
+                while (iterator.hasNext()) {
+                    ImageView currentCallableCardImgView = ((Card)iterator.next()).getImageView();
+                    currentCallableCardImgView.setY(currentCallableCardImgView.getY()+offsetY);
+                    offsetY = offsetY + moveY;
+                    callableCardContainer.addView(currentCallableCardImgView);
+                }
+            }
+
         }
     }
 

@@ -14,13 +14,15 @@ public class Card implements Comparable<Card> {
     private int image;
     private ImageView imgView;
     private int order;
+    private int deckID;
 
-    public Card(Context context, String type, String value, int image, int order) {
+    public Card(Context context, String type, String value, int image, int order, int deckID) {
         this.type = type;
         this.value = value;
         this.tag = type+" "+value;
         this.image = image;
         this.order = order;
+        this.deckID = deckID;
 
         this.imgView = new ImageView(context);
         this.imgView.setImageResource(this.image);
@@ -30,7 +32,7 @@ public class Card implements Comparable<Card> {
         this.imgView.setMaxHeight(160);
         this.imgView.setMaxWidth(160);
         this.imgView.setTag(this.tag);
-        this.imgView.setId(this.image);
+        this.imgView.setId(this.image+this.deckID);
     }
 
     public ImageView getImageView() {

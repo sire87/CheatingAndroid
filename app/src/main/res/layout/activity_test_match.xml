@@ -15,11 +15,6 @@
         android:gravity="top|left"
         android:id="@+id/drawnCardContainer">
 
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/calledCard"
-            android:src="@drawable/card_56" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -27,11 +22,11 @@
         android:layout_height="200px"
         android:gravity="bottom"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/playerCardContainer"></RelativeLayout>
+        android:id="@+id/playerCardContainer"
+        android:layout_toLeftOf="@+id/callableCardContainer"
+        android:layout_toStartOf="@+id/callableCardContainer"></RelativeLayout>
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -40,48 +35,67 @@
         android:text="Karte spielen"
         android:onClick="playCard"
         android:id="@+id/playCard"
+        android:textSize="8dp"
         android:layout_above="@+id/playerCardContainer"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignRight="@+id/playerCardContainer"
+        android:layout_alignEnd="@+id/playerCardContainer" />
 
     <RelativeLayout
-        android:layout_width="160px"
-        android:layout_height="240px"
-        android:gravity="bottom|center_vertical"
-        android:id="@+id/cardStackContainer"
-        android:layout_above="@+id/playCard"
-        android:layout_centerHorizontal="true"></RelativeLayout>
-
-    <ImageView
-        android:layout_width="160px"
-        android:layout_height="160px"
-        android:visibility="invisible"
-        android:src="@drawable/card_56"
-        android:layout_alignParentTop="true"
+        android:layout_width="100px"
+        android:layout_height="fill_parent"
+        android:gravity="right"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/cardDeckImage" />
+        android:id="@+id/callableCardContainer"></RelativeLayout>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vergleichskarte ziehen"
-        android:visibility="invisible"
-        android:onClick="drawCards"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/cardDeckImage"
-        android:layout_toStartOf="@+id/cardDeckImage" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/tableRow">
+
+        <ImageView
+            android:layout_width="160px"
+            android:layout_height="160px"
+            android:id="@+id/calledCard"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_column="0" />
+
+        <RelativeLayout
+            android:layout_width="160px"
+            android:layout_height="200px"
+            android:gravity="bottom|center_vertical"
+            android:id="@+id/cardStackContainer"
+            android:layout_below="@+id/drawnCardContainer"
+            android:layout_toRightOf="@+id/drawnCardContainer"
+            android:layout_toEndOf="@+id/drawnCardContainer"
+            android:layout_column="1"></RelativeLayout>
+    </TableRow>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="angesagte Karte"
+        android:text="angesagte Karte || Spielstapel"
         android:textColor="@color/accentColor"
         android:id="@+id/textView2"
-        android:layout_below="@+id/drawnCardContainer"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_above="@+id/tableRow"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="ansagbare Karten -->"
+        android:textColor="@color/accentColor"
+        android:id="@+id/textView3"
+        android:layout_alignTop="@+id/callableCardContainer"
+        android:layout_toRightOf="@+id/tableRow"
+        android:layout_toEndOf="@+id/tableRow" />
 
 
 </RelativeLayout>
