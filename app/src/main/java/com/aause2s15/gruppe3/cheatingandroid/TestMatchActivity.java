@@ -24,20 +24,27 @@ import java.util.Iterator;
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
-    private CardDeck cardDeck;
-    private CardDeck callableCards;
+    // MATCH LOGIC RELATED VARIABLES
     private Player player1;
-    private View selectedCard;
+
+    private CardDeck callableCardDeck;
+
     private ArrayList<Card> stackedCards;
-    private boolean cardFlipped;
+    private Card playedCard;
     private Card calledCard;
     private Card flippedCard;
+
+    private boolean cardFlipped;
+
+    private View selectedPlayerCard;
+    private View selectedCallableCard;
+
+    // ACCELEROMETER RELATED VARIABLES
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 1600;
-    private static final int playerCards = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,22 +63,259 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
 
         // INITIALISING CARD DECK
-        this.callableCards = new CardDeck(this,0);
-        this.cardDeck = new CardDeck(this,1);
-        this.cardDeck.shuffle(5);
+        // IMPORTANT: id is crucial for onClick()
+        // 0 = callable card deck
+        // 1 = player card deck
+        this.callableCardDeck = new CardDeck(this,0);
+        CardDeck cardDeck = new CardDeck(this,1);
+        cardDeck.shuffle(5);
 
         // INITIALISING STACK
         this.stackedCards = new ArrayList<>(10);
         this.cardFlipped = false;
 
         // INITIALISING PLAYER
+        // TODO: check value for player card count
         this.player1 = new Player("Player 1");
-        for (int i = 0; i <this.playerCards; i++) {
-            this.player1.drawCard(this.cardDeck);
+        for (int i = 0; i <13; i++) {
+            this.player1.drawCard(cardDeck);
         }
 
-        // RENDERING PLAYER CARDS
-        renderCards();
+        // RENDERING CARDS
+        renderPlayerCards();
+        renderCallableCards();
+    }
+
+    // render player cards
+    public void renderPlayerCards() {
+
+        ViewGroup playerCardContainer = (ViewGroup) findViewById(R.id.playerCardContainer);
+        playerCardContainer.removeAllViews();
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int maxWidth = displayMetrics.widthPixels-200;
+        float offsetX = 0;
+        float moveX = 80;
+
+        if (this.player1.getPlayerCards().size()>0) {
+            moveX = (maxWidth-160) / this.player1.getPlayerCards().size();
+            if (moveX > 80) {
+                moveX = 80;
+            }
+        }
+
+        Iterator it = this.player1.getPlayerCards().iterator();
+
+        while (it.hasNext()) {
+
+            Card currentPlayerCard = (Card) it.next();
+
+            currentPlayerCard.getImageView().setClickable(true);
+            currentPlayerCard.getImageView().setOnClickListener(this);
+            currentPlayerCard.getImageView().setX(offsetX);
+
+            offsetX = offsetX + moveX;
+
+            playerCardContainer.addView(currentPlayerCard.getImageView());
+        }
+    }
+
+    // render callable cards
+    public void renderCallableCards() {
+
+        if (this.calledCard != null) {
+            Card[] tempCardDeck = this.callableCardDeck.getCardDeck();
+            ArrayList<Card> storeCallableCards = new ArrayList<>(15);
+
+            for (int i=0; i<tempCardDeck.length-1; i++) {
+
+                if (!tempCardDeck[i].getTag().substring(1).equals(this.calledCard.getTag().substring(1)) && (
+                        tempCardDeck[i].getValue().equals(this.calledCard.getValue()) ||
+                                tempCardDeck[i].getType().equals(this.calledCard.getType()))) {
+
+                    tempCardDeck[i].getImageView().setY(0);
+                    storeCallableCards.add(tempCardDeck[i]);
+                }
+            }
+
+            ViewGroup callableCardContainer = (ViewGroup) findViewById(R.id.callableCardContainer);
+            callableCardContainer.removeAllViews();
+            int offsetY = 0;
+            int moveY = 35;
+
+            Collections.sort(storeCallableCards);
+            Iterator iterator = storeCallableCards.iterator();
+
+            while (iterator.hasNext()) {
+                ImageView crrntImgView = ((Card)iterator.next()).getImageView();
+                crrntImgView.setY(crrntImgView.getY()+offsetY);
+                offsetY = offsetY + moveY;
+                crrntImgView.setOnClickListener(this);
+                crrntImgView.setClickable(true);
+                callableCardContainer.addView(crrntImgView);
+            }
+        }
+    }
+
+    // move card from player to stack
+    public void playCard(View v)     {
+
+        if ((this.selectedPlayerCard != null && this.selectedCallableCard !=null)
+                || (this.selectedPlayerCard != null && this.stackedCards.size()==0)) {
+
+            for (Card c : this.player1.getPlayerCards()) {
+                if (c.getTag().substring(1).equals(this.selectedPlayerCard.getTag().toString().substring(1))) {
+                    this.playedCard = c;
+                    this.calledCard = c;
+                    break;
+                }
+            }
+
+            if (this.selectedCallableCard != null) {
+                for (Card c : this.callableCardDeck.getCardDeck()) {
+                    if (c.getTag().substring(1).equals(this.selectedCallableCard.getTag().toString().substring(1))) {
+                        this.calledCard = c;
+                        break;
+                    }
+                }
+            }
+
+            // IMAGE VIEW
+            ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.calledCard.getImage());
+            ((ImageView) this.selectedPlayerCard).setImageResource(R.drawable.card_56);
+            this.selectedPlayerCard.setClickable(false);
+            this.selectedPlayerCard.setX(0);
+
+            // VIEW GROUP
+            ((ViewGroup) findViewById(R.id.playerCardContainer)).removeView(this.selectedPlayerCard);
+            ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(this.selectedPlayerCard);
+            Toast.makeText(this,"Angesagte Karte: "+this.calledCard.getTag().substring(1), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
+
+            // DATA
+            this.player1.playCard(playedCard);
+            this.stackedCards.add(this.playedCard);
+            toggleSelectPlayerCard(this.selectedPlayerCard);
+
+            // RENDERING
+            renderPlayerCards();
+            renderCallableCards();
+        }
+    }
+
+    // move all cards from stack to player
+    public void pickUpCards(View v) {
+
+        if (this.stackedCards.size()>0) {
+
+            ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
+            stackedCardsContainer.removeAllViews();
+
+            this.calledCard = null;
+            this.selectedCallableCard = null;
+
+            ((ImageView)findViewById(R.id.calledCard)).setImageResource(0);
+            ((ViewGroup)findViewById(R.id.callableCardContainer)).removeAllViews();
+
+            Iterator iterator = this.stackedCards.iterator();
+
+            while (iterator.hasNext()) {
+                Card currentStackedCard = (Card) iterator.next();
+                this.player1.addCard(currentStackedCard);
+                currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
+                stackedCardsContainer.removeView(currentStackedCard.getImageView());
+                iterator.remove();
+                renderPlayerCards();
+            }
+        }
+    }
+
+    // flip top card of stack
+    public void flipCard(View v) {
+
+        if (!cardFlipped && this.stackedCards.size()>0) {
+
+            int index = this.stackedCards.size() - 1;
+            Card flippedCard = this.stackedCards.get(index);
+            this.flippedCard = flippedCard;
+            ImageView imgFlippedCard = flippedCard.getImageView();
+            imgFlippedCard.setImageResource(flippedCard.getImage());
+            if (validCard()) {
+                Toast.makeText(this, "Du hast eine korrekte Karte gespielt!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle("LÜGNER!");
+                alertDialog.setMessage("Du hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                pickUpCards(null);
+            }
+        }
+    }
+
+    // check if flippedCard matches called card
+    public boolean validCard() {
+
+        if (this.calledCard != null) {
+
+            if (this.flippedCard.getTag().substring(1).equals(this.calledCard.getTag().substring(1))) {
+                return true;
+            }
+
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // behaviour for selecting player card
+    // TODO: REFACTORING
+    public void toggleSelectPlayerCard(View v) {
+
+        if (this.selectedPlayerCard == v) {
+            ((ImageView) this.selectedPlayerCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            this.selectedPlayerCard = null;
+        }
+
+        else if (this.selectedPlayerCard != null) {
+            ((ImageView) this.selectedPlayerCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
+            this.selectedPlayerCard = v;
+        }
+
+        else {
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
+            this.selectedPlayerCard = v;
+        }
+    }
+
+    // behaviour for selecting callable card
+    // TODO: REFACTORING
+    public void selectCallableCard(View v) {
+
+        if (this.selectedCallableCard == v) {
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            this.selectedCallableCard = null;
+        }
+
+        else if (this.selectedCallableCard != null) {
+            ((ImageView) this.selectedCallableCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
+            this.selectedCallableCard = v;
+        }
+
+        else {
+            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
+            this.selectedCallableCard = v;
+        }
     }
 
     @Override
@@ -96,252 +340,16 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         return super.onOptionsItemSelected(item);
     }
 
-    // draw card from card deck
-/*    public void drawCards(View view) {
-
-        int topCardIndex = this.cardDeck.getCurrentIndex();
-
-        if (topCardIndex>=0) {
-            Card currentCard = this.cardDeck.drawTopCard();
-
-            ViewGroup viewGroup = (ViewGroup) findViewById(R.id.drawnCardContainer);
-            viewGroup.setClipChildren(false);
-
-            viewGroup.addView(currentCard.getImageView());
-            this.calledCard = currentCard;
-        }
-        else {
-            // ((ImageView)findViewById(R.id.cardDeckImage)).setImageResource(0);
-            // Toast.makeText(this, "Keine Karten im Deck übrig", Toast.LENGTH_SHORT).show();
-        }
-    }*/
-
-    // move card from player to stack
-    public void playCard(View view)     {
-
-        if (this.selectedCard != null) {
-
-            // this.selectedCard.setY(this.selectedCard.getY()+40);
-
-            String selectedCardTag = this.selectedCard.getTag().toString();
-
-            Iterator iterator = this.player1.getPlayerCards().iterator();
-
-            while (iterator.hasNext()) {
-
-                Card currentPlayerCard = (Card) iterator.next();
-                if (currentPlayerCard.getTag().equals(selectedCardTag)) {
-                    Card chosenCard = currentPlayerCard;
-                    this.player1.playCard(chosenCard);
-
-                    if (this.stackedCards.size() == 0) {
-                        Toast.makeText(this, selectedCardTag + " wurde angesagt!", Toast.LENGTH_SHORT).show();
-                        this.calledCard = chosenCard;
-                        ((ImageView)findViewById(R.id.calledCard)).setImageResource(this.calledCard.getImage());
-                    }
-
-                    this.stackedCards.add(chosenCard);
-                    ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
-                    viewGroup.removeView(this.selectedCard);
-                    this.selectedCard = null;
-                    break;
-                }
-            }
-
-            renderCards();
-            int index = this.stackedCards.size() - 1;
-            Card testcard = this.stackedCards.get(index);
-            ImageView imgStackedCard = testcard.getImageView();
-            imgStackedCard.setX(0);
-            imgStackedCard.setY(0);
-            imgStackedCard.setColorFilter(getResources().getColor(R.color.noHighlightColor));
-            imgStackedCard.setClickable(false);
-            imgStackedCard.setImageResource(R.drawable.card_56);
-            this.selectedCard = null;
-            ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
-            stackedCardsContainer.addView(imgStackedCard);
-            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // check if flippedCard matches drawn card
-    public boolean validCard() {
-
-        if (this.calledCard != null) {
-
-            String valueFlippedCard = this.flippedCard.getValue();
-            String valueCurrentCard = this.calledCard.getValue();
-            String typeFlippedCard = this.flippedCard.getType();
-            String typeCurrentCard = this.calledCard.getType();
-
-            if (valueFlippedCard.equals(valueCurrentCard) || typeFlippedCard.equals(typeCurrentCard)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // flip top card of stack
-    public void flipCard(View view) {
-
-        if (!cardFlipped && this.stackedCards.size()>0) {
-
-            int index = this.stackedCards.size() - 1;
-            Card flippedCard = this.stackedCards.get(index);
-            this.flippedCard = flippedCard;
-            ImageView imgFlippedCard = flippedCard.getImageView();
-            // imgFlippedCard.setX(imgFlippedCard.getX()+20);
-            imgFlippedCard.setImageResource(flippedCard.getImage());
-            if (validCard()) {
-                Toast.makeText(this, "Du hast eine korrekte Karte gespielt!", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle("LÜGNER!");
-                alertDialog.setMessage("Du hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-                pickUpCards(null);
-            }
-        }
-    }
-
-    // move all cards from stack to player
-    public void pickUpCards(View view) {
-
-        if (this.stackedCards.size()>0) {
-
-            ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
-            stackedCardsContainer.removeAllViews();
-
-            this.calledCard = null;
-            ((ImageView)findViewById(R.id.calledCard)).setImageResource(R.drawable.card_56);
-
-            Iterator iterator = this.stackedCards.iterator();
-
-            while (iterator.hasNext()) {
-                Card currentStackedCard = (Card) iterator.next();
-                this.player1.addCard(currentStackedCard);
-                currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
-                currentStackedCard.getImageView().setY(currentStackedCard.getImageView().getY()+40);
-                stackedCardsContainer.removeView(currentStackedCard.getImageView());
-                iterator.remove();
-                renderCards();
-            }
-        }
-    }
-
-    // render player cards
-    public void renderCards() {
-
-        // TODO: show valid cards if this.stackedCards.size()>0
-        // idea: show them on the right (vertically), make play card only clickable, when a card was called
-        // attention: must be unique ids (adapt CardDeck and Card class to ensure that!)
-        // attention: must adapt onClick(View v): different handling for call cards
-
-        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.playerCardContainer);
-        viewGroup.setClipChildren(false);
-        viewGroup.removeAllViews();
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int maxWidth = displayMetrics.widthPixels-200;
-        float offset = 0;
-        float moveX = 80;
-
-        if (this.player1.getPlayerCards().size()>0) {
-            moveX = (maxWidth-160) / this.player1.getPlayerCards().size();
-            if (moveX > 80) {
-                moveX = 80;
-            }
-        }
-
-        Iterator iterator = this.player1.getPlayerCards().iterator();
-
-        while (iterator.hasNext()) {
-
-            Card currentPlayerCard = (Card) iterator.next();
-
-            currentPlayerCard.getImageView().setClickable(true);
-            currentPlayerCard.getImageView().setOnClickListener(this);
-            currentPlayerCard.getImageView().setX(offset);
-
-            offset = offset + moveX;
-
-            viewGroup.addView(currentPlayerCard.getImageView());
-        }
-
-        renderCallableCards();
-    }
-
-    public void renderCallableCards() {
-
-        if (this.calledCard != null) {
-
-            if (this.stackedCards.size()>0) {
-
-                Card[] tempCardDeck = this.callableCards.getCardDeck();
-                ArrayList<Card> storeCallableCards = new ArrayList<>(15);
-
-                for (int i=0; i<tempCardDeck.length-1; i++) {
-                    if (!tempCardDeck[i].getTag().equals(this.calledCard.getTag()) && (
-                            tempCardDeck[i].getValue().equals(this.calledCard.getValue()) ||
-                                    tempCardDeck[i].getType().equals(this.calledCard.getType()))) {
-
-                        tempCardDeck[i].getImageView().setY(0);
-                        storeCallableCards.add(tempCardDeck[i]);
-                    }
-                }
-
-                ViewGroup callableCardContainer = (ViewGroup) findViewById(R.id.callableCardContainer);
-                callableCardContainer.removeAllViews();
-                int offsetY = 0;
-                int moveY = 40;
-
-                Collections.sort(storeCallableCards);
-                Iterator iterator = storeCallableCards.iterator();
-
-                while (iterator.hasNext()) {
-                    ImageView currentCallableCardImgView = ((Card)iterator.next()).getImageView();
-                    currentCallableCardImgView.setY(currentCallableCardImgView.getY()+offsetY);
-                    offsetY = offsetY + moveY;
-                    callableCardContainer.addView(currentCallableCardImgView);
-                }
-            }
-
-        }
-    }
-
     @Override
     // called when card is clicked
     public void onClick(View v) {
 
-        if (this.selectedCard == v) {
-            this.selectedCard.setY(this.selectedCard.getY()+40);
-            ((ImageView) this.selectedCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
-            this.selectedCard = null;
+        if (v.getTag().toString().startsWith("1")) {
+            toggleSelectPlayerCard(v);
         }
 
-        else if (this.selectedCard != null) {
-            this.selectedCard.setY(this.selectedCard.getY()+40);
-            ((ImageView) this.selectedCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
-            v.setY(v.getY()-40);
-            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
-            this.selectedCard = v;
-        }
-
-        else {
-            v.setY(v.getY()-40);
-            ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
-            this.selectedCard = v;
+        if (v.getTag().toString().startsWith("0")) {
+            selectCallableCard(v);
         }
     }
 
