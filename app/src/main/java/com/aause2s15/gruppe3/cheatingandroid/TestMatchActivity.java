@@ -212,6 +212,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             stackedCardsContainer.removeAllViews();
 
             this.calledCard = null;
+            ((ImageView) this.selectedCallableCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             this.selectedCallableCard = null;
 
             ((ImageView)findViewById(R.id.calledCard)).setImageResource(0);
