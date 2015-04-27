@@ -93,15 +93,13 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         playerCardContainer.removeAllViews();
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int maxWidth = displayMetrics.widthPixels-200;
+        int maxWidth = displayMetrics.widthPixels;
         float offsetX = 0;
         float moveX = 80;
 
         if (this.player1.getPlayerCards().size()>0) {
-            moveX = (maxWidth-160) / this.player1.getPlayerCards().size();
-            if (moveX > 80) {
-                moveX = 80;
-            }
+            moveX = (maxWidth-240) / this.player1.getPlayerCards().size();
+            if (moveX > 80) moveX = 80;
         }
 
         Iterator it = this.player1.getPlayerCards().iterator();
@@ -126,6 +124,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         if (this.calledCard != null) {
             Card[] tempCardDeck = this.callableCardDeck.getCardDeck();
             ArrayList<Card> storeCallableCards = new ArrayList<>(15);
+            findViewById(R.id.callableText).setVisibility(View.VISIBLE);
 
             for (int i=0; i<tempCardDeck.length-1; i++) {
 
@@ -140,8 +139,13 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
             ViewGroup callableCardContainer = (ViewGroup) findViewById(R.id.callableCardContainer);
             callableCardContainer.removeAllViews();
+
+            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+            int maxHeight = displayMetrics.heightPixels;
             int offsetY = 0;
-            int moveY = 35;
+            int moveY = (maxHeight-240) / storeCallableCards.size();
+            if (moveY > 40) moveY = 40;
+
 
             Collections.sort(storeCallableCards);
             Iterator iterator = storeCallableCards.iterator();
@@ -213,6 +217,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
             this.calledCard = null;
             ((ImageView) this.selectedCallableCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
+            this.selectedCallableCard.setX(this.selectedCallableCard.getX()+20);
+            findViewById(R.id.callableText).setVisibility(View.INVISIBLE);
             this.selectedCallableCard = null;
 
             ((ImageView)findViewById(R.id.calledCard)).setImageResource(0);
@@ -282,40 +288,48 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     public void toggleSelectPlayerCard(View v) {
 
         if (this.selectedPlayerCard == v) {
+            this.selectedPlayerCard.setY(this.selectedPlayerCard.getY() + 30);
             ((ImageView) this.selectedPlayerCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             this.selectedPlayerCard = null;
         }
 
         else if (this.selectedPlayerCard != null) {
+            this.selectedPlayerCard.setY(this.selectedPlayerCard.getY() + 30);
             ((ImageView) this.selectedPlayerCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
             this.selectedPlayerCard = v;
+            this.selectedPlayerCard.setY(this.selectedPlayerCard.getY() - 30);
         }
 
         else {
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
             this.selectedPlayerCard = v;
+            this.selectedPlayerCard.setY(this.selectedPlayerCard.getY() - 30);
         }
     }
 
     // behaviour for selecting callable card
     // TODO: REFACTORING
-    public void selectCallableCard(View v) {
+    public void toggleSelectCallableCard(View v) {
 
         if (this.selectedCallableCard == v) {
+            this.selectedCallableCard.setX(this.selectedCallableCard.getX() + 20);
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             this.selectedCallableCard = null;
         }
 
         else if (this.selectedCallableCard != null) {
+            this.selectedCallableCard.setX(this.selectedCallableCard.getX() + 20);
             ((ImageView) this.selectedCallableCard).setColorFilter(getResources().getColor(R.color.noHighlightColor));
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
             this.selectedCallableCard = v;
+            this.selectedCallableCard.setX(this.selectedCallableCard.getX() - 20);
         }
 
         else {
             ((ImageView) v).setColorFilter(getResources().getColor(R.color.highlightColor));
             this.selectedCallableCard = v;
+            this.selectedCallableCard.setX(this.selectedCallableCard.getX() - 20);
         }
     }
 
@@ -350,7 +364,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
 
         if (v.getTag().toString().startsWith("0")) {
-            selectCallableCard(v);
+            toggleSelectCallableCard(v);
         }
     }
 

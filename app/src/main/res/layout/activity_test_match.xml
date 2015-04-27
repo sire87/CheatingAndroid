@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="150px"
+        android:layout_height="180px"
         android:gravity="bottom"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -31,17 +31,19 @@
         android:layout_alignEnd="@+id/playerCardContainer" />
 
     <RelativeLayout
-        android:layout_width="100px"
+        android:layout_width="120px"
         android:layout_height="fill_parent"
         android:gravity="right"
-        android:layout_centerVertical="true"
+        android:id="@+id/callableCardContainer"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/callableCardContainer"></RelativeLayout>
+        android:layout_below="@+id/callableText"></RelativeLayout>
 
     <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/tableRow">
@@ -58,7 +60,7 @@
         <RelativeLayout
             android:layout_width="150px"
             android:layout_height="150px"
-            android:gravity="bottom|center_vertical"
+            android:paddingLeft="25px"
             android:id="@+id/cardStackContainer"
             android:layout_below="@+id/drawnCardContainer"
             android:layout_toRightOf="@+id/drawnCardContainer"
@@ -70,22 +72,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="angesagte Karte || Spielstapel"
-        android:textColor="@color/accentColor"
-        android:id="@+id/textView2"
-        android:layout_above="@+id/tableRow"
-        android:layout_centerHorizontal="true" />
+        android:text="ansagbar"
+        android:visibility="invisible"
+        android:textColor="#FFFFFF"
+        android:id="@+id/callableText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <TextView
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="ansagbare Karten -->"
-        android:textColor="@color/accentColor"
-        android:id="@+id/textView3"
-        android:layout_alignTop="@+id/callableCardContainer"
-        android:layout_toRightOf="@+id/tableRow"
-        android:layout_toEndOf="@+id/tableRow" />
+        android:layout_below="@+id/tableRow"
+        android:layout_centerHorizontal="true">
+
+        <TextView android:text="angesagt"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+        android:layout_width="155px"
+        android:layout_height="wrap_content"/>
+
+        <TextView android:text="Stapel"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:layout_width="155px"
+            android:layout_height="wrap_content"/>
+
+        </TableRow>
 
 
 </RelativeLayout>
