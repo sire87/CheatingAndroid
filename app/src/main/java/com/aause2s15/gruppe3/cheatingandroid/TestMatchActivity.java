@@ -7,10 +7,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Debug;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -413,5 +415,15 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    // for debugging
+    public void getMemoryUsage(View View) {
+        int usedKBytes = (int) (Debug.getNativeHeapAllocatedSize() / 1024L);
+        int freeKbytes = (int) (Debug.getNativeHeapFreeSize() / 1024L);
+        String txt = "Memory Used: "+usedKBytes+" KB\n" +
+                "Memory Free: "+freeKbytes+" KB";
+
+        Toast.makeText(this,txt, Toast.LENGTH_SHORT).show();
     }
 }
