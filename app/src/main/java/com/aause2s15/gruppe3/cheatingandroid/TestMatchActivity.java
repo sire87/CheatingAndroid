@@ -127,7 +127,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             ArrayList<Card> storeCallableCards = new ArrayList<>(15);
             findViewById(R.id.callableText).setVisibility(View.VISIBLE);
 
-            for (int i=0; i<tempCardDeck.length-1; i++) {
+            for (int i=0; i<tempCardDeck.length; i++) {
 
                 if (!tempCardDeck[i].getTag().substring(1).equals(this.calledCard.getTag().substring(1)) && (
                         tempCardDeck[i].getValue().equals(this.calledCard.getValue()) ||
