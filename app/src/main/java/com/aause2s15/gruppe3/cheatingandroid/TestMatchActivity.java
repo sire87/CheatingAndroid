@@ -417,13 +417,4 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    // for debugging
-    public void getMemoryUsage(View View) {
-        int usedKBytes = (int) (Debug.getNativeHeapAllocatedSize() / 1024L);
-        int freeKbytes = (int) (Debug.getNativeHeapFreeSize() / 1024L);
-        String txt = "Memory Used: "+usedKBytes+" KB\n" +
-                "Memory Free: "+freeKbytes+" KB";
-
-        Toast.makeText(this,txt, Toast.LENGTH_SHORT).show();
-    }
 }
