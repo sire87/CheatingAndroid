@@ -5,6 +5,7 @@
     <string name="action_settings">Eigenschaften</string>
 
     <!-- MainActivity -->
+    <string name="service_id">com.aause2s15.gruppe3.cheatingandroid</string>
     <string name="player_name">Player 1</string>
     <string name="create_match">Spiel erstellen</string>
     <string name="join_match">Spiel beitreten</string>
