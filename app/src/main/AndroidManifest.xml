@@ -4,19 +4,22 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_new"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true"
-        android:largeHeap="true">
-
+        android:theme="@style/AppTheme" >
+        <application>
+            <!-- Required for Nearby Connections API -->
+            <meta-data android:name="com.google.android.gms.nearby.connection.SERVICE_ID"
+                android:value="@string/com.aause2s15.gruppe3.cheatingandroid" />
+            <activity>
+                ...
+            </activity>
+        </application>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +29,6 @@
         </activity>
         <activity
             android:name=".CreateMatchActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_create_match"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -35,7 +37,6 @@
         </activity>
         <activity
             android:name=".JoinMatchActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_join_match"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -43,8 +44,17 @@
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
-            android:name=".RulesActivity"
-            android:screenOrientation="portrait"
+            android:name=".MatchActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_match"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/FullscreenTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
+        </activity>
+        <activity
+            android:name=".util.RulesActivity"
             android:label="@string/title_activity_rules"
             android:parentActivityName=".MainActivity" >
             <meta-data
@@ -52,13 +62,12 @@
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
-            android:name=".TestMatchActivity"
-            android:screenOrientation="landscape"
-            android:label="@string/title_activity_test_match"
-            android:parentActivityName=".CreateMatchActivity" >
+            android:name=".RulesActivity"
+            android:label="@string/title_activity_rules"
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aause2s15.gruppe3.cheatingandroid.CreateMatchActivity" />
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
     </application>
 

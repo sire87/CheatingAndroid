@@ -9,8 +9,25 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.connection.AppIdentifier;
+import com.google.android.gms.nearby.connection.AppMetadata;
+import com.google.android.gms.nearby.connection.Connections;
+import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener,
+        Connections.ConnectionRequestListener,
+        Connections.MessageListener,
+        Connections.EndpointDiscoveryListener {
+
+    // Identify if the device is the host
+    private boolean mIsHost = false;
+
+    private static int[] NETWORK_TYPES = {ConnectivityManager.TYPE_WIFI, ConnectivityManager.TYPE_ETHERNET};
 
     /** not sure */
     public final static String EXTRA_MESSAGE = "com.aause2s15.gruppe3.cheatingandroid";
@@ -19,6 +36,38 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Initialize the Nearby Connections API
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Nearby.CONNECTIONS_API)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    private boolean isConnectedToNetwork() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        for (int networkType : NETWORK_TYPES) {
+            NetworkInfo info = connManager.getNetworkInfo(networkType);
+            if (info != null && info.isConnectedOrConnecting()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
