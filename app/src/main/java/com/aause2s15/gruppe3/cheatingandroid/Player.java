@@ -13,7 +13,7 @@ public class Player {
 
     public Player(String playerName) {
         this.playerName = playerName;
-        this.playerCards = new ArrayList<>(13);
+        this.playerCards = new ArrayList<>(10);
     }
 
     public void drawCard(CardDeck cardDeck) {

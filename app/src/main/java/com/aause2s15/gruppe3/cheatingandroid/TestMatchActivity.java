@@ -7,12 +7,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Debug;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,17 +24,10 @@ import java.util.Iterator;
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
-    // MATCH LOGIC RELATED VARIABLES
-    private Player player1;
-
-    private CardDeck callableCardDeck;
-
-    private ArrayList<Card> stackedCards;
-    private Card playedCard;
-    private Card calledCard;
-    private Card flippedCard;
-
-    private boolean cardFlipped;
+    private Match match;
+    private int playerID;
+    private String playerName = "HOST Hans"; // TODO: get name from MainActivity
+    private boolean active = true; // TODO: only allow interaction when true
 
     private View selectedPlayerCard;
     private View selectedCallableCard;
@@ -64,24 +55,12 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
 
-        // INITIALISING CARD DECK
-        // IMPORTANT: id is crucial for onClick()
-        // 0 = callable card deck
-        // 1 = player card deck
-        this.callableCardDeck = new CardDeck(this,0);
-        CardDeck cardDeck = new CardDeck(this,1);
-        cardDeck.shuffle(5);
+        // IF HOST: CREATE MATCH
+        this.match = new Match(this); // TODO: match must be created ONLY by HOST
+        this.match.addPlayer(new Player(this.playerName));
+        this.playerID = this.match.getPlayerID(this.playerName);
 
-        // INITIALISING STACK
-        this.stackedCards = new ArrayList<>(10);
-        this.cardFlipped = false;
-
-        // INITIALISING PLAYER
-        // TODO: check value for player card count
-        this.player1 = new Player("Player 1");
-        for (int i = 0; i <13; i++) {
-            this.player1.drawCard(cardDeck);
-        }
+        // TODO: IF CLIENT: JOIN MATCH (addPlayer) AND SYNC WITH HOST
 
         // RENDERING CARDS
         renderPlayerCards();
@@ -100,12 +79,12 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         float offsetX = 0;
         float moveX = 80;
 
-        if (this.player1.getPlayerCards().size()>0) {
-            moveX = (maxWidth-280) / this.player1.getPlayerCards().size();
+        if (this.match.getPlayer(this.playerID).getPlayerCards().size()>0) {
+            moveX = (maxWidth-280) / this.match.getPlayer(this.playerID).getPlayerCards().size();
             if (moveX > 80) moveX = 80;
         }
 
-        Iterator it = this.player1.getPlayerCards().iterator();
+        Iterator it = this.match.getPlayer(this.playerID).getPlayerCards().iterator();
 
         while (it.hasNext()) {
 
@@ -124,16 +103,16 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // render callable cards
     public void renderCallableCards() {
 
-        if (this.calledCard != null) {
-            Card[] tempCardDeck = this.callableCardDeck.getCardDeck();
+        if (this.match.getCalledCard() != null) {
+            Card[] tempCardDeck = this.match.getCallableCardDeck().getCardDeck();
             ArrayList<Card> storeCallableCards = new ArrayList<>(15);
             findViewById(R.id.callableText).setVisibility(View.VISIBLE);
 
             for (int i=0; i<tempCardDeck.length; i++) {
 
-                if (!tempCardDeck[i].getTag().substring(1).equals(this.calledCard.getTag().substring(1)) && (
-                        tempCardDeck[i].getValue().equals(this.calledCard.getValue()) ||
-                                tempCardDeck[i].getType().equals(this.calledCard.getType()))) {
+                if (!tempCardDeck[i].getTag().substring(1).equals(this.match.getCalledCard().getTag().substring(1)) && (
+                        tempCardDeck[i].getValue().equals(this.match.getCalledCard().getValue()) ||
+                                tempCardDeck[i].getType().equals(this.match.getCalledCard().getType()))) {
 
                     tempCardDeck[i].getImageView().setY(0);
                     storeCallableCards.add(tempCardDeck[i]);
@@ -168,27 +147,27 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     public void playCard(View v)     {
 
         if ((this.selectedPlayerCard != null && this.selectedCallableCard !=null)
-                || (this.selectedPlayerCard != null && this.stackedCards.size()==0)) {
+                || (this.selectedPlayerCard != null && this.match.getStackedCards().size()==0)) {
 
-            for (Card c : this.player1.getPlayerCards()) {
+            for (Card c : this.match.getPlayer(this.playerID).getPlayerCards()) {
                 if (c.getTag().substring(1).equals(this.selectedPlayerCard.getTag().toString().substring(1))) {
-                    this.playedCard = c;
-                    this.calledCard = c;
+                    this.match.setPlayedCard(c);
+                    this.match.setCalledCard(c);
                     break;
                 }
             }
 
             if (this.selectedCallableCard != null) {
-                for (Card c : this.callableCardDeck.getCardDeck()) {
+                for (Card c : this.match.getCallableCardDeck().getCardDeck()) {
                     if (c.getTag().substring(1).equals(this.selectedCallableCard.getTag().toString().substring(1))) {
-                        this.calledCard = c;
+                        this.match.setCalledCard(c);
                         break;
                     }
                 }
             }
 
             // IMAGE VIEW
-            ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.calledCard.getImage());
+            ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.match.getCalledCard().getImage());
             ((ImageView) this.selectedPlayerCard).setImageResource(R.drawable.card_56);
             this.selectedPlayerCard.setClickable(false);
             this.selectedPlayerCard.setX(0);
@@ -196,12 +175,12 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             // VIEW GROUP
             ((ViewGroup) findViewById(R.id.playerCardContainer)).removeView(this.selectedPlayerCard);
             ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(this.selectedPlayerCard);
-            Toast.makeText(this,"Angesagte Karte: "+this.calledCard.getTag().substring(1), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Angesagte Karte: "+this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
 
             // DATA
-            this.player1.playCard(playedCard);
-            this.stackedCards.add(this.playedCard);
+            this.match.getPlayer(this.playerID).playCard(this.match.getPlayedCard());
+            this.match.getStackedCards().add(this.match.getPlayedCard());
             toggleSelectPlayerCard(this.selectedPlayerCard);
             if (this.selectedCallableCard != null) toggleSelectCallableCard(this.selectedCallableCard);
             this.selectedCallableCard = null;
@@ -215,23 +194,23 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // move all cards from stack to player
     public void pickUpCards(View v) {
 
-        if (this.stackedCards.size()>0) {
+        if (this.match.getStackedCards().size()>0) {
 
             ViewGroup stackedCardsContainer = (ViewGroup) findViewById(R.id.cardStackContainer);
             stackedCardsContainer.removeAllViews();
 
-            this.calledCard = null;
+            this.match.setCalledCard(null);
             findViewById(R.id.callableText).setVisibility(View.INVISIBLE);
             this.selectedCallableCard = null;
 
             ((ImageView)findViewById(R.id.calledCard)).setImageResource(0);
             ((ViewGroup)findViewById(R.id.callableCardContainer)).removeAllViews();
 
-            Iterator iterator = this.stackedCards.iterator();
+            Iterator iterator = this.match.getStackedCards().iterator();
 
             while (iterator.hasNext()) {
                 Card currentStackedCard = (Card) iterator.next();
-                this.player1.addCard(currentStackedCard);
+                this.match.getPlayer(this.playerID).addCard(currentStackedCard);
                 currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
                 stackedCardsContainer.removeView(currentStackedCard.getImageView());
                 iterator.remove();
@@ -243,11 +222,11 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // flip top card of stack
     public void flipCard(View v) {
 
-        if (!cardFlipped && this.stackedCards.size()>0) {
+        if (!this.match.getCardFlipped() && this.match.getStackedCards().size()>0) {
 
-            int index = this.stackedCards.size() - 1;
-            Card flippedCard = this.stackedCards.get(index);
-            this.flippedCard = flippedCard;
+            int index = this.match.getStackedCards().size() - 1;
+            Card flippedCard = this.match.getStackedCards().get(index);
+            this.match.setFlippedCard(flippedCard);
             ImageView imgFlippedCard = flippedCard.getImageView();
             imgFlippedCard.setImageResource(flippedCard.getImage());
             if (validCard()) {
@@ -273,9 +252,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     // check if flippedCard matches called card
     public boolean validCard() {
 
-        if (this.calledCard != null) {
+        if (this.match.getCalledCard() != null) {
 
-            if (this.flippedCard.getTag().substring(1).equals(this.calledCard.getTag().substring(1))) {
+            if (this.match.getFlippedCard().getTag().substring(1).equals(this.match.getCalledCard().getTag().substring(1))) {
                 return true;
             }
 
@@ -287,7 +266,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // behaviour for selecting player card
-    // TODO: REFACTORING
     public void toggleSelectPlayerCard(View v) {
 
         if (this.selectedPlayerCard == v) {
@@ -312,7 +290,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // behaviour for selecting callable card
-    // TODO: REFACTORING
     public void toggleSelectCallableCard(View v) {
 
         if (this.selectedCallableCard == v) {
@@ -372,6 +349,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     @Override
+    // called when device is shaken
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
