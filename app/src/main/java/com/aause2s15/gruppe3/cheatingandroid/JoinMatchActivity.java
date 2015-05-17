@@ -1,59 +1,72 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.aause2s15.gruppe3.cheatingandroid.connection.server.ServerConnector;
+import com.aause2s15.gruppe3.cheatingandroid.connection.server.ServerException;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 
-public class JoinMatchActivity extends ActionBarActivity {
+public class JoinMatchActivity extends Activity implements
+        GoogleApiClient.ConnectionCallbacks {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView(R.layout.activity_join_match);
-
-        // get the message from the intent
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
 
-        // create the text view
         TextView textView = new TextView(this);
         textView.setTextSize(24);
 
         textView.setBackgroundColor(getResources().getColor(R.color.primaryColor));
         textView.setText("Hallo " + message + ",\n\nleider steht diese Funktion momentan noch nicht zur Verfügung.");
-
-        // Set the text view as the activity layout
         setContentView(textView);
 
-        // code below does not work as expected
-        // ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(200,200);
-        // addContentView(textView, params);
+
+        ServerConnector.init(this, this);
     }
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_join_match, menu);
-        return true;
+    protected  void onStart() {
+        super.onStart();
+        ServerConnector.connect();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    protected  void onStop() {
+        ServerConnector.close();
+        super.onStop();
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public void startTestMatch(View view) {
+        Intent intent = new Intent(this, TestMatchActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Toast.makeText(this, "jeeaaah", Toast.LENGTH_LONG).show();
+        try {
+            ServerConnector.startDiscovery();
+        } catch (ServerException e) {
+            e.printStackTrace();
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
 }
