@@ -4,22 +4,22 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
+        android:name=".CheatingAndroidService"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher_new"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true"
-        android:largeHeap="true">
-
+        android:largeHeap="true"
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,39 +28,55 @@
         </activity>
         <activity
             android:name=".CreateMatchActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_create_match"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
             android:name=".JoinMatchActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_join_match"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
             android:name=".RulesActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_rules"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
             android:name=".TestMatchActivity"
-            android:screenOrientation="landscape"
             android:label="@string/title_activity_test_match"
-            android:parentActivityName=".CreateMatchActivity" >
+            android:parentActivityName=".CreateMatchActivity"
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.CreateMatchActivity" />
+        </activity>
+        <activity
+            android:name=".HostBTMatchActivity"
+            android:label="@string/title_activity_host_btmatch"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
+        </activity>
+        <activity
+            android:name=".JoinBTMatchActivity"
+            android:label="@string/title_activity_join_btmatch"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
     </application>
 

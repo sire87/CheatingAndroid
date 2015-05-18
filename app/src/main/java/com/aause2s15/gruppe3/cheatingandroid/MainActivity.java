@@ -1,5 +1,6 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,13 +13,37 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-    /** not sure */
     public final static String EXTRA_MESSAGE = "com.aause2s15.gruppe3.cheatingandroid";
+
+    // Bluetooth related stuff
+    private BluetoothAdapter mBluetoothAdapter = null;
+
+    // Intent request codes
+    private static final int REQUEST_ENABLE_BT = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get local Bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Anwendung beendet: Gerät unterstützt kein Bluetooth", Toast.LENGTH_LONG).show();
+            this.finish();
+        }
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
+        String defaultPlayerName = mBluetoothAdapter.getName();
+        EditText playerName = (EditText) findViewById(R.id.textPlayerName);
+        playerName.setText(defaultPlayerName);
+
     }
 
     @Override
@@ -79,5 +104,14 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    public void hostBTMatch(View v) {
+        Intent i = new Intent(this, HostBTMatchActivity.class);
+        startActivity(i);
+    }
+
+    public void joinBTMatch(View v) {
+        Intent i = new Intent(this,JoinBTMatchActivity.class);
+        startActivity(i);
+    }
 
 }

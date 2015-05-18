@@ -40,9 +40,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
+        android:id="@+id/imageView2"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/buttonJoinMatch"
-        android:id="@+id/imageView2" />
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="35dp"
@@ -70,6 +70,26 @@
         android:textSize="06dp"
         android:layout_toRightOf="@+id/buttonJoinMatch"
         android:layout_toEndOf="@+id/buttonJoinMatch" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BT Join"
+        android:onClick="joinBTMatch"
+        android:id="@+id/bt_join"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BT Host"
+        android:onClick="hostBTMatch"
+        android:id="@+id/bt_host"
+        android:layout_above="@+id/bt_join"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>
