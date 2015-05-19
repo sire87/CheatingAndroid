@@ -6,9 +6,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class HostBTMatchActivity extends ActionBarActivity {
+
+    private CheatingAndroidService mCheatingAndroidService = null;
+    private BluetoothAdapter mBluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +25,24 @@ public class HostBTMatchActivity extends ActionBarActivity {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
+
+        this.mCheatingAndroidService = new CheatingAndroidService();
+        mCheatingAndroidService.start(); // start listening
+
+        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        String name = mBluetoothAdapter.getName();
+        String address = mBluetoothAdapter.getAddress();
+        ((TextView)findViewById(R.id.bt_name_address)).setText("Warte auf Verbindung\n\n" +
+                "Spiel-Name: "+name+"\nSpiel-Adresse: "+address);
+
+        toastConnectedDevices(null);
+        ListView connectedListView = (ListView) findViewById(R.id.bt_connected_devices);
+        connectedListView.setAdapter(mCheatingAndroidService.getmConnectedDevicesArrayAdapter());
+    }
+
+    public void toastConnectedDevices(View v) {
+        String tmp = mCheatingAndroidService.getConnectedDevices();
+        Toast.makeText(this,"Verbunden mit: " + tmp,Toast.LENGTH_SHORT).show();
     }
 
     @Override

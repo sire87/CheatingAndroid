@@ -26,7 +26,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="BT Scan"
+        android:text="BT Scan for more"
         android:onClick="discoverDevices"
         android:id="@+id/bt_scan"
         android:layout_centerVertical="true"

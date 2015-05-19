@@ -6,4 +6,40 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.aause2s15.gruppe3.cheatingandroid.HostBTMatchActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Warte auf Verbindungen"
+        android:id="@+id/bt_name_address"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aktualisieren"
+        android:onClick="toastConnectedDevices"
+        android:id="@+id/start_bt_game"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verbunden:"
+        android:id="@+id/bt_connected"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textIsSelectable="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bt_connected_devices"
+        android:layout_above="@+id/start_bt_game"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/bt_connected"
+        android:headerDividersEnabled="false" />
 </RelativeLayout>

@@ -5,8 +5,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.widget.ArrayAdapter;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.UUID;
 
 /**
@@ -19,6 +22,14 @@ public class CheatingAndroidService extends Application {
     private static final String NAME = "CheatingAndroidBluetooth";
     private static final UUID MY_UUID = UUID.fromString("b992a855-b913-4a22-80db-b6698bff46f0");
 
+    private AcceptThread mAcceptThread;
+    private ConnectThread mConnectThread;
+    private ConnectedThread mConnectedThread;
+    private String connectedDevices = "Verbunden mit: NIX";
+
+    private int currentMessage = 0;
+    private ArrayAdapter<String> mConnectedDevicesArrayAdapter;
+
     public static CheatingAndroidService getInstance() {
         return singleton;
     }
@@ -26,6 +37,70 @@ public class CheatingAndroidService extends Application {
     public final void onCreate(){
         super.onCreate();
         singleton = this;
+        this.mConnectedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+    }
+
+    public synchronized void start() {
+        // Cancel any thread attempting to make a connection
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+
+        // Cancel any thread currently running a connection
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+
+        // Start the thread to listen on a BluetoothServerSocket
+        if (mAcceptThread == null) {
+            mAcceptThread = new AcceptThread();
+            mAcceptThread.start();
+        }
+    }
+
+    public synchronized void connect(BluetoothDevice device) {
+        // Cancel any thread attempting to make a connection
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+
+        // Cancel any thread currently running a connection
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+
+        // Start the thread to connect with the given device
+        mConnectThread = new ConnectThread(device);
+        mConnectThread.start();
+    }
+
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
+        // Cancel the thread that completed the connection
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+
+        // Cancel any thread currently running a connection
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+
+        // TODO: Cancel the accept thread, when 3 devices connected or match started
+
+        mConnectedThread = new ConnectedThread(socket);
+        mConnectedThread.start();
+
+        // TODO: Do something with device.getName()
+        // mConnectedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+        // mConnectedDevicesArrayAdapter.notifyDataSetChanged();
+        connectedDevices = device.getName();
+        // updateConnectedDevices(device);
     }
 
     private class AcceptThread extends Thread {
@@ -34,12 +109,15 @@ public class CheatingAndroidService extends Application {
         public AcceptThread() {
             BluetoothServerSocket tmp = null;
             try {
-                mBluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
+                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
             } catch (IOException e) {}
             mmServerSocket = tmp;
         }
 
         public void run() {
+
+            setName("AcceptThread");
+
             BluetoothSocket socket = null;
             while (true) {
                 try {
@@ -48,9 +126,10 @@ public class CheatingAndroidService extends Application {
                     break;
                 }
                 if (socket != null) {
-                    // TODO: manageConnectedSocket(socket);
-                    cancel(); // TODO: limit to 3 connections
-                    break;
+                    synchronized (CheatingAndroidService.this){
+                        connected(socket, socket.getRemoteDevice());
+                        break;
+                    }
                 }
             }
         }
@@ -85,7 +164,11 @@ public class CheatingAndroidService extends Application {
                 return;
             }
 
-            // manageConnectedSocket(mmSocket); // TODO:
+            // manageConnectedSocket(mmSocket); // TODO: TEST
+            synchronized (CheatingAndroidService.this) {
+                mConnectThread = null;
+            }
+            connected(mmSocket, mmDevice);
         }
 
         public void cancel() {
@@ -96,10 +179,68 @@ public class CheatingAndroidService extends Application {
 
     }
 
-    // temp
-    public String getText() {
-        return "Ist da jemand?";
+    private class ConnectedThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket) {
+            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) {}
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run() {
+            byte[] buffer = new byte[1024];
+            int bytes;
+
+            while (true) {
+                try {
+                    bytes = mmInStream.read(buffer);
+                    // TODO: do something with message
+//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+//                            .sendToTarget();
+                    currentMessage = bytes; // TODO: do something with that
+
+                } catch (IOException e) {
+                    CheatingAndroidService.this.start();
+                    break;}
+            }
+        }
+
+        public void write(byte[] bytes) {
+            try {
+                mmOutStream.write(bytes);
+            } catch (IOException e) {}
+        }
+
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {}
+        }
     }
 
+    public ArrayAdapter<String> getmConnectedDevicesArrayAdapter() {
+        return this.mConnectedDevicesArrayAdapter;
+    }
+
+    public String getConnectedDevices() {
+        return connectedDevices;
+    }
+
+    // does not work - why?
+    public void updateConnectedDevices(BluetoothDevice device) {
+        mConnectedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+        mConnectedDevicesArrayAdapter.notifyDataSetChanged();
+    }
 
 }

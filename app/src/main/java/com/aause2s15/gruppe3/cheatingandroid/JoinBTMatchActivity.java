@@ -11,14 +11,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Set;
 
 
 public class JoinBTMatchActivity extends ActionBarActivity {
 
+    private CheatingAndroidService mCheatingAndroidService = null;
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
@@ -39,11 +43,6 @@ public class JoinBTMatchActivity extends ActionBarActivity {
 
     public void showDevices() {
 
-        // TEST
-        String test = ((CheatingAndroidService)getApplication()).getText();
-        mNewDevicesArrayAdapter.add(test);
-        mPairedDevicesArrayAdapter.add("Bekannte Geraete");
-
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         // If there are paired devices
         if (pairedDevices.size() > 0) {
@@ -55,13 +54,35 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         }
         ListView pairedListView = (ListView) findViewById(R.id.bt_devices);
         pairedListView.setAdapter(mPairedDevicesArrayAdapter);
+        pairedListView.setOnItemClickListener(mDeviceClickListener);
 
         ListView newDevicesListView = (ListView) findViewById(R.id.bt_new_devices);
         newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
+        newDevicesListView.setOnItemClickListener(mDeviceClickListener);
     }
 
     public void discoverDevices(View v) {
         mBluetoothAdapter.startDiscovery();
+    }
+
+    private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+            mBluetoothAdapter.cancelDiscovery();
+            String info = ((TextView) v).getText().toString();
+            String address = info.substring(info.length() - 17);
+            // Toast.makeText(getApplicationContext(), "Adresse: "+address, Toast.LENGTH_LONG).show();
+            // now connect to that device
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+            try {
+                mCheatingAndroidService.connect(device);
+            } catch (Exception e) {
+                toast(e.getMessage());
+            }
+        }
+    };
+
+    public void toast(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -70,6 +91,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         setContentView(R.layout.activity_join_btmatch);
 
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.mCheatingAndroidService = new CheatingAndroidService();
         this.mPairedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         this.mNewDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         showDevices();
