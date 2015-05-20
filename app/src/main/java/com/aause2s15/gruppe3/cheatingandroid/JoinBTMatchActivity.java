@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,10 +24,29 @@ import java.util.Set;
 
 public class JoinBTMatchActivity extends ActionBarActivity {
 
-    private CheatingAndroidService mCheatingAndroidService = null;
+    private CheatingAndroidService mService = null;
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+
+    private final Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    // new device added > toast it!
+                    String mConnectedDeviceName = msg.getData().getString("device_name");
+                    Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    // welcome message from host > toast it!
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String welcomeMsg = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getApplicationContext(), welcomeMsg, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+
+    };
 
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -74,7 +95,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
             // now connect to that device
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
             try {
-                mCheatingAndroidService.connect(device);
+                mService.connect(device);
             } catch (Exception e) {
                 toast(e.getMessage());
             }
@@ -91,7 +112,8 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         setContentView(R.layout.activity_join_btmatch);
 
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.mCheatingAndroidService = new CheatingAndroidService();
+        this.mService = new CheatingAndroidService();
+        mService.setHandler(mHandler);
         this.mPairedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         this.mNewDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         showDevices();

@@ -5,8 +5,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.widget.ArrayAdapter;
-
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,17 +19,15 @@ import java.util.UUID;
 public class CheatingAndroidService extends Application {
 
     private static CheatingAndroidService singleton;
-    private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private Handler mHandler = null;
+    private final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String NAME = "CheatingAndroidBluetooth";
     private static final UUID MY_UUID = UUID.fromString("b992a855-b913-4a22-80db-b6698bff46f0");
 
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
-    private String connectedDevices = "Verbunden mit: NIX";
-
-    private int currentMessage = 0;
-    private ArrayAdapter<String> mConnectedDevicesArrayAdapter;
+    private String lastConnectedDevice = "Keine Verbindung";
 
     public static CheatingAndroidService getInstance() {
         return singleton;
@@ -37,7 +36,22 @@ public class CheatingAndroidService extends Application {
     public final void onCreate(){
         super.onCreate();
         singleton = this;
-        this.mConnectedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+    }
+
+    public void setHandler(Handler mHandler) {
+        this.mHandler = mHandler;
+    }
+
+    public String getLastConnectedDevice() {
+        return lastConnectedDevice;
+    }
+
+    public void write(byte[] out) {
+        ConnectedThread r;
+        synchronized (this) {
+            r = mConnectedThread;
+        }
+        r.write(out);
     }
 
     public synchronized void start() {
@@ -97,10 +111,12 @@ public class CheatingAndroidService extends Application {
         mConnectedThread.start();
 
         // TODO: Do something with device.getName()
-        // mConnectedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-        // mConnectedDevicesArrayAdapter.notifyDataSetChanged();
-        connectedDevices = device.getName();
-        // updateConnectedDevices(device);
+        lastConnectedDevice = device.getName() + "\n" + device.getAddress();
+        Message msg = mHandler.obtainMessage(1);
+        Bundle bundle = new Bundle();
+        bundle.putString("device_name", lastConnectedDevice);
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
     }
 
     private class AcceptThread extends Thread {
@@ -206,9 +222,7 @@ public class CheatingAndroidService extends Application {
                 try {
                     bytes = mmInStream.read(buffer);
                     // TODO: do something with message
-//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-//                            .sendToTarget();
-                    currentMessage = bytes; // TODO: do something with that
+                    mHandler.obtainMessage(2, bytes, -1, buffer).sendToTarget();
 
                 } catch (IOException e) {
                     CheatingAndroidService.this.start();
@@ -216,9 +230,10 @@ public class CheatingAndroidService extends Application {
             }
         }
 
-        public void write(byte[] bytes) {
+        public void write(byte[] buffer) {
             try {
-                mmOutStream.write(bytes);
+                mmOutStream.write(buffer);
+                mHandler.obtainMessage(3, -1, -1, buffer).sendToTarget();
             } catch (IOException e) {}
         }
 
@@ -227,20 +242,6 @@ public class CheatingAndroidService extends Application {
                 mmSocket.close();
             } catch (IOException e) {}
         }
-    }
-
-    public ArrayAdapter<String> getmConnectedDevicesArrayAdapter() {
-        return this.mConnectedDevicesArrayAdapter;
-    }
-
-    public String getConnectedDevices() {
-        return connectedDevices;
-    }
-
-    // does not work - why?
-    public void updateConnectedDevices(BluetoothDevice device) {
-        mConnectedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-        mConnectedDevicesArrayAdapter.notifyDataSetChanged();
     }
 
 }
