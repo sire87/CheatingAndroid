@@ -24,7 +24,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
+                case Constants.MESSAGE_DEVICE_NAME:
                     // new device added > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -36,9 +36,18 @@ public class HostBTMatchActivity extends ActionBarActivity {
     };
 
     public void sendMessageToClients(View v) {
-        String welcome = "HALLO!";
-        byte[] send = welcome.getBytes();
-        mService.write(send);
+        if (mConnectedDevicesArrayAdapter.getCount() > 0){
+            String welcome = "Willkommen im Spiel!";
+            byte[] send = welcome.getBytes();
+            mService.write(send);
+            startTestMatch(null);
+        }
+
+    }
+
+    public void startTestMatch(View view) {
+        Intent intent = new Intent(this, TestMatchActivity.class);
+        startActivity(intent);
     }
 
     @Override

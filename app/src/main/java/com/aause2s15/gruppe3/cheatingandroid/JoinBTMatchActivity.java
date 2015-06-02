@@ -32,16 +32,17 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
+                case Constants.MESSAGE_DEVICE_NAME:
                     // new device added > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
-                case 2:
+                case Constants.MESSAGE_READ:
                     // welcome message from host > toast it!
                     byte[] readBuf = (byte[]) msg.obj;
                     String welcomeMsg = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(getApplicationContext(), welcomeMsg, Toast.LENGTH_SHORT).show();
+                    startTestMatch(null);
                     break;
             }
         }
@@ -101,6 +102,11 @@ public class JoinBTMatchActivity extends ActionBarActivity {
             }
         }
     };
+
+    public void startTestMatch(View view) {
+        Intent intent = new Intent(this, TestMatchActivity.class);
+        startActivity(intent);
+    }
 
     public void toast(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();

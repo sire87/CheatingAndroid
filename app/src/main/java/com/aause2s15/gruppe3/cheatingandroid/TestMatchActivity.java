@@ -7,6 +7,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -18,6 +20,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -53,16 +58,39 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         // INITIALISING ACCELEROMETER
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
+        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+    }
+
+    public void initMatch(View v) {
+
+        findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
 
         // IF HOST: CREATE MATCH
         this.match = new Match(this); // TODO: match must be created ONLY by HOST
+
+        // TODO: add other players from connected devices array
         this.match.addPlayer(new Player(this.playerName));
         this.playerID = this.match.getPlayerID(this.playerName);
 
         // TODO: IF CLIENT: JOIN MATCH (addPlayer) AND SYNC WITH HOST
 
         // RENDERING CARDS
+        renderMatch();
+    }
+
+    public void updateMatch(View v) {
+//        Gson gson = new Gson();
+//        String matchInstance = gson.toJson(this.match);
+//        String matchInstance = "TEST";
+//        byte[] send = matchInstance.getBytes();
+//        CheatingAndroidService.getInstance().write(send);
+
+        String device = CheatingAndroidService.getInstance().getLastConnectedDevice();
+        Toast.makeText(this, device, Toast.LENGTH_SHORT).show();
+    }
+
+    public void renderMatch() {
         renderPlayerCards();
         renderCallableCards();
     }
@@ -175,7 +203,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             // VIEW GROUP
             ((ViewGroup) findViewById(R.id.playerCardContainer)).removeView(this.selectedPlayerCard);
             ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(this.selectedPlayerCard);
-            Toast.makeText(this,"Angesagte Karte: "+this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Angesagte Karte: " + this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
 
             // DATA
@@ -186,8 +214,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             this.selectedCallableCard = null;
 
             // RENDERING
-            renderPlayerCards();
-            renderCallableCards();
+            renderMatch();
         }
     }
 

@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
-        android:name=".CheatingAndroidService"
+        android:name="com.aause2s15.gruppe3.cheatingandroid.CheatingAndroidService"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher_new"
@@ -65,7 +65,8 @@
         <activity
             android:name=".HostBTMatchActivity"
             android:label="@string/title_activity_host_btmatch"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
@@ -73,7 +74,8 @@
         <activity
             android:name=".JoinBTMatchActivity"
             android:label="@string/title_activity_join_btmatch"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
