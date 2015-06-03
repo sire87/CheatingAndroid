@@ -9,11 +9,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Warte auf Verbindungen"
+        android:text="Warte auf Verbindung..."
         android:id="@+id/bt_name_address"
+        android:textSize="20sp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="20sp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="30dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -22,17 +24,19 @@
         android:onClick="sendMessageToClients"
         android:id="@+id/start_bt_game"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Verbunden:"
         android:id="@+id/bt_connected"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:textSize="20sp"
-        android:textIsSelectable="true" />
+        android:textIsSelectable="true"
+        android:layout_below="@+id/bt_name_address"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <ListView
         android:layout_width="wrap_content"

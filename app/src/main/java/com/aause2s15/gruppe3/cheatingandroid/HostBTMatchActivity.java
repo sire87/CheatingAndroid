@@ -30,6 +30,13 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     refreshConnectedDevices(null);
                     break;
+                case Constants.MESSAGE_READ:
+                    // message from client > toast it and send it back to clients
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String welcomeMsg = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getApplicationContext(), welcomeMsg, Toast.LENGTH_SHORT).show();
+                    sendMessageToClients(null);
+                    break;
             }
         }
 
@@ -37,10 +44,9 @@ public class HostBTMatchActivity extends ActionBarActivity {
 
     public void sendMessageToClients(View v) {
         if (mConnectedDevicesArrayAdapter.getCount() > 0){
-            String welcome = "Willkommen im Spiel!";
+            String welcome = "Hallo Clients!";
             byte[] send = welcome.getBytes();
             mService.write(send);
-            startTestMatch(null);
         }
 
     }

@@ -66,7 +66,7 @@
             android:name=".HostBTMatchActivity"
             android:label="@string/title_activity_host_btmatch"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
@@ -75,7 +75,7 @@
             android:name=".JoinBTMatchActivity"
             android:label="@string/title_activity_join_btmatch"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />

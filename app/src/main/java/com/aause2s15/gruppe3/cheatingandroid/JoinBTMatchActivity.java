@@ -42,7 +42,6 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     byte[] readBuf = (byte[]) msg.obj;
                     String welcomeMsg = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(getApplicationContext(), welcomeMsg, Toast.LENGTH_SHORT).show();
-                    startTestMatch(null);
                     break;
             }
         }
@@ -74,13 +73,19 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                 mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         }
-        ListView pairedListView = (ListView) findViewById(R.id.bt_devices);
+/*        ListView pairedListView = (ListView) findViewById(R.id.bt_devices);
         pairedListView.setAdapter(mPairedDevicesArrayAdapter);
-        pairedListView.setOnItemClickListener(mDeviceClickListener);
+        pairedListView.setOnItemClickListener(mDeviceClickListener);*/
 
         ListView newDevicesListView = (ListView) findViewById(R.id.bt_new_devices);
         newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
+    }
+
+    public void sendMessageToHost(View v) {
+            String welcome = "Hallo Host!";
+            byte[] send = welcome.getBytes();
+            mService.write(send);
     }
 
     public void discoverDevices(View v) {
