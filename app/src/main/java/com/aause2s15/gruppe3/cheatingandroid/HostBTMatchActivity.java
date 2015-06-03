@@ -33,9 +33,10 @@ public class HostBTMatchActivity extends ActionBarActivity {
                 case Constants.MESSAGE_READ:
                     // message from client > toast it and send it back to clients
                     byte[] readBuf = (byte[]) msg.obj;
-                    String welcomeMsg = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getApplicationContext(), welcomeMsg, Toast.LENGTH_SHORT).show();
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getApplicationContext(), receivedMessage, Toast.LENGTH_SHORT).show();
                     sendMessageToClients(null);
+//                    startTestMatch(null);
                     break;
             }
         }
@@ -48,7 +49,6 @@ public class HostBTMatchActivity extends ActionBarActivity {
             byte[] send = welcome.getBytes();
             mService.write(send);
         }
-
     }
 
     public void startTestMatch(View view) {

@@ -189,21 +189,6 @@ public class CheatingAndroidService extends Application {
                 }
 
             } catch (Exception e) {}
-
-/*            BluetoothSocket socket = null;
-            while (true) {
-                try {
-                    socket = mmServerSocket.accept();
-                } catch (IOException e) {
-                    break;
-                }
-                if (socket != null) {
-                    synchronized (CheatingAndroidService.this){
-                        connected(socket, socket.getRemoteDevice());
-                        break;
-                    }
-                }
-            }*/
         }
 
         public void cancel() {

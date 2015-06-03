@@ -59,7 +59,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
     }
 
     public void initMatch(View v) {
@@ -80,14 +79,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     public void updateMatch(View v) {
-//        Gson gson = new Gson();
-//        String matchInstance = gson.toJson(this.match);
-//        String matchInstance = "TEST";
-//        byte[] send = matchInstance.getBytes();
-//        CheatingAndroidService.getInstance().write(send);
-
-        String device = CheatingAndroidService.getInstance().getLastConnectedDevice();
-        Toast.makeText(this, device, Toast.LENGTH_SHORT).show();
+        String welcome = "Hallo Host! Bin im Spiel!"; // DOES NOT WORK ATM :-(
+        byte[] send = welcome.getBytes();
+        CheatingAndroidService.getInstance().write(send);
     }
 
     public void renderMatch() {

@@ -40,8 +40,9 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                 case Constants.MESSAGE_READ:
                     // welcome message from host > toast it!
                     byte[] readBuf = (byte[]) msg.obj;
-                    String welcomeMsg = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getApplicationContext(), welcomeMsg, Toast.LENGTH_SHORT).show();
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getApplicationContext(), receivedMessage, Toast.LENGTH_SHORT).show();
+                    startTestMatch(null);
                     break;
             }
         }
