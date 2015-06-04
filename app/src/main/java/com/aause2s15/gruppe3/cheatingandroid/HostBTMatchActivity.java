@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class HostBTMatchActivity extends ActionBarActivity {
 
-    private CheatingAndroidService mService = null;
+    private CheatingAndroidService mService;
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mConnectedDevicesArrayAdapter;
 
@@ -31,12 +31,10 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     refreshConnectedDevices(null);
                     break;
                 case Constants.MESSAGE_READ:
-                    // message from client > toast it and send it back to clients
+                    // message from client > toast it
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(getApplicationContext(), receivedMessage, Toast.LENGTH_SHORT).show();
-                    sendMessageToClients(null);
-//                    startTestMatch(null);
                     break;
             }
         }
@@ -48,6 +46,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
             String welcome = "Hallo Clients!";
             byte[] send = welcome.getBytes();
             mService.write(send);
+            startTestMatch(null);
         }
     }
 
@@ -65,7 +64,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
 
-        this.mService = new CheatingAndroidService();
+        this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
         mService.start(); // start listening
 

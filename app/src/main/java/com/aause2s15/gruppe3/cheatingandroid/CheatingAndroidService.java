@@ -1,6 +1,5 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
-import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -18,11 +17,11 @@ import java.util.UUID;
  * Created by Simon on 18.05.2015.
  * TODO: prevent device from connecting multiple times
  */
-public class CheatingAndroidService extends Application {
+public class CheatingAndroidService {
 
     // CA specific
-    private static CheatingAndroidService singleton;
-    private String lastConnectedDevice;
+    private static final CheatingAndroidService INSTANCE = new CheatingAndroidService();
+    private String lastConnectedDevice = "keine Verbindung";
 
     // Name for the SDP record when creating server socket
     private static final String NAME = "CheatingAndroidBluetooth";
@@ -49,13 +48,10 @@ public class CheatingAndroidService extends Application {
             UUID.fromString("b992a855-b913-4a22-80db-b6698bff46f0"),
             UUID.fromString("5df33d47-986c-4a35-a349-3878e2d474cd")};
 
-    public static CheatingAndroidService getInstance() {
-        return singleton;
-    }
+    private CheatingAndroidService() {}
 
-    public final void onCreate(){
-        super.onCreate();
-        singleton = this;
+    public static CheatingAndroidService getInstance() {
+        return INSTANCE;
     }
 
     /**
@@ -123,7 +119,7 @@ public class CheatingAndroidService extends Application {
         mConnectedThreads.add(mConnectedThread);
 
         // Send the name of the connected device back to the UI Activity
-        lastConnectedDevice = device.getName() + "\n" + device.getAddress();
+        this.lastConnectedDevice = device.getName() + "\n" + device.getAddress();
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, lastConnectedDevice);
@@ -328,4 +324,5 @@ public class CheatingAndroidService extends Application {
     public String getLastConnectedDevice() {
         return lastConnectedDevice;
     }
+
 }

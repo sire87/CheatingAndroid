@@ -29,6 +29,8 @@ import java.util.Iterator;
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
+    CheatingAndroidService app;
+
     private Match match;
     private int playerID;
     private String playerName = "HOST Hans"; // TODO: get name from MainActivity
@@ -59,6 +61,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
     }
 
     public void initMatch(View v) {
@@ -79,9 +82,15 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     public void updateMatch(View v) {
-        String welcome = "Hallo Host! Bin im Spiel!"; // DOES NOT WORK ATM :-(
+        String welcome = "Bin im Spiel! :-D";
         byte[] send = welcome.getBytes();
-        CheatingAndroidService.getInstance().write(send);
+        String test = ((CheatingAndroidApplication)this.getApplicationContext()).caService.getLastConnectedDevice();
+        if (test == null) {
+            Toast.makeText(this,"kein Gerät :-/",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this,test,Toast.LENGTH_SHORT).show();
+            ((CheatingAndroidApplication)this.getApplicationContext()).caService.write(send);
+        }
     }
 
     public void renderMatch() {

@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class JoinBTMatchActivity extends ActionBarActivity {
 
-    private CheatingAndroidService mService = null;
+    private CheatingAndroidService mService;
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
@@ -84,9 +84,9 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     }
 
     public void sendMessageToHost(View v) {
-            String welcome = "Hallo Host!";
-            byte[] send = welcome.getBytes();
-            mService.write(send);
+        String welcome = "Hallo Host!";
+        byte[] send = welcome.getBytes();
+        mService.write(send);
     }
 
     public void discoverDevices(View v) {
@@ -103,6 +103,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
             try {
                 mService.connect(device);
+
             } catch (Exception e) {
                 toast(e.getMessage());
             }
@@ -124,7 +125,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         setContentView(R.layout.activity_join_btmatch);
 
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.mService = new CheatingAndroidService();
+        this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
         this.mPairedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         this.mNewDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
