@@ -10,6 +10,9 @@ public interface Constants {
     int MESSAGE_READ = 2;
     int MESSAGE_WRITE = 3;
 
+    int HOST = 4;
+    int CLIENT = 5;
+
     // Key names received from the CheatingAndroidService Handler
     String DEVICE_NAME = "device_name";
 }

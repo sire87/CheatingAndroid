@@ -1,6 +1,5 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import android.content.Context;
 
@@ -8,7 +7,7 @@ import android.content.Context;
 /**
  * Created by Simon on 13.05.2015.
  */
-public class Match implements Serializable {
+public class Match {
 
     private ArrayList<Player> players;
     private ArrayList<Card> stackedCards;
@@ -82,6 +81,8 @@ public class Match implements Serializable {
     public ArrayList<Card> getStackedCards() {
         return this.stackedCards;
     }
+
+    public CardDeck getCardDeck() {return this.cardDeck;}
 
 
 }

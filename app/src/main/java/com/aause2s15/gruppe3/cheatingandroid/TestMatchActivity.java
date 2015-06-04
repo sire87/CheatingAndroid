@@ -3,6 +3,7 @@ package com.aause2s15.gruppe3.cheatingandroid;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,21 +21,34 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
-    CheatingAndroidService app;
+    private final Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    // message from host containing card deck > toast it
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    int l = receivedMessage.length();
+                    String test = receivedMessage.substring(l-100);
+                    Toast.makeText(getApplicationContext(),test,Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
+    private String cardDeckString;
 
     private Match match;
     private int playerID;
     private String playerName = "HOST Hans"; // TODO: get name from MainActivity
-    private boolean active = true; // TODO: only allow interaction when true
+    private boolean active = false; // TODO: only allow interaction when true
 
     private View selectedPlayerCard;
     private View selectedCallableCard;
@@ -62,6 +76,26 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
+        Intent intent = getIntent();
+        int host = intent.getIntExtra("HOST", 99);
+
+        switch (host) {
+            case Constants.HOST:
+                Toast.makeText(this, "Ich bin der Host!",Toast.LENGTH_SHORT).show();
+                this.active = true;
+                break;
+            case Constants.CLIENT:
+                Toast.makeText(this, "Ich bin ein Client!", Toast.LENGTH_SHORT).show();
+                findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
+                findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
+                break;
+            default:
+                Toast.makeText(this, "Keine BT-Verbindung!", Toast.LENGTH_SHORT).show();
+                findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
+        }
+
+        ((CheatingAndroidApplication)this.getApplicationContext()).caService.setHandler(mHandler);
+
     }
 
     public void initMatch(View v) {
@@ -77,20 +111,32 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         // TODO: IF CLIENT: JOIN MATCH (addPlayer) AND SYNC WITH HOST
 
+        this.cardDeckString = this.match.getCardDeck().getCardDeckString();
+
+        // Testing string splitting
+        toastParsedCardDeckString(cardDeckString);
+
         // RENDERING CARDS
         renderMatch();
     }
 
-    public void updateMatch(View v) {
-        String welcome = "Bin im Spiel! :-D";
-        byte[] send = welcome.getBytes();
-        String test = ((CheatingAndroidApplication)this.getApplicationContext()).caService.getLastConnectedDevice();
-        if (test == null) {
-            Toast.makeText(this,"kein Gerät :-/",Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this,test,Toast.LENGTH_SHORT).show();
-            ((CheatingAndroidApplication)this.getApplicationContext()).caService.write(send);
+    public void toastParsedCardDeckString(String s) {
+        String[] e = s.split("\\-");
+        for (int i = 0; i < e.length; i++) {
+            String[] c = e[i].split("\\.");
+            String type = c[0];
+            String value = c[1];
+            int image = Integer.parseInt(c[2]);
+            int order = Integer.parseInt(c[3]);
+            if (i > 42) {
+                Toast.makeText(this,"Card["+i+"]: "+"Type: "+type+" Value: "+value+" Image: "+image+" Order: "+order,Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    public void updateMatch(View v) {
+        byte[] send = cardDeckString.getBytes();
+        ((CheatingAndroidApplication)this.getApplicationContext()).caService.write(send);
     }
 
     public void renderMatch() {

@@ -28,7 +28,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test-Nachricht"
+        android:text="Nachricht an Host"
         android:onClick="sendMessageToHost"
         android:id="@+id/b_test"
         android:layout_alignParentBottom="true"

@@ -46,12 +46,13 @@ public class HostBTMatchActivity extends ActionBarActivity {
             String welcome = "Hallo Clients!";
             byte[] send = welcome.getBytes();
             mService.write(send);
-            startTestMatch(null);
+            startTestMatch();
         }
     }
 
-    public void startTestMatch(View view) {
+    public void startTestMatch() {
         Intent intent = new Intent(this, TestMatchActivity.class);
+        intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
     }
 

@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class CardDeck {
 
-    private Card[] cardDeck;
+    public Card[] cardDeck; // TODO: change to private after test
     private int currentIndex;
 
     public CardDeck(Context context, int deckID) {
@@ -29,7 +29,7 @@ public class CardDeck {
         cardDeck[9] = new Card(context, "Kreuz","10",R.drawable.card_10,9,deckID);
         cardDeck[10] = new Card(context, "Kreuz","Bube",R.drawable.card_11,10,deckID);
         cardDeck[11] = new Card(context, "Kreuz","Dame",R.drawable.card_12,11,deckID);
-        cardDeck[12] = new Card(context, "Kreuz","König",R.drawable.card_13,12,deckID);
+        cardDeck[12] = new Card(context, "Kreuz","Koenig",R.drawable.card_13,12,deckID);
 
         cardDeck[13] = new Card(context, "Karo","Ass",R.drawable.card_14,26,deckID);
         cardDeck[14] = new Card(context, "Karo","2",R.drawable.card_15,14,deckID);
@@ -43,7 +43,7 @@ public class CardDeck {
         cardDeck[22] = new Card(context, "Karo","10",R.drawable.card_23,22,deckID);
         cardDeck[23] = new Card(context, "Karo","Bube",R.drawable.card_24,23,deckID);
         cardDeck[24] = new Card(context, "Karo","Dame",R.drawable.card_25,24,deckID);
-        cardDeck[25] = new Card(context, "Karo","König",R.drawable.card_26,25,deckID);
+        cardDeck[25] = new Card(context, "Karo","Koenig",R.drawable.card_26,25,deckID);
 
         cardDeck[26] = new Card(context, "Herz","Ass",R.drawable.card_27,52,deckID);
         cardDeck[27] = new Card(context, "Herz","2",R.drawable.card_28,40,deckID);
@@ -57,7 +57,7 @@ public class CardDeck {
         cardDeck[35] = new Card(context, "Herz","10",R.drawable.card_36,48,deckID);
         cardDeck[36] = new Card(context, "Herz","Bube",R.drawable.card_37,49,deckID);
         cardDeck[37] = new Card(context, "Herz","Dame",R.drawable.card_38,50,deckID);
-        cardDeck[38] = new Card(context, "Herz","König",R.drawable.card_39,51,deckID);
+        cardDeck[38] = new Card(context, "Herz","Koenig",R.drawable.card_39,51,deckID);
 
         cardDeck[39] = new Card(context, "Pik","Ass",R.drawable.card_40,39,deckID);
         cardDeck[40] = new Card(context, "Pik","2",R.drawable.card_41,27,deckID);
@@ -71,7 +71,7 @@ public class CardDeck {
         cardDeck[48] = new Card(context, "Pik","10",R.drawable.card_49,35,deckID);
         cardDeck[49] = new Card(context, "Pik","Bube",R.drawable.card_50,36,deckID);
         cardDeck[50] = new Card(context, "Pik","Dame",R.drawable.card_51,37,deckID);
-        cardDeck[51] = new Card(context, "Pik","König",R.drawable.card_52,38,deckID);
+        cardDeck[51] = new Card(context, "Pik","Koenig",R.drawable.card_52,38,deckID);
     }
 
     public void shuffle(int count) {
@@ -98,6 +98,42 @@ public class CardDeck {
 
     public Card[] getCardDeck() {
         return this.cardDeck;
+    }
+
+    public String getCardDeckString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 51; i++) {
+            builder.append(cardDeck[i].getType());
+            builder.append(".");
+            builder.append(cardDeck[i].getValue());
+            builder.append(".");
+            builder.append(cardDeck[i].getImage());
+            builder.append(".");
+            builder.append(cardDeck[i].getOrder());
+            builder.append("-");
+        }
+        builder.append(cardDeck[51].getType());
+        builder.append(".");
+        builder.append(cardDeck[51].getValue());
+        builder.append(".");
+        builder.append(cardDeck[51].getImage());
+        builder.append(".");
+        builder.append(cardDeck[51].getOrder());
+        return builder.toString();
+    }
+
+    // TODO: find out why this does not work...
+    public void buildCardDeckfromString (Context context, String cardDeckString) {
+        String[] deck = cardDeckString.split("\\-");
+        for (int i = 0; i < deck.length; i++) {
+            String[] card = deck[i].split("\\.");
+            String type = card[0];
+            String value = card[1];
+            int image = Integer.parseInt(card[2]);
+            int order = Integer.parseInt(card[3]);
+            cardDeck[i] = new Card(context, type, value, image, order, 1);
+        }
+
     }
 
 }

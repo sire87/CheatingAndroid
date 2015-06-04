@@ -18,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Set;
 
 
@@ -42,7 +41,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(getApplicationContext(), receivedMessage, Toast.LENGTH_SHORT).show();
-                    startTestMatch(null);
+                    startTestMatch();
                     break;
             }
         }
@@ -110,8 +109,9 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         }
     };
 
-    public void startTestMatch(View view) {
+    public void startTestMatch() {
         Intent intent = new Intent(this, TestMatchActivity.class);
+        intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
     }
 
