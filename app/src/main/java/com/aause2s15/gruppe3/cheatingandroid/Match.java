@@ -50,6 +50,10 @@ public class Match {
         return this.players.get(i);
     }
 
+    public ArrayList<Player> getPlayers() {
+        return this.players;
+    }
+
     public Card getCalledCard() {
         return this.calledCard;
     }

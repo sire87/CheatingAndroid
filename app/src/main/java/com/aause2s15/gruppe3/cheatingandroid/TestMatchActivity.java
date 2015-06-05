@@ -32,18 +32,17 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
-                    // message from host containing card deck > toast it
+                    // message from host
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    int l = receivedMessage.length();
-                    String test = receivedMessage.substring(l-100);
-                    Toast.makeText(getApplicationContext(),test,Toast.LENGTH_SHORT).show();
+                    cardDeckString = cardDeckString+receivedMessage;
+                    findViewById(R.id.b_deal_cards).setVisibility(View.VISIBLE);
                     break;
             }
         }
     };
 
-    private String cardDeckString;
+    private String cardDeckString = "";
 
     private Match match;
     private int playerID;
@@ -106,37 +105,25 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         this.match = new Match(this); // TODO: match must be created ONLY by HOST
 
         // TODO: add other players from connected devices array
-        this.match.addPlayer(new Player(this.playerName));
-        this.playerID = this.match.getPlayerID(this.playerName);
 
         // TODO: IF CLIENT: JOIN MATCH (addPlayer) AND SYNC WITH HOST
+        if (this.cardDeckString.equals("")) {
+            this.cardDeckString = this.match.getCardDeck().getCardDeckString();
+        }
 
-        this.cardDeckString = this.match.getCardDeck().getCardDeckString();
-
-        // Testing string splitting
-        toastParsedCardDeckString(cardDeckString);
+        // SYNCING HOST CARDS TO CLIENTS FOR TESTING PURPOSES
+        this.match.getCardDeck().buildCardDeckfromString(this, cardDeckString);
+        this.match.addPlayer(new Player(this.playerName));
+        this.playerID = this.match.getPlayerID(this.playerName);
 
         // RENDERING CARDS
         renderMatch();
     }
 
-    public void toastParsedCardDeckString(String s) {
-        String[] e = s.split("\\-");
-        for (int i = 0; i < e.length; i++) {
-            String[] c = e[i].split("\\.");
-            String type = c[0];
-            String value = c[1];
-            int image = Integer.parseInt(c[2]);
-            int order = Integer.parseInt(c[3]);
-            if (i > 42) {
-                Toast.makeText(this,"Card["+i+"]: "+"Type: "+type+" Value: "+value+" Image: "+image+" Order: "+order,Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     public void updateMatch(View v) {
         byte[] send = cardDeckString.getBytes();
         ((CheatingAndroidApplication)this.getApplicationContext()).caService.write(send);
+        findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
     }
 
     public void renderMatch() {

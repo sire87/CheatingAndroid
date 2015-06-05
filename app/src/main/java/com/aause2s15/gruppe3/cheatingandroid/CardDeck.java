@@ -1,6 +1,7 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -127,13 +128,13 @@ public class CardDeck {
         String[] deck = cardDeckString.split("\\-");
         for (int i = 0; i < deck.length; i++) {
             String[] card = deck[i].split("\\.");
-            String type = card[0];
-            String value = card[1];
-            int image = Integer.parseInt(card[2]);
-            int order = Integer.parseInt(card[3]);
-            cardDeck[i] = new Card(context, type, value, image, order, 1);
+            String type = card.length > 0 ? card[0] : "";
+            String value = card.length > 1 ? card[1] : "";
+            int image = card.length > 2 ? Integer.parseInt(card[2]) : 0;
+            int order = card.length > 3 ? Integer.parseInt(card[3]) : 0;
+            if (i >= 42)
+            Toast.makeText(context, "Card[" + i + "]: " + "Type: " + type + " Value: " + value + " Image: " + image + " Order: " + order, Toast.LENGTH_SHORT).show();
+            this.cardDeck[i] = new Card(context, type, value, image, order, 1);
         }
-
     }
-
 }
