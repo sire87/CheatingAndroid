@@ -31,15 +31,19 @@ public class Match {
 
     }
 
-    public void addPlayer(Player p) {
+    public void addPlayer(Player p, int index) {
         this.players.add(p);
         for (int i = 0; i < 10; i++) {
-            this.players.get(0).drawCard(this.cardDeck);
+            this.players.get(index).drawCard(this.cardDeck);
         }
     }
 
-    public int getPlayerID(String name) {
-        return 0; // TODO: return ACTUAL ID
+    public int getPlayerID(String playerAddress) {
+        for (int i=0; i<players.size(); i++){
+            if (players.get(i).getPlayerAddress().equals(playerAddress))
+                return i;
+        }
+        return 0;
     }
 
     public boolean getCardFlipped() {

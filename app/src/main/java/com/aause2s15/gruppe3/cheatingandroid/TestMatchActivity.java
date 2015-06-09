@@ -42,12 +42,12 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         }
     };
 
-    private String cardDeckString = "";
-
+    private CheatingAndroidService mService;
     private Match match;
+    private ArrayList<Player> players = new ArrayList<Player>(4);
+    private String cardDeckString = "";
     private int playerID;
-    private String playerName = "HOST Hans"; // TODO: get name from MainActivity
-    private boolean active = false; // TODO: only allow interaction when true
+    private boolean active = false; //TODO: only allow interaction if true
 
     private View selectedPlayerCard;
     private View selectedCallableCard;
@@ -80,11 +80,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         switch (host) {
             case Constants.HOST:
-                Toast.makeText(this, "Ich bin der Host!",Toast.LENGTH_SHORT).show();
                 this.active = true;
                 break;
             case Constants.CLIENT:
-                Toast.makeText(this, "Ich bin ein Client!", Toast.LENGTH_SHORT).show();
                 findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
                 findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
                 break;
@@ -92,37 +90,62 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 Toast.makeText(this, "Keine BT-Verbindung!", Toast.LENGTH_SHORT).show();
                 findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
         }
+        mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
+        mService.setHandler(mHandler);
+        parsePlayerData();
+        toastPlayerInfo();
+    }
 
-        ((CheatingAndroidApplication)this.getApplicationContext()).caService.setHandler(mHandler);
+    public void parsePlayerData() {
+        String playerData = mService.getPlayerData();
+        String[] players = playerData.split("\\-");
+        for (int i = 0; i<players.length; i++) {
+            String[] player = players[i].split("\\.");
+            String playerName = player.length > 0 ? player[0] : "";
+            String playerAddress = player.length > 1 ? player[1] : "";
+            try {
+                this.players.add(new Player(playerName, playerAddress));
+            } catch (Exception e) {}
+        }
+    }
 
+    public void toastPlayerInfo() {
+        for (int i = 0; i <this.players.size(); i++) {
+            Player p = this.players.get(i);
+            int id = i;
+            String name = p.getPlayerName();
+            String address = p.getPlayerAddress();
+            String info = "ID: "+id+" Name: "+name+" Adresse: "+address;
+            Toast.makeText(this, info, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void initMatch(View v) {
 
         findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
+        this.match = new Match(this);
 
-        // IF HOST: CREATE MATCH
-        this.match = new Match(this); // TODO: match must be created ONLY by HOST
-
-        // TODO: add other players from connected devices array
-
-        // TODO: IF CLIENT: JOIN MATCH (addPlayer) AND SYNC WITH HOST
         if (this.cardDeckString.equals("")) {
             this.cardDeckString = this.match.getCardDeck().getCardDeckString();
         }
 
-        // SYNCING HOST CARDS TO CLIENTS FOR TESTING PURPOSES
         this.match.getCardDeck().buildCardDeckfromString(this, cardDeckString);
-        this.match.addPlayer(new Player(this.playerName));
-        this.playerID = this.match.getPlayerID(this.playerName);
+
+        for (int i = 0; i < this.players.size(); i++){
+            this.match.addPlayer(this.players.get(i),i);
+        }
+
+        // TODO: problem?
+        this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
+        Toast.makeText(this,"Meine ID ="+this.playerID,Toast.LENGTH_LONG).show();
 
         // RENDERING CARDS
         renderMatch();
     }
 
-    public void updateMatch(View v) {
+    public void syncDeckWithClients(View v) {
         byte[] send = cardDeckString.getBytes();
-        ((CheatingAndroidApplication)this.getApplicationContext()).caService.write(send);
+        mService.write(send);
         findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
     }
 

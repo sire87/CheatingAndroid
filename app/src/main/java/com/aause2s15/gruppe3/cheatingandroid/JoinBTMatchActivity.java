@@ -32,15 +32,15 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_DEVICE_NAME:
-                    // new device added > toast it!
+                    // connected to host > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_READ:
-                    // welcome message from host > toast it!
+                    // welcome message with player data from host > store data and start game
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getApplicationContext(), receivedMessage, Toast.LENGTH_SHORT).show();
+                    mService.addPlayerData(receivedMessage);
                     startTestMatch();
                     break;
             }
@@ -82,10 +82,14 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
     }
 
-    public void sendMessageToHost(View v) {
-        String welcome = "Hallo Host!";
-        byte[] send = welcome.getBytes();
+    public void sendClientPlayerDataToHost(View v) {
+        Intent intent = getIntent();
+        String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String playerAddress = mBluetoothAdapter.getAddress();
+        String playerData = playerName+"."+playerAddress+"-";
+        byte[] send = playerData.getBytes();
         mService.write(send);
+        findViewById(R.id.b_test).setVisibility(View.INVISIBLE);
     }
 
     public void discoverDevices(View v) {

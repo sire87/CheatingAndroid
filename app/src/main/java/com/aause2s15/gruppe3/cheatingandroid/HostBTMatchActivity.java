@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 
 public class HostBTMatchActivity extends ActionBarActivity {
 
@@ -25,25 +27,26 @@ public class HostBTMatchActivity extends ActionBarActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_DEVICE_NAME:
-                    // new device added > toast it!
+                    // new device connected > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     refreshConnectedDevices(null);
                     break;
                 case Constants.MESSAGE_READ:
-                    // message from client > toast it
+                    // message from client with player data > store it in service class
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getApplicationContext(), receivedMessage, Toast.LENGTH_SHORT).show();
+                    mService.addPlayerData(receivedMessage);
+                    String playerData = mService.getPlayerData();
+                    Toast.makeText(getApplicationContext(), playerData, Toast.LENGTH_SHORT).show();
                     break;
             }
         }
-
     };
 
     public void sendMessageToClients(View v) {
         if (mConnectedDevicesArrayAdapter.getCount() > 0){
-            String welcome = "Hallo Clients!";
+            String welcome = mService.getPlayerData();
             byte[] send = welcome.getBytes();
             mService.write(send);
             startTestMatch();
@@ -51,6 +54,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
     }
 
     public void startTestMatch() {
+        // TODO: send player data to all connected devices
         Intent intent = new Intent(this, TestMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
@@ -74,6 +78,10 @@ public class HostBTMatchActivity extends ActionBarActivity {
         String address = mBluetoothAdapter.getAddress();
         ((TextView)findViewById(R.id.bt_name_address)).setText("Warte auf Verbindung\n\n" +
                 "Spiel-Name: "+name+"\nSpiel-Adresse: "+address);
+
+        Intent intent = getIntent();
+        String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        mService.addPlayerData(playerName+"."+address+"-");
 
         ListView connectedListView = (ListView) findViewById(R.id.bt_connected_devices);
         mConnectedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);

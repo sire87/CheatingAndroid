@@ -22,6 +22,7 @@ public class CheatingAndroidService {
     // CA specific
     private static final CheatingAndroidService INSTANCE = new CheatingAndroidService();
     private String lastConnectedDevice = "keine Verbindung";
+    private String playerData = "";
 
     // Name for the SDP record when creating server socket
     private static final String NAME = "CheatingAndroidBluetooth";
@@ -323,6 +324,18 @@ public class CheatingAndroidService {
 
     public String getLastConnectedDevice() {
         return lastConnectedDevice;
+    }
+
+    public void addPlayerData(String playerData){
+        this.playerData= this.playerData+playerData;
+    }
+
+    public String getPlayerData() {
+        return this.playerData;
+    }
+
+    public String getPlayerAddress() {
+        return mBluetoothAdapter.getAddress();
     }
 
 }

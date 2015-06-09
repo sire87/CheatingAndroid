@@ -132,8 +132,8 @@ public class CardDeck {
             String value = card.length > 1 ? card[1] : "";
             int image = card.length > 2 ? Integer.parseInt(card[2]) : 0;
             int order = card.length > 3 ? Integer.parseInt(card[3]) : 0;
-            if (i >= 42)
-            Toast.makeText(context, "Card[" + i + "]: " + "Type: " + type + " Value: " + value + " Image: " + image + " Order: " + order, Toast.LENGTH_SHORT).show();
+//            if (i >= 42)
+//            Toast.makeText(context, "Card[" + i + "]: " + "Type: " + type + " Value: " + value + " Image: " + image + " Order: " + order, Toast.LENGTH_SHORT).show();
             this.cardDeck[i] = new Card(context, type, value, image, order, 1);
         }
     }

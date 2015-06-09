@@ -106,11 +106,17 @@ public class MainActivity extends ActionBarActivity {
 
     public void hostBTMatch(View v) {
         Intent i = new Intent(this, HostBTMatchActivity.class);
+        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        String message = editText.getText().toString();
+        i.putExtra(EXTRA_MESSAGE, message);
         startActivity(i);
     }
 
     public void joinBTMatch(View v) {
         Intent i = new Intent(this,JoinBTMatchActivity.class);
+        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        String message = editText.getText().toString();
+        i.putExtra(EXTRA_MESSAGE, message);
         startActivity(i);
     }
 

@@ -10,10 +10,20 @@ public class Player {
 
     private ArrayList<Card> playerCards;
     private String playerName;
+    private String playerAddress;
 
-    public Player(String playerName) {
+    public Player(String playerName, String playerAddress) {
         this.playerName = playerName;
+        this.playerAddress = playerAddress;
         this.playerCards = new ArrayList<>(10);
+    }
+
+    public String getPlayerName(){
+        return this.playerName;
+    }
+
+    public String getPlayerAddress(){
+        return this.playerAddress;
     }
 
     public void drawCard(CardDeck cardDeck) {
