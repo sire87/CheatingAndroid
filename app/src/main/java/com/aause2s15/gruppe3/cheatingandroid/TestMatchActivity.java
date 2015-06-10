@@ -197,6 +197,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         Toast.makeText(this, "angesagte Karte = "+calledCardTag.substring(1), Toast.LENGTH_SHORT).show();
 
         // TODO: solve issue: calledCard = null but playedCard not
+        // reason = calledCard not yet set!
         Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
         Card calledCard = this.match.getCallableCardDeck().getCard(calledCardTag);
         // TESTING...

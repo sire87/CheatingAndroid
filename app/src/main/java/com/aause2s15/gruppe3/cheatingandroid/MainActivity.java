@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         String defaultPlayerName = mBluetoothAdapter.getName();
-        EditText playerName = (EditText) findViewById(R.id.textPlayerName);
+        EditText playerName = (EditText) findViewById(R.id.etxt_playername);
         playerName.setText(defaultPlayerName);
 
     }
@@ -72,7 +72,7 @@ public class MainActivity extends ActionBarActivity {
     /** called when the user clicks the create match button */
     public void createMatch(View view) {
         Intent intent = new Intent(this, CreateMatchActivity.class);
-        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        EditText editText = (EditText) findViewById(R.id.etxt_playername);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
 
@@ -87,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void joinMatch(View view) {
         Intent intent = new Intent(this, JoinMatchActivity.class);
-        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        EditText editText = (EditText) findViewById(R.id.etxt_playername);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
 
@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void hostBTMatch(View v) {
         Intent i = new Intent(this, HostBTMatchActivity.class);
-        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        EditText editText = (EditText) findViewById(R.id.etxt_playername);
         String message = editText.getText().toString();
         i.putExtra(EXTRA_MESSAGE, message);
         startActivity(i);
@@ -114,7 +114,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void joinBTMatch(View v) {
         Intent i = new Intent(this,JoinBTMatchActivity.class);
-        EditText editText = (EditText) findViewById(R.id.textPlayerName);
+        EditText editText = (EditText) findViewById(R.id.etxt_playername);
         String message = editText.getText().toString();
         i.putExtra(EXTRA_MESSAGE, message);
         startActivity(i);

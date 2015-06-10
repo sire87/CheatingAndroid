@@ -64,7 +64,7 @@
         </activity>
         <activity
             android:name=".HostBTMatchActivity"
-            android:label="@string/title_activity_host_btmatch"
+            android:label="LÜGEN - Bluetooth-Spiel erstellen"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape">
             <meta-data
@@ -73,7 +73,7 @@
         </activity>
         <activity
             android:name=".JoinBTMatchActivity"
-            android:label="@string/title_activity_join_btmatch"
+            android:label="LÜGEN - Bluetooth-Spiel beitreten"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape">
             <meta-data

@@ -7,42 +7,26 @@
     android:background="@color/primaryColor">
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="@string/player_name"
         android:text="@string/player_name"
         android:ems="10"
-        android:id="@+id/textPlayerName"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/create_match"
-        android:id="@+id/buttonCreateMatch"
-        android:layout_below="@+id/textPlayerName"
-        android:layout_centerHorizontal="true"
-        android:onClick="createMatch"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/join_match"
-        android:id="@+id/buttonJoinMatch"
-        android:layout_below="@+id/buttonCreateMatch"
-        android:layout_alignLeft="@+id/buttonCreateMatch"
-        android:layout_alignStart="@+id/buttonCreateMatch"
-        android:onClick="joinMatch"/>
+        android:id="@+id/etxt_playername"
+        android:layout_toRightOf="@+id/txt_name"
+        android:enabled="true"
+        android:layout_toLeftOf="@+id/img_android"
+        android:layout_toStartOf="@+id/img_android" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logo"
-        android:id="@+id/imageView2"
+        android:id="@+id/img_android"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@+id/bt_host"
+        android:layout_toEndOf="@+id/bt_host" />
 
     <ImageView
         android:layout_width="35dp"
@@ -51,45 +35,54 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/imageView" />
+        android:id="@+id/img_aau" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Spielregeln"
-        android:id="@+id/Spielregeln_Button"
+        android:id="@+id/bt_rules"
         android:onClick="rules"
-        android:layout_marginRight="17dp"
-        android:layout_marginEnd="17dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:background="@color/aauColorLight"
-        android:layout_toLeftOf="@+id/imageView"
-
-        android:layout_alignTop="@+id/imageView"
-        android:textAlignment="center"
-        android:textSize="06dp"
-        android:layout_toRightOf="@+id/buttonJoinMatch"
-        android:layout_toEndOf="@+id/buttonJoinMatch" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BT Join"
-        android:onClick="joinBTMatch"
-        android:id="@+id/bt_join"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/img_aau"
+        android:textColor="@color/aauColorDark" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bluetooth-Spiel beitreten"
+        android:onClick="joinBTMatch"
+        android:id="@+id/bt_join"
+        android:layout_below="@+id/bt_host"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="BT Host"
+        android:text="Bluetooth-Spiel erstellen"
         android:onClick="hostBTMatch"
         android:id="@+id/bt_host"
-        android:layout_above="@+id/bt_join"
+        android:layout_below="@+id/etxt_playername"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Name: "
+        android:gravity="center_vertical"
+        android:id="@+id/txt_name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/bt_host" />
 
 
 </RelativeLayout>
