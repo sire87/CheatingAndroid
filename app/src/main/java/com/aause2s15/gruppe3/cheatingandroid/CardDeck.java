@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class CardDeck {
 
-    public Card[] cardDeck; // TODO: change to private after test
+    private Card[] cardDeck;
     private int currentIndex;
 
     public CardDeck(Context context, int deckID) {
@@ -123,7 +123,6 @@ public class CardDeck {
         return builder.toString();
     }
 
-    // TODO: find out why this does not work...
     public void buildCardDeckfromString (Context context, String cardDeckString) {
         String[] deck = cardDeckString.split("\\-");
         for (int i = 0; i < deck.length; i++) {
@@ -132,9 +131,17 @@ public class CardDeck {
             String value = card.length > 1 ? card[1] : "";
             int image = card.length > 2 ? Integer.parseInt(card[2]) : 0;
             int order = card.length > 3 ? Integer.parseInt(card[3]) : 0;
-//            if (i >= 42)
-//            Toast.makeText(context, "Card[" + i + "]: " + "Type: " + type + " Value: " + value + " Image: " + image + " Order: " + order, Toast.LENGTH_SHORT).show();
             this.cardDeck[i] = new Card(context, type, value, image, order, 1);
         }
+    }
+
+    public Card getCard(String tag) {
+        for (int i = 0; i < this.cardDeck.length; i++){
+            if (cardDeck[i].getTag().equals(tag)){
+                Card card = cardDeck[i];
+                return card;
+            }
+        }
+        return null;
     }
 }

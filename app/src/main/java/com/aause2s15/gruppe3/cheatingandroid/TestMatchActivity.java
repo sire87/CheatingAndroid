@@ -28,15 +28,28 @@ import java.util.Iterator;
 
 public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
-    private final Handler mHandler = new Handler() {
+    private final Handler cardDeckHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
-                    // message from host
+                    // message from host > store card deck data
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     cardDeckString = cardDeckString+receivedMessage;
                     findViewById(R.id.b_deal_cards).setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    };
+
+    private final Handler clientHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    // message from host > update game state
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    parsePlayerMove(receivedMessage);
                     break;
             }
         }
@@ -91,9 +104,14 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
         }
         mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
-        mService.setHandler(mHandler);
+        mService.setHandler(cardDeckHandler);
         parsePlayerData();
         toastPlayerInfo();
+    }
+
+    public void toastMessage(String msg){
+        Toast.makeText(this, "Nachricht = "+msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Laenge = "+msg.length(), Toast.LENGTH_LONG).show();
     }
 
     public void parsePlayerData() {
@@ -141,12 +159,64 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         // RENDERING CARDS
         renderMatch();
+
+        // CHANGE HANDLER
+        mService.setHandler(clientHandler);
     }
 
     public void syncDeckWithClients(View v) {
-        byte[] send = cardDeckString.getBytes();
+        byte[] send = (Constants.CARD_DECK + cardDeckString).getBytes();
         mService.write(send);
         findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
+    }
+
+    public void syncPlayerMoveWithClients() {
+        String playerID = Integer.toString(this.playerID);
+        String playedCardTag = this.match.getPlayedCard().getTag();
+        String calledCardTag = this.match.getCalledCard().getTag();
+        String moveData = playerID+"."+playedCardTag+"."+calledCardTag;
+        byte[] send = moveData.getBytes();
+        mService.write(send);
+    }
+
+    public void parsePlayerMove(String move) {
+        /*TODO:
+        * 1. parse - done
+        * 2. update match data - tbd
+        * 3. update view - tbd*/
+
+        Toast.makeText(this, "Nachricht = "+move, Toast.LENGTH_LONG).show();
+
+        String[] tmp = move.split("\\.");
+        int playerID = tmp.length > 0 ? Integer.parseInt(tmp[0]) : 0;
+        String playedCardTag = tmp.length > 1 ? tmp[1] : "";
+        String calledCardTag = tmp.length > 2 ? tmp[2] : "";
+
+        Toast.makeText(this, "Spieler ID = "+playerID, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "gespielte Karte = "+playedCardTag.substring(1), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "angesagte Karte = "+calledCardTag.substring(1), Toast.LENGTH_SHORT).show();
+
+        // TODO: solve issue: calledCard = null but playedCard not
+        Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
+        Card calledCard = this.match.getCallableCardDeck().getCard(calledCardTag);
+        // TESTING...
+        if (calledCard != null){
+            String test = calledCard.getTag();
+            Toast.makeText(this, test, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "solve issue with calledCard", Toast.LENGTH_LONG).show();
+        }
+
+/*      this.match.getPlayer(playerID).playCard(playedCard);
+        this.match.getStackedCards().add(playedCard);
+        this.match.setPlayedCard(playedCard);
+        this.match.setCalledCard(calledCard);
+
+        ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.match.getCalledCard().getImage());
+        Toast.makeText(this, "Angesagte Karte: " + this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();*/
+
+        renderMatch();
     }
 
     public void renderMatch() {
@@ -274,6 +344,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
             // RENDERING
             renderMatch();
+
+            // SYNCING
+            syncPlayerMoveWithClients();
         }
     }
 

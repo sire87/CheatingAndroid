@@ -13,6 +13,9 @@ public interface Constants {
     int HOST = 4;
     int CLIENT = 5;
 
+    int CARD_DECK = 6;
+    int MOVE_DATA = 7;
+
     // Key names received from the CheatingAndroidService Handler
     String DEVICE_NAME = "device_name";
 }

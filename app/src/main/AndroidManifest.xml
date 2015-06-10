@@ -19,7 +19,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +30,7 @@
             android:name=".CreateMatchActivity"
             android:label="@string/title_activity_create_match"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
@@ -39,7 +39,7 @@
             android:name=".JoinMatchActivity"
             android:label="@string/title_activity_join_match"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
@@ -48,7 +48,7 @@
             android:name=".RulesActivity"
             android:label="@string/title_activity_rules"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
@@ -66,7 +66,7 @@
             android:name=".HostBTMatchActivity"
             android:label="@string/title_activity_host_btmatch"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
@@ -75,7 +75,7 @@
             android:name=".JoinBTMatchActivity"
             android:label="@string/title_activity_join_btmatch"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
