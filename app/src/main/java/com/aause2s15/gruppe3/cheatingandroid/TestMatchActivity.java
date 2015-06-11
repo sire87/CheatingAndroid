@@ -49,7 +49,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                     // message from host > update game state
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    parsePlayerMove(receivedMessage);
+                    interpretMessage(receivedMessage);
                     break;
             }
         }
@@ -170,16 +170,39 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
     }
 
-    public void syncPlayerMoveWithClients() {
+    public void syncPlayerMove() {
+        String messageCode = Integer.toString(Constants.PLAYER_MOVE);
         String playerID = Integer.toString(this.playerID);
         String playedCardTag = this.match.getPlayedCard().getTag();
         String calledCardTag = this.match.getCalledCard().getTag();
-        String moveData = playerID+"."+playedCardTag+"."+calledCardTag;
+        String moveData = messageCode+playerID+"."+playedCardTag+"."+calledCardTag;
         byte[] send = moveData.getBytes();
+        mService.write(send);
+        Toast.makeText(this, "gesendet: "+moveData, Toast.LENGTH_LONG).show();
+    }
+
+    public void syncPlayerPickup() {
+        // TODO: ...
+        String messageCode = Integer.toString(Constants.PLAYER_PICKUP);
+        byte[] send = (messageCode+"TEST-PICKUP").getBytes();
         mService.write(send);
     }
 
-    public void parsePlayerMove(String move) {
+    public void interpretMessage(String msg){
+        int messageCode = Integer.parseInt(msg.substring(0,1));
+        switch (messageCode) {
+            case Constants.PLAYER_MOVE:
+                processPlayerMoveMessage(msg.substring(1));
+                break;
+            case Constants.PLAYER_PICKUP:
+                processPlayerPickupMessage(msg.substring(1));
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void processPlayerMoveMessage(String move) {
 
         String[] tmp = move.split("\\.");
         int playerID = tmp.length > 0 ? Integer.parseInt(tmp[0]) : 0;
@@ -193,27 +216,29 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             calledCard = this.match.getCardDeck().getCard(calledCardTag);
         }
 
-        // TODO: delete this when done
-        // String test1 = calledCard.getTag();
-        // String test2 = playedCard.getTag();
-        // Toast.makeText(this, playerID+" called : "+test1, Toast.LENGTH_LONG).show();
-        // Toast.makeText(this, playerID+" played : "+test2, Toast.LENGTH_LONG).show();
-
-        // TESTING...
+        // update match data
         this.match.getPlayer(playerID).playCard(playedCard);
         this.match.getStackedCards().add(playedCard);
         this.match.setPlayedCard(playedCard);
         this.match.setCalledCard(calledCard);
 
+        // render called card
         ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.match.getCalledCard().getImage());
+
+        // render played card / stacked cards
+        playedCard.getImageView().setImageResource(R.drawable.card_56);
+        ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(playedCard.getImageView());
+
+        // toasting info
         Toast.makeText(this, "Angesagte Karte: " + this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
         Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
 
-        // TODO:
-        // render stacked cards!
-        // pickup method!
-
         renderMatch();
+    }
+
+    public void processPlayerPickupMessage(String pickup) {
+        // TODO: ...
+        Toast.makeText(this, pickup, Toast.LENGTH_LONG).show();
     }
 
     public void renderMatch() {
@@ -343,7 +368,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             renderMatch();
 
             // SYNCING
-            syncPlayerMoveWithClients();
+            syncPlayerMove();
         }
     }
 
@@ -372,6 +397,8 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                 iterator.remove();
                 renderPlayerCards();
             }
+            // SYNCING
+            syncPlayerPickup();
         }
     }
 
