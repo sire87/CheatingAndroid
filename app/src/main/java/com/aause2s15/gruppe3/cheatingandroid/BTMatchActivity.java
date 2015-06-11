@@ -60,6 +60,8 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private ArrayList<Player> players = new ArrayList<Player>(4);
     private String cardDeckString = "";
     private int playerID;
+    private int previousPlayerID;
+    private int nextPlayerID;
     private boolean active = false; //TODO: only allow interaction if true
 
     private View selectedPlayerCard;
@@ -149,9 +151,14 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             this.match.addPlayer(this.players.get(i),i);
         }
 
-        // TODO: problem?
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
+        this.previousPlayerID = this.playerID != 0 ? this.playerID - 1 : this.players.size() - 1;
+        this.nextPlayerID = this.playerID != this.players.size() - 1 ? this.playerID + 1 : 0;
+
         Toast.makeText(this,"Meine ID ="+this.playerID,Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"Nachbar davor ID ="+this.previousPlayerID,Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"Nachbar danach ID ="+this.nextPlayerID,Toast.LENGTH_LONG).show();
+
 
         // RENDERING CARDS
         renderMatch();
@@ -177,10 +184,10 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         Toast.makeText(this, "gesendet: "+moveData, Toast.LENGTH_LONG).show();
     }
 
-    public void syncPlayerPickup() {
+    public void syncPlayerPickup(int playerID) {
         String messageCode = Integer.toString(Constants.PLAYER_PICKUP);
-        String playerID = Integer.toString(this.playerID);
-        byte[] send = (messageCode+playerID).getBytes();
+        String tmp = Integer.toString(playerID);
+        byte[] send = (messageCode+tmp).getBytes();
         mService.write(send);
     }
 
@@ -395,7 +402,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 renderPlayerCards();
             }
             // SYNCING
-            syncPlayerPickup();
+            syncPlayerPickup(playerID);
         }
     }
 
@@ -410,21 +417,13 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             ImageView imgFlippedCard = flippedCard.getImageView();
             imgFlippedCard.setImageResource(flippedCard.getImage());
             if (validCard()) {
-                Toast.makeText(this, "Du hast eine korrekte Karte gespielt!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Die gespielte Karte war korrekt! Du musst alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                pickUpCards(this.playerID);
             }
             else {
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle("LÜGNER!");
-                alertDialog.setMessage("Du hast KEINE korrekte Karte gespielt und musst nun alle Karten aufnehmen!");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-                pickUpCards(this.playerID);
+                String name = players.get(this.previousPlayerID).getPlayerName();
+                Toast.makeText(this, "Die gespielte Karte war NICHT korrekt! "+name+" muss alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                pickUpCards(this.previousPlayerID);
             }
         }
     }
