@@ -180,42 +180,38 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     public void parsePlayerMove(String move) {
-        /*TODO:
-        * 1. parse - done
-        * 2. update match data - tbd
-        * 3. update view - tbd*/
-
-        Toast.makeText(this, "Nachricht = "+move, Toast.LENGTH_LONG).show();
 
         String[] tmp = move.split("\\.");
         int playerID = tmp.length > 0 ? Integer.parseInt(tmp[0]) : 0;
         String playedCardTag = tmp.length > 1 ? tmp[1] : "";
         String calledCardTag = tmp.length > 2 ? tmp[2] : "";
 
-        Toast.makeText(this, "Spieler ID = "+playerID, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "gespielte Karte = "+playedCardTag.substring(1), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "angesagte Karte = "+calledCardTag.substring(1), Toast.LENGTH_SHORT).show();
-
-        // TODO: solve issue: calledCard = null but playedCard not
-        // reason = calledCard not yet set!
         Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
         Card calledCard = this.match.getCallableCardDeck().getCard(calledCardTag);
-        // TESTING...
-        if (calledCard != null){
-            String test = calledCard.getTag();
-            Toast.makeText(this, test, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "solve issue with calledCard", Toast.LENGTH_LONG).show();
+
+        if (calledCard == null) {
+            calledCard = this.match.getCardDeck().getCard(calledCardTag);
         }
 
-/*      this.match.getPlayer(playerID).playCard(playedCard);
+        // TODO: delete this when done
+        // String test1 = calledCard.getTag();
+        // String test2 = playedCard.getTag();
+        // Toast.makeText(this, playerID+" called : "+test1, Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, playerID+" played : "+test2, Toast.LENGTH_LONG).show();
+
+        // TESTING...
+        this.match.getPlayer(playerID).playCard(playedCard);
         this.match.getStackedCards().add(playedCard);
         this.match.setPlayedCard(playedCard);
         this.match.setCalledCard(calledCard);
 
         ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.match.getCalledCard().getImage());
         Toast.makeText(this, "Angesagte Karte: " + this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();*/
+        Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
+
+        // TODO:
+        // render stacked cards!
+        // pickup method!
 
         renderMatch();
     }

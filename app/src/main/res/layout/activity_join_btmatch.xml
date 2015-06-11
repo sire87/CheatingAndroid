@@ -18,7 +18,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Suche Geräte"
+        android:text="Starte Suche"
         android:onClick="discoverDevices"
         android:id="@+id/bt_scan"
         android:layout_alignParentTop="true"
