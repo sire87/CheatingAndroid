@@ -27,24 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateMatchActivity"
-            android:label="@string/title_activity_create_match"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
-        </activity>
-        <activity
-            android:name=".JoinMatchActivity"
-            android:label="@string/title_activity_join_match"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="landscape" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
-        </activity>
-        <activity
             android:name=".RulesActivity"
             android:label="@string/title_activity_rules"
             android:parentActivityName=".MainActivity"
@@ -54,13 +36,13 @@
                 android:value="com.aause2s15.gruppe3.cheatingandroid.MainActivity" />
         </activity>
         <activity
-            android:name=".TestMatchActivity"
+            android:name=".BTMatchActivity"
             android:label="@string/title_activity_test_match"
-            android:parentActivityName=".CreateMatchActivity"
+            android:parentActivityName=".HostBTMatchActivity"
             android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aause2s15.gruppe3.cheatingandroid.CreateMatchActivity" />
+                android:value="com.aause2s15.gruppe3.cheatingandroid.HostBTMatchActivity" />
         </activity>
         <activity
             android:name=".HostBTMatchActivity"

@@ -15,6 +15,5 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    //Text mit den Spielregeln is im Ordner String gespeichert
 
 </RelativeLayout>

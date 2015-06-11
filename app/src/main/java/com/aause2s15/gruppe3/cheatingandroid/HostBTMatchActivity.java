@@ -14,8 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 
 public class HostBTMatchActivity extends ActionBarActivity {
 
@@ -55,7 +53,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
 
     public void startTestMatch() {
         // TODO: send player data to all connected devices
-        Intent intent = new Intent(this, TestMatchActivity.class);
+        Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
     }
@@ -84,7 +82,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
         mService.addPlayerData(playerName+"."+address+"-");
 
         ListView connectedListView = (ListView) findViewById(R.id.bt_connected_devices);
-        mConnectedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        mConnectedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         connectedListView.setAdapter(mConnectedDevicesArrayAdapter);
     }
 

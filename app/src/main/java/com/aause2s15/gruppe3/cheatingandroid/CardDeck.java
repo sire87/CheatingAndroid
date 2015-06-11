@@ -1,8 +1,6 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
 import android.content.Context;
-import android.widget.Toast;
-
 import java.util.Random;
 
 /**
@@ -138,8 +136,7 @@ public class CardDeck {
     public Card getCard(String tag) {
         for (int i = 0; i < this.cardDeck.length; i++){
             if (cardDeck[i].getTag().equals(tag)){
-                Card card = cardDeck[i];
-                return card;
+                return cardDeck[i];
             }
         }
         return null;

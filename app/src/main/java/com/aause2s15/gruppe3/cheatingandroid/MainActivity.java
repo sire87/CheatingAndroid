@@ -43,7 +43,6 @@ public class MainActivity extends ActionBarActivity {
         String defaultPlayerName = mBluetoothAdapter.getName();
         EditText playerName = (EditText) findViewById(R.id.etxt_playername);
         playerName.setText(defaultPlayerName);
-
     }
 
     @Override
@@ -69,39 +68,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /** called when the user clicks the create match button */
-    public void createMatch(View view) {
-        Intent intent = new Intent(this, CreateMatchActivity.class);
-        EditText editText = (EditText) findViewById(R.id.etxt_playername);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-
-        if (!message.isEmpty()){
-            startActivity(intent);
-        }
-
-        else {
-            Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void joinMatch(View view) {
-        Intent intent = new Intent(this, JoinMatchActivity.class);
-        EditText editText = (EditText) findViewById(R.id.etxt_playername);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-
-        if (!message.isEmpty()){
-            startActivity(intent);
-        }
-
-        else {
-            Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
-        }
-    }
-    public void rules (View view){
-        Intent intent = new Intent(this, RulesActivity.class);
-        startActivity(intent);
+    public void rules (View v){
+        Intent i = new Intent(this, RulesActivity.class);
+        startActivity(i);
     }
 
     public void hostBTMatch(View v) {
@@ -109,7 +78,11 @@ public class MainActivity extends ActionBarActivity {
         EditText editText = (EditText) findViewById(R.id.etxt_playername);
         String message = editText.getText().toString();
         i.putExtra(EXTRA_MESSAGE, message);
-        startActivity(i);
+        if (message.isEmpty()) {
+            Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
+        } else {
+            startActivity(i);
+        }
     }
 
     public void joinBTMatch(View v) {
@@ -117,7 +90,10 @@ public class MainActivity extends ActionBarActivity {
         EditText editText = (EditText) findViewById(R.id.etxt_playername);
         String message = editText.getText().toString();
         i.putExtra(EXTRA_MESSAGE, message);
-        startActivity(i);
+        if (message.isEmpty()) {
+            Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
+        } else {
+            startActivity(i);
+        }
     }
-
 }

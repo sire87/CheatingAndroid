@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 
-public class TestMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
+public class BTMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
     private final Handler cardDeckHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -118,17 +118,18 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
             String playerAddress = player.length > 1 ? player[1] : "";
             try {
                 this.players.add(new Player(playerName, playerAddress));
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                Toast.makeText(this, "Es trat ein Problem beim Parsen der Spielerdaten auf.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     public void toastPlayerInfo() {
         for (int i = 0; i <this.players.size(); i++) {
             Player p = this.players.get(i);
-            int id = i;
             String name = p.getPlayerName();
             String address = p.getPlayerAddress();
-            String info = "ID: "+id+" Name: "+name+" Adresse: "+address;
+            String info = "ID: "+i+" Name: "+name+" Adresse: "+address;
             Toast.makeText(this, info, Toast.LENGTH_LONG).show();
         }
     }
@@ -433,13 +434,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
         if (this.match.getCalledCard() != null) {
 
-            if (this.match.getFlippedCard().getTag().substring(1).equals(this.match.getCalledCard().getTag().substring(1))) {
-                return true;
-            }
-
-            else {
-                return false;
-            }
+            return this.match.getFlippedCard().getTag().substring(1).equals(this.match.getCalledCard().getTag().substring(1));
         }
         return true;
     }

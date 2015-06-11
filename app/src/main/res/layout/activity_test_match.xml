@@ -5,7 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@drawable/backrepeat"
-    tools:context="com.aause2s15.gruppe3.cheatingandroid.TestMatchActivity">
+    tools:context="com.aause2s15.gruppe3.cheatingandroid.BTMatchActivity">
 
     <RelativeLayout
         android:layout_width="wrap_content"

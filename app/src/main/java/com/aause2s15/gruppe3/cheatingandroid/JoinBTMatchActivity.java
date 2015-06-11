@@ -114,7 +114,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     };
 
     public void startTestMatch() {
-        Intent intent = new Intent(this, TestMatchActivity.class);
+        Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
     }
@@ -131,8 +131,8 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
-        this.mPairedDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
-        this.mNewDevicesArrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        this.mPairedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        this.mNewDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         showDevices();
 
         // Register the BroadcastReceiver
