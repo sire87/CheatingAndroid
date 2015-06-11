@@ -109,11 +109,6 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
         toastPlayerInfo();
     }
 
-    public void toastMessage(String msg){
-        Toast.makeText(this, "Nachricht = "+msg, Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "Laenge = "+msg.length(), Toast.LENGTH_LONG).show();
-    }
-
     public void parsePlayerData() {
         String playerData = mService.getPlayerData();
         String[] players = playerData.split("\\-");
@@ -182,9 +177,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     public void syncPlayerPickup() {
-        // TODO: ...
         String messageCode = Integer.toString(Constants.PLAYER_PICKUP);
-        byte[] send = (messageCode+"TEST-PICKUP").getBytes();
+        String playerID = Integer.toString(this.playerID);
+        byte[] send = (messageCode+playerID).getBytes();
         mService.write(send);
     }
 
@@ -237,8 +232,9 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     public void processPlayerPickupMessage(String pickup) {
-        // TODO: ...
-        Toast.makeText(this, pickup, Toast.LENGTH_LONG).show();
+        // TODO: test that shit
+        int playerPickupID = Integer.parseInt(pickup);
+        pickUpCards(playerPickupID);
     }
 
     public void renderMatch() {
@@ -373,7 +369,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
     }
 
     // move all cards from stack to player
-    public void pickUpCards(View v) {
+    public void pickUpCards(int playerID) {
 
         if (this.match.getStackedCards().size()>0) {
 
@@ -391,7 +387,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
 
             while (iterator.hasNext()) {
                 Card currentStackedCard = (Card) iterator.next();
-                this.match.getPlayer(this.playerID).addCard(currentStackedCard);
+                this.match.getPlayer(playerID).addCard(currentStackedCard);
                 currentStackedCard.getImageView().setImageResource(currentStackedCard.getImage());
                 stackedCardsContainer.removeView(currentStackedCard.getImageView());
                 iterator.remove();
@@ -427,7 +423,7 @@ public class TestMatchActivity extends ActionBarActivity implements View.OnClick
                             }
                         });
                 alertDialog.show();
-                pickUpCards(null);
+                pickUpCards(this.playerID);
             }
         }
     }
