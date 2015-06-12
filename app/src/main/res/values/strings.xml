@@ -18,16 +18,16 @@
 
     <!-- RulesActivity -->
     <string name="title_activity_rules">LÜGEN - Regeln</string>
-    <string name="rules">"Jeder bekommt gleichviele Karten und hält sie verdeckt auf der Hand. Dann wird entschieden wer anfängt (per Zufallsgenerator).\r\n Dieser Spieler nennt nun eine oder mehrere Karten, also welche Art von Karte es ist (Bube, König…) und jeder Spieler muss nun reihum (beginnend mit dem Ausrufer) eine oder mehrere seiner Karten dieser Art verdeckt auf einen Stapel in der Mitte legen.\r\n Wenn man keine Karte dieser Farbe hat (oder sie nicht legen will) kann man 'lügen' und eine falsche Karte hinlegen.\r\n Wird es vom nachfolgenden Spieler geglaubt geht es normal weiter. Glaubt er es seinem Vorgänger aber nicht, kann er die Karte umdrehen, um zu prüfen ob der Spieler gelogen hat. War die Farbe richtig bekommt der Misstrauische alle Karten, war die Farbe jedoch falsch, bekommt der Lügende alle Karten. \r\nWer als Erstes keine Karten mehr hat, hat gewonnen. \r\nSpieler werden via Bluetooth gesucht und danach kann man auswählen mit wem man ein Spiel starten will. Sind die Spieler ausgesucht, beginnt automatisch ein Spiel. Ist ein Spieler längere Zeit inaktiv, bekommt er nach Ablauf einer gewissen Zeit alle Karten als Strafe angehängt."</string>
+    +    <string name="rules">"Der Spieler hat die Möglichkeit einen Namen auszuwählen und einem Bluetooth-Spiel beizutreten oder selbst ein Bluetooth-Spiel zu erstellen. An einem Bluetooth-Spiel müssen mindestens 2 Spieler (Host + 1 Client) bzw. können maximal 4 Spieler (Host + max. 3 Clients) teilnehmen.\r\n\n Jeder Spieler bekommt 10 zufällige Karten. Der Host beginnt mit dem ersten Spielzug und nennt eine Karte (Typ und Wert) und legt diese ab. Reihum legt nun jeder weitere Spieler eine Karte ab, die entweder den gleichen Typ oder gleichen Wert haben muss.\r\n\n Wenn ein Spieler keine entsprechende Karte hat oder sie nicht spielen will, kann dieser 'lügen' und eine falsche Karte hinlegen.\r\n\n Der nachfolgende Spieler kann einfach weiterspielen, hat aber auch die Möglichkeit diese Karte aufzudecken um so zu überprüfen, ob der vorhergehende Spieler gelogen hat. Hat der vorhergende Spieler eine richtige Karte gespielt, muss der aufdeckende Spieler alle Karten aufnehmen, andernfalls hat der vorhergehende Spieler gelogen und muss somit alle Karten aufnehmen.\r\n\n Gewonnen hat, wer zuerst keine Karten mehr hat."</string>
 
     <!-- TestMatchActivity -->
     <string name="title_activity_test_match">TestMatchActivity</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-        <string name="title_activity_host_btmatch">HostBTMatchActivity</string>
+    <string name="title_activity_host_btmatch">HostBTMatchActivity</string>
 
     <string name="hello_world">Hello world!</string>
-        <string name="title_activity_join_btmatch">JoinBTMatchActivity</string>
+    <string name="title_activity_join_btmatch">JoinBTMatchActivity</string>
 
 </resources>

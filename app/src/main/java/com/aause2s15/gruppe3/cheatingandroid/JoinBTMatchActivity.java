@@ -41,7 +41,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     mService.addPlayerData(receivedMessage);
-                    startTestMatch();
+                    startMatch();
                     break;
             }
         }
@@ -113,7 +113,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         }
     };
 
-    public void startTestMatch() {
+    public void startMatch() {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);

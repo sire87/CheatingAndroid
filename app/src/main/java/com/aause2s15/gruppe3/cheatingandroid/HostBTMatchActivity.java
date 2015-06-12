@@ -47,11 +47,11 @@ public class HostBTMatchActivity extends ActionBarActivity {
             String welcome = mService.getPlayerData();
             byte[] send = welcome.getBytes();
             mService.write(send);
-            startTestMatch();
+            startMatch();
         }
     }
 
-    public void startTestMatch() {
+    public void startMatch() {
         // TODO: send player data to all connected devices
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);

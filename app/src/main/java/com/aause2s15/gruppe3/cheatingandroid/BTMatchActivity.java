@@ -1,8 +1,6 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -28,33 +26,6 @@ import java.util.Iterator;
 
 public class BTMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
-    private final Handler cardDeckHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_READ:
-                    // message from host > store card deck data
-                    byte[] readBuf = (byte[]) msg.obj;
-                    String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    cardDeckString = cardDeckString+receivedMessage;
-                    findViewById(R.id.b_deal_cards).setVisibility(View.VISIBLE);
-                    break;
-            }
-        }
-    };
-
-    private final Handler clientHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_READ:
-                    // message from host > update game state
-                    byte[] readBuf = (byte[]) msg.obj;
-                    String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    interpretMessage(receivedMessage);
-                    break;
-            }
-        }
-    };
-
     private CheatingAndroidService mService;
     private Match match;
     private ArrayList<Player> players = new ArrayList<Player>(4);
@@ -74,6 +45,35 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 1600;
 
+    private final Handler cardDeckHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    // message from host > store card deck data
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    cardDeckString = cardDeckString+receivedMessage;
+                    findViewById(R.id.b_deal_cards).setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    };
+
+    private final Handler clientHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    // message from host > update message state
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    interpretMessage(receivedMessage);
+                    break;
+            }
+        }
+    };
+
+    // TODO - VERY IMPORTANT: HOST HANDLER !!!
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +83,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
 
-        setContentView(R.layout.activity_test_match);
+        setContentView(R.layout.activity_btmatch);
 
         // INITIALISING ACCELEROMETER
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -98,19 +98,23 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 this.active = true;
                 break;
             case Constants.CLIENT:
+                this.active = false;
                 findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
                 findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
                 break;
             default:
+                this.active = false;
                 Toast.makeText(this, "Keine BT-Verbindung!", Toast.LENGTH_SHORT).show();
                 findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
         }
         mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(cardDeckHandler);
         parsePlayerData();
-        toastPlayerInfo();
     }
 
+    /**
+     * Parses player data string and adds all players of a match to an array.
+     */
     public void parsePlayerData() {
         String playerData = mService.getPlayerData();
         String[] players = playerData.split("\\-");
@@ -126,6 +130,10 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Toasts player info (id, name, address) when match is started.
+     * TODO: not needed anymore...
+     */
     public void toastPlayerInfo() {
         for (int i = 0; i <this.players.size(); i++) {
             Player p = this.players.get(i);
@@ -136,6 +144,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Initializes a new match. Sets own player id and the id of the previous and next player.
+     *
+     * @param v the view of the dealCards button // TODO: view not needed
+     */
     public void initMatch(View v) {
 
         findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
@@ -152,13 +165,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
 
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
-        this.previousPlayerID = this.playerID != 0 ? this.playerID - 1 : this.players.size() - 1;
-        this.nextPlayerID = this.playerID != this.players.size() - 1 ? this.playerID + 1 : 0;
+        this.previousPlayerID = getPreviousPlayerID();
+        this.nextPlayerID = getNextPlayerID();
 
-        Toast.makeText(this,"Meine ID ="+this.playerID,Toast.LENGTH_LONG).show();
+/*        Toast.makeText(this,"Meine ID ="+this.playerID,Toast.LENGTH_LONG).show();
         Toast.makeText(this,"Nachbar davor ID ="+this.previousPlayerID,Toast.LENGTH_LONG).show();
-        Toast.makeText(this,"Nachbar danach ID ="+this.nextPlayerID,Toast.LENGTH_LONG).show();
-
+        Toast.makeText(this,"Nachbar danach ID ="+this.nextPlayerID,Toast.LENGTH_LONG).show();*/
 
         // RENDERING CARDS
         renderMatch();
@@ -167,12 +179,41 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         mService.setHandler(clientHandler);
     }
 
+    /**
+     * Returns the id of the previous player.
+     *
+     * @return the id of the previous player
+     */
+    public int getPreviousPlayerID(){
+        return this.playerID != 0 ? this.playerID - 1 : this.players.size() - 1;
+    }
+
+    /**
+     * Returns the id of the next player.
+     *
+     * @return the id of the next player
+     */
+    public int getNextPlayerID(){
+        return this.playerID != this.players.size() - 1 ? this.playerID + 1 : 0;
+    }
+
+    /**
+     * Generates a string containing the shuffled card deck and sends it to the other players so
+     * that the card deck can be synchronized. Called only by the host of the match when the match
+     * is started.
+     *
+     * @param v the view of the sync button // TODO: view not needed...
+     */
     public void syncDeckWithClients(View v) {
         byte[] send = (Constants.CARD_DECK + cardDeckString).getBytes();
         mService.write(send);
         findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Called when a player made a move. Generates a string containing all necessary information
+     * and sends it to the other players so that this move can be synchronized.
+     */
     public void syncPlayerMove() {
         String messageCode = Integer.toString(Constants.PLAYER_MOVE);
         String playerID = Integer.toString(this.playerID);
@@ -181,9 +222,15 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         String moveData = messageCode+playerID+"."+playedCardTag+"."+calledCardTag;
         byte[] send = moveData.getBytes();
         mService.write(send);
-        Toast.makeText(this, "gesendet: "+moveData, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Called when a player has to pick up all stacked cards. Generates a string containing all
+     * necessary information and sends it to the other players so that this move can be
+     * synchronized.
+     *
+     * @param playerID the id of the player that picked up all stacked cards
+     */
     public void syncPlayerPickup(int playerID) {
         String messageCode = Integer.toString(Constants.PLAYER_PICKUP);
         String tmp = Integer.toString(playerID);
@@ -191,8 +238,15 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         mService.write(send);
     }
 
+    /**
+     * Interpretes the message received by the handler. The first character of the string
+     * represents the message type. Depending on the type the according processMessage method is
+     * called.
+     *
+     * @param msg the string containing the received message
+     */
     public void interpretMessage(String msg){
-        int messageCode = Integer.parseInt(msg.substring(0,1));
+        int messageCode = Integer.parseInt(msg.substring(0, 1));
         switch (messageCode) {
             case Constants.PLAYER_MOVE:
                 processPlayerMoveMessage(msg.substring(1));
@@ -205,12 +259,21 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Parses playerMoveMessage and updates match data a view.
+     *
+     * @param move the string containing the player id the tags of the played and the called card
+     */
     public void processPlayerMoveMessage(String move) {
 
         String[] tmp = move.split("\\.");
         int playerID = tmp.length > 0 ? Integer.parseInt(tmp[0]) : 0;
         String playedCardTag = tmp.length > 1 ? tmp[1] : "";
         String calledCardTag = tmp.length > 2 ? tmp[2] : "";
+
+        if (playerID == getPreviousPlayerID()){
+            this.active = true;
+        }
 
         Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
         Card calledCard = this.match.getCallableCardDeck().getCard(calledCardTag);
@@ -233,26 +296,33 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(playedCard.getImageView());
 
         // toasting info
-        Toast.makeText(this, "Angesagte Karte: " + this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
         Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
 
         renderMatch();
     }
 
+    /**
+     * Parses player id string to int and calls pickUpCards method.
+     *
+     * @param pickup the string containing id of player to pick up cards
+     */
     public void processPlayerPickupMessage(String pickup) {
-        // TODO: test that shit
         int playerPickupID = Integer.parseInt(pickup);
         pickUpCards(playerPickupID);
     }
 
+    /**
+     * calls renderPlayerCards and renderCallableCards method
+     */
     public void renderMatch() {
         renderPlayerCards();
         renderCallableCards();
     }
 
-    // render player cards
+    /**
+     * renders player cards
+     */
     public void renderPlayerCards() {
-
         ViewGroup playerCardContainer = (ViewGroup) findViewById(R.id.playerCardContainer);
         playerCardContainer.removeAllViews();
 
@@ -283,10 +353,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    // render callable cards
+    /**
+     * renders callable cards
+     */
     public void renderCallableCards() {
 
-        if (this.match.getCalledCard() != null) {
+        if (this.active && this.match.getCalledCard() != null) {
             Card[] tempCardDeck = this.match.getCallableCardDeck().getCardDeck();
             ArrayList<Card> storeCallableCards = new ArrayList<>(15);
             findViewById(R.id.callableText).setVisibility(View.VISIBLE);
@@ -326,11 +398,15 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    // move card from player to stack
-    public void playCard(View v)     {
+    /**
+     * plays currently selected card, removing it from player hand and adding it to card stack
+     *
+     * @param v view of playCard button
+     */
+    public void playCard(View v) {
 
-        if ((this.selectedPlayerCard != null && this.selectedCallableCard !=null)
-                || (this.selectedPlayerCard != null && this.match.getStackedCards().size()==0)) {
+        if ((this.active && this.selectedPlayerCard != null && this.selectedCallableCard !=null)
+                || (this.active && this.selectedPlayerCard != null && this.match.getStackedCards().size()==0)) {
 
             for (Card c : this.match.getPlayer(this.playerID).getPlayerCards()) {
                 if (c.getTag().substring(1).equals(this.selectedPlayerCard.getTag().toString().substring(1))) {
@@ -358,8 +434,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             // VIEW GROUP
             ((ViewGroup) findViewById(R.id.playerCardContainer)).removeView(this.selectedPlayerCard);
             ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(this.selectedPlayerCard);
-            Toast.makeText(this, "Angesagte Karte: " + this.match.getCalledCard().getTag().substring(1), Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
 
             // DATA
             this.match.getPlayer(this.playerID).playCard(this.match.getPlayedCard());
@@ -369,6 +443,8 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             this.selectedCallableCard = null;
 
             // RENDERING
+            this.active = false;
+            ((ViewGroup)findViewById(R.id.callableCardContainer)).removeAllViews();
             renderMatch();
 
             // SYNCING
@@ -376,7 +452,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    // move all cards from stack to player
+    /**
+     * removes all cards from car stack and adds them to the hand of the player with the specified
+     * id
+     *
+     * @param playerID id of the player to pick up cards
+     */
     public void pickUpCards(int playerID) {
 
         if (this.match.getStackedCards().size()>0) {
@@ -406,7 +487,13 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    // flip top card of stack
+    /**
+     * Flips top card of card stack and checks if the called card matches the flipped card.
+     * If it matches the player who flipped the card has to pick up all cards from the card stack,
+     * otherwise the previous player has to.
+     *
+     * @param v the view of the flipCard button
+     */
     public void flipCard(View v) {
 
         if (!this.match.getCardFlipped() && this.match.getStackedCards().size()>0) {
@@ -428,7 +515,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    // check if flippedCard matches called card
+    /**
+     * Checks if flipped card matches called card
+     *
+     * @return true if card is valid, otherwise false
+     */
     public boolean validCard() {
 
         if (this.match.getCalledCard() != null) {
@@ -438,7 +529,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         return true;
     }
 
-    // behaviour for selecting player card
+    /**
+     * Selects a card from player hand if clicked by the player. If there is already a selected
+     * card, that one gets deselected first.
+     *
+     * @param v the view of the selected card
+     */
     public void toggleSelectPlayerCard(View v) {
 
         if (this.selectedPlayerCard == v) {
@@ -462,7 +558,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    // behaviour for selecting callable card
+    /**
+     * Selects a card from callable cards if clicked by the player. If there is already a selected
+     * card, that one gets deselected first.
+     *
+     * @param v the view of the selected card
+     */
     public void toggleSelectCallableCard(View v) {
 
         if (this.selectedCallableCard == v) {
@@ -489,7 +590,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_test_match, menu);
+        getMenuInflater().inflate(R.menu.menu_btmatch, menu);
         return true;
     }
 
@@ -508,8 +609,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    // called when card is clicked
+    /**
+     * calls toggleSelectPlayerCard method if tag of clicked card tag starts with 1 or
+     * toggleSelectCallableCard if clicked card tag starts with 0.
+     *
+     * @param v the view of the clicked card
+     */
     public void onClick(View v) {
 
         if (v.getTag().toString().startsWith("1")) {
@@ -521,8 +626,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    // called when device is shaken
+    /**
+     * Called when the device gets shaken. Calls flipCard method.
+     *
+     * @param sensorEvent the specified sensor event
+     */
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
@@ -558,11 +666,13 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
     }
 
+    @Override
     protected void onPause() {
         super.onPause();
         senSensorManager.unregisterListener(this);
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
