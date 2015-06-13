@@ -4,13 +4,22 @@ import android.content.Context;
 import java.util.Random;
 
 /**
- * Created by Simon on 20.04.2015.
+ * CardDeck Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ * @since 2015-04-20
  */
 public class CardDeck {
 
     private Card[] cardDeck;
     private int currentIndex;
 
+    /**
+     * Constructs a CardDeck object.
+     * @param context the current context
+     * @param deckID the deck id of the card deck
+     */
     public CardDeck(Context context, int deckID) {
 
         cardDeck = new Card[52];
@@ -73,6 +82,11 @@ public class CardDeck {
         cardDeck[51] = new Card(context, "Pik","Koenig",R.drawable.card_52,38,deckID);
     }
 
+    /**
+     * Shuffles the specified card deck.
+     *
+     * @param count the amount of times the card deck is shuffled
+     */
     public void shuffle(int count) {
         int index;
         Card temp;
@@ -88,6 +102,11 @@ public class CardDeck {
         }
     }
 
+    /**
+     * Returns the current top card of the card deck and updates the current index (new top card).
+     *
+     * @return the current top card of the card deck
+     */
     public Card drawTopCard() {
 
             Card topCard = this.cardDeck[this.currentIndex];
@@ -95,10 +114,20 @@ public class CardDeck {
             return topCard;
     }
 
+    /**
+     * Returns the specified CardDeck.
+     *
+     * @return the Card array the CardDeck consists of
+     */
     public Card[] getCardDeck() {
         return this.cardDeck;
     }
 
+    /**
+     * Returns a string containg all cards (type, value, image, order)
+     *
+     * @return a string containing all cards.
+     */
     public String getCardDeckString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 51; i++) {
@@ -121,6 +150,13 @@ public class CardDeck {
         return builder.toString();
     }
 
+    /**
+     * Builds a card deck from a specified string containing all necessary information about the
+     * card deck (type, value, image, order)
+     *
+     * @param context the current context
+     * @param cardDeckString the string containing all cards
+     */
     public void buildCardDeckfromString (Context context, String cardDeckString) {
         String[] deck = cardDeckString.split("\\-");
         for (int i = 0; i < deck.length; i++) {
@@ -133,6 +169,12 @@ public class CardDeck {
         }
     }
 
+    /**
+     * Returns a card with a specified card tag.
+     *
+     * @param tag the tag of the card to be returned
+     * @return the card with the specified card tag
+     */
     public Card getCard(String tag) {
         for (int i = 0; i < this.cardDeck.length; i++){
             if (cardDeck[i].getTag().equals(tag)){

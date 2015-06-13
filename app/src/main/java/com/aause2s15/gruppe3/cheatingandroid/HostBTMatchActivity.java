@@ -14,7 +14,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+/**
+ * HostBTMatchActivity Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ */
 public class HostBTMatchActivity extends ActionBarActivity {
 
     private CheatingAndroidService mService;
@@ -28,7 +33,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     // new device connected > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    refreshConnectedDevices(null);
+                    refreshConnectedDevices();
                     break;
                 case Constants.MESSAGE_READ:
                     // message from client with player data > store it in service class
@@ -42,6 +47,12 @@ public class HostBTMatchActivity extends ActionBarActivity {
         }
     };
 
+    /**
+     * Sends a message to clients containing all necessarry information about all players that
+     * have joined the match an starts the match.
+     *
+     * @param v the view of the start match button
+     */
     public void sendMessageToClients(View v) {
         if (mConnectedDevicesArrayAdapter.getCount() > 0){
             String welcome = mService.getPlayerData();
@@ -51,6 +62,9 @@ public class HostBTMatchActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Starts a new Match.
+     */
     public void startMatch() {
         // TODO: send player data to all connected devices
         Intent intent = new Intent(this, BTMatchActivity.class);
@@ -58,6 +72,11 @@ public class HostBTMatchActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    /**
+     * Makes the host device discoverable for other bluetooth devices. Sets the handler for the
+     * host to react to messages from clients. Lists all clients that have successfully connected
+     * to the host.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +105,10 @@ public class HostBTMatchActivity extends ActionBarActivity {
         connectedListView.setAdapter(mConnectedDevicesArrayAdapter);
     }
 
-    public void refreshConnectedDevices(View v) {
+    /**
+     * Updates connected devices ListView
+     */
+    public void refreshConnectedDevices() {
         mConnectedDevicesArrayAdapter.add(mService.getLastConnectedDevice());
         mConnectedDevicesArrayAdapter.notifyDataSetChanged();
     }

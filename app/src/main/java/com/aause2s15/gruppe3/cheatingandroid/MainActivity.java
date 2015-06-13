@@ -10,7 +10,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
+/**
+ * MainActivity Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ */
 public class MainActivity extends ActionBarActivity {
 
     public final static String EXTRA_MESSAGE = "com.aause2s15.gruppe3.cheatingandroid";
@@ -21,6 +26,10 @@ public class MainActivity extends ActionBarActivity {
     // Intent request codes
     private static final int REQUEST_ENABLE_BT = 3;
 
+    /**
+     * Checks if device supports bluetooth. Terminates application, if device does not support
+     * bluetooth. Sets default player name to device bluetooth adapter name.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,11 +77,21 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Called if the rules button is clicked. Starts RulesActivity.
+     *
+     * @param v the view of the rules button
+     */
     public void rules (View v){
         Intent i = new Intent(this, RulesActivity.class);
         startActivity(i);
     }
 
+    /**
+     * Called if the host bt match button is clicked. Starts the HostBTMatchActivity.
+     *
+     * @param v the view of the host bt-match button
+     */
     public void hostBTMatch(View v) {
         Intent i = new Intent(this, HostBTMatchActivity.class);
         EditText editText = (EditText) findViewById(R.id.etxt_playername);
@@ -85,6 +104,11 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Called if the join bt match button is clicked. Starts the JoinBTMatchActivity.
+     *
+     * @param v the view of the join bt-match button
+     */
     public void joinBTMatch(View v) {
         Intent i = new Intent(this,JoinBTMatchActivity.class);
         EditText editText = (EditText) findViewById(R.id.etxt_playername);

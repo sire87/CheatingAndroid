@@ -23,7 +23,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-
+/**
+ * BTMatchActivity Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ */
 public class BTMatchActivity extends ActionBarActivity implements View.OnClickListener, SensorEventListener {
 
     private CheatingAndroidService mService;
@@ -167,10 +172,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
         this.previousPlayerID = getPreviousPlayerID();
         this.nextPlayerID = getNextPlayerID();
-
-/*        Toast.makeText(this,"Meine ID ="+this.playerID,Toast.LENGTH_LONG).show();
-        Toast.makeText(this,"Nachbar davor ID ="+this.previousPlayerID,Toast.LENGTH_LONG).show();
-        Toast.makeText(this,"Nachbar danach ID ="+this.nextPlayerID,Toast.LENGTH_LONG).show();*/
 
         // RENDERING CARDS
         renderMatch();

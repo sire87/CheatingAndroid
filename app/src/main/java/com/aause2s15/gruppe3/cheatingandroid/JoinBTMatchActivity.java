@@ -20,7 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Set;
 
-
+/**
+ * JoinBTMatchActivity Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ */
 public class JoinBTMatchActivity extends ActionBarActivity {
 
     private CheatingAndroidService mService;
@@ -62,6 +67,26 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         }
     };
 
+    private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+            mBluetoothAdapter.cancelDiscovery();
+            String info = ((TextView) v).getText().toString();
+            String address = info.substring(info.length() - 17);
+            // Toast.makeText(getApplicationContext(), "Adresse: "+address, Toast.LENGTH_LONG).show();
+            // now connect to that device
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+            try {
+                mService.connect(device);
+
+            } catch (Exception e) {
+                toast(e.getMessage());
+            }
+        }
+    };
+
+    /**
+     * Updates ListView displaying all discovered bluetooth devices.
+     */
     public void showDevices() {
 
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -82,6 +107,11 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
     }
 
+    /**
+     * Sends a message to the host containing player name and player MAC address.
+     *
+     * @param v the view of the send player data to host button // TODO: not needed anymore...
+     */
     public void sendClientPlayerDataToHost(View v) {
         Intent intent = getIntent();
         String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
@@ -92,37 +122,37 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         findViewById(R.id.b_test).setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Starts searching for discoverable bluetooth deveces.
+     *
+     * @param v the view of the start discovery button
+     */
     public void discoverDevices(View v) {
         mBluetoothAdapter.startDiscovery();
     }
 
-    private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            mBluetoothAdapter.cancelDiscovery();
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
-            // Toast.makeText(getApplicationContext(), "Adresse: "+address, Toast.LENGTH_LONG).show();
-            // now connect to that device
-            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-            try {
-                mService.connect(device);
-
-            } catch (Exception e) {
-                toast(e.getMessage());
-            }
-        }
-    };
-
+    /**
+     * Called if the host clicks on the start match button. Starts BTMatchActivity.
+     */
     public void startMatch() {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
     }
 
+    /**
+     * Toasts  a specified message.
+     *
+     * @param message the message to be toasted
+     */
     public void toast(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Sets the handler for clients to react on messages from the host. Lists all bluetooth devices
+     * that were found during discovery.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

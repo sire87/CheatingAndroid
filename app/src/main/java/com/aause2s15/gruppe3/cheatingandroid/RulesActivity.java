@@ -5,7 +5,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+/**
+ * RulesActivity Class
+ *
+ * @author Alexander Schein
+ * @version 1.0
+ */
 public class RulesActivity extends ActionBarActivity {
 
     @Override

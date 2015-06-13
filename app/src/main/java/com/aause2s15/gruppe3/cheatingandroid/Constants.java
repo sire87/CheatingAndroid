@@ -1,7 +1,11 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
 /**
- * Created by Simon on 01.06.2015.
+ * Constants Interface
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ * @since 2015-06-01
  */
 public interface Constants {
 

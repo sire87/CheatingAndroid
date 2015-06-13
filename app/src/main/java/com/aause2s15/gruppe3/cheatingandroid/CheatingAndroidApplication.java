@@ -3,7 +3,11 @@ package com.aause2s15.gruppe3.cheatingandroid;
 import android.app.Application;
 
 /**
- * Created by Simon on 04.06.2015.
+ * CheatingAndroidApplication Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ * @since 2015-06-04
  */
 public class CheatingAndroidApplication extends Application {
 

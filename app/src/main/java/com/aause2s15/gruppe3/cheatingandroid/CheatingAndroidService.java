@@ -14,10 +14,15 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * Created by Simon on 18.05.2015.
- * TODO: prevent device from connecting multiple times
+ * CheatingAndroidService Class
+ *
+ * @author Simon Reisinger
+ * @version 1.0
+ * @since 2015-05-18
  */
 public class CheatingAndroidService {
+
+    // TODO: prevent devices from connecting multiple times!
 
     // CA specific
     private static final CheatingAndroidService INSTANCE = new CheatingAndroidService();
@@ -49,8 +54,16 @@ public class CheatingAndroidService {
             UUID.fromString("b992a855-b913-4a22-80db-b6698bff46f0"),
             UUID.fromString("5df33d47-986c-4a35-a349-3878e2d474cd")};
 
+    /**
+     * Constructs the CheatingAndroidService object.
+     */
     private CheatingAndroidService() {}
 
+    /**
+     * Returns the instance of the CheatingAndroidService.
+     *
+     * @return the instance of the CheatingAndroidService
+     */
     public static CheatingAndroidService getInstance() {
         return INSTANCE;
     }
@@ -318,22 +331,46 @@ public class CheatingAndroidService {
         }
     }
 
+    /**
+     * Sets a specified handler.
+     * @param mHandler the handler to be set.
+     */
     public void setHandler(Handler mHandler) {
         this.mHandler = mHandler;
     }
 
+    /**
+     * Returns the last connected device
+     *
+     * @return a string with the last connected device
+     */
     public String getLastConnectedDevice() {
         return lastConnectedDevice;
     }
 
+    /**
+     * Adds player data (player name and MAC address)
+     *
+     * @param playerData a string containing name and MAC address of a player
+     */
     public void addPlayerData(String playerData){
         this.playerData= this.playerData+playerData;
     }
 
+    /**
+     * Returns data from all players (player names and MAC addresses).
+     *
+     * @return a string containing all player names and MAC addresses
+     */
     public String getPlayerData() {
         return this.playerData;
     }
 
+    /**
+     * Returns the own MAC address.
+     *
+     * @return a string containig the own MAC address
+     */
     public String getPlayerAddress() {
         return mBluetoothAdapter.getAddress();
     }
