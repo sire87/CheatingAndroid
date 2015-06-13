@@ -38,7 +38,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private int playerID;
     private int previousPlayerID;
     private int nextPlayerID;
-    private boolean active = false; //TODO: only allow interaction if true
+    private boolean active = false;
 
     private View selectedPlayerCard;
     private View selectedCallableCard;
@@ -226,7 +226,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     }
 
     /**
-     * Called when a player has to pick up all stacked cards. Generates a string containing all
+     * Called if a player has to pick up all stacked cards. Generates a string containing all
      * necessary information and sends it to the other players so that this move can be
      * synchronized.
      *
@@ -237,6 +237,33 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         String tmp = Integer.toString(playerID);
         byte[] send = (messageCode+tmp).getBytes();
         mService.write(send);
+    }
+
+    /**
+     * Called if a player has no cards left and the next player has not flipped the card or if
+     * the move was valid. Generates a string containing all necessary information and sends it to
+     * the other player so that this move can be synchronized.
+     *
+     * @param playerID the id of the player that has won the match
+     */
+    public void syncPlayerWon(int playerID){
+        String messageCode = Integer.toString(Constants.PLAYER_WON);
+        String tmp = Integer.toString(playerID);
+        byte[] send = (messageCode+tmp).getBytes();
+        mService.write(send);
+    }
+
+    /**
+     * Checks if the previous player has played his last card.
+     *
+     * @return true if previous player has played his last card, otherwise false
+     */
+    public boolean previousPlayerLastCard() {
+        if (this.match.getPlayer(previousPlayerID).getPlayerCards().size()==0){
+            Toast.makeText(this, "Letzte Karte gespielt!", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -255,6 +282,8 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             case Constants.PLAYER_PICKUP:
                 processPlayerPickupMessage(msg.substring(1));
                 break;
+            case Constants.PLAYER_WON:
+                processPlayerWonMessage(msg.substring(1));
             default:
                 break;
         }
@@ -297,6 +326,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(playedCard.getImageView());
 
         // toasting info
+        previousPlayerLastCard();
         Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
 
         renderMatch();
@@ -305,11 +335,29 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     /**
      * Parses player id string to int and calls pickUpCards method.
      *
-     * @param pickup the string containing id of player to pick up cards
+     * @param pickup the string containing the id of player to pick up cards
      */
     public void processPlayerPickupMessage(String pickup) {
         int playerPickupID = Integer.parseInt(pickup);
         pickUpCards(playerPickupID);
+    }
+
+    /**
+     * Parses player id string to int and informs player on who the winner is.
+     *
+     * @param won the string containing the id of player that has won the match
+     */
+    public void processPlayerWonMessage(String won) {
+        int playerWonID = Integer.parseInt(won);
+        String name = players.get(playerWonID).getPlayerName();
+        String myName = players.get(this.playerID).getPlayerName();
+        if (name.equals(myName)) {
+            Toast.makeText(this, "Gratulation! Du hast das Spiel gewonnen!", Toast.LENGTH_LONG).show();
+        }
+        else {
+            Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
+        }
+        this.active=false;
     }
 
     /**
@@ -406,7 +454,14 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public void playCard(View v) {
 
-        if ((this.active && this.selectedPlayerCard != null && this.selectedCallableCard !=null)
+        if (this.active && previousPlayerLastCard()) {
+            String name = players.get(this.previousPlayerID).getPlayerName();
+            Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
+            syncPlayerWon(previousPlayerID);
+            this.active=false;
+        }
+
+        else if ((this.active && this.selectedPlayerCard != null && this.selectedCallableCard !=null)
                 || (this.active && this.selectedPlayerCard != null && this.match.getStackedCards().size()==0)) {
 
             for (Card c : this.match.getPlayer(this.playerID).getPlayerCards()) {
@@ -504,7 +559,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             this.match.setFlippedCard(flippedCard);
             ImageView imgFlippedCard = flippedCard.getImageView();
             imgFlippedCard.setImageResource(flippedCard.getImage());
-            if (validCard()) {
+            if (validCard() && previousPlayerLastCard()) {
+                String name = players.get(this.previousPlayerID).getPlayerName();
+                Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
+                syncPlayerWon(previousPlayerID);
+            }
+            else if (validCard()) {
                 Toast.makeText(this, "Die gespielte Karte war korrekt! Du musst alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
                 pickUpCards(this.playerID);
             }

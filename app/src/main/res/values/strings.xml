@@ -1,33 +1,15 @@
 <resources>
 
     <!-- Application -->
-    <string name="app_name">LÜGEN - Das Kartenspiel</string>
-    <string name="action_settings">Eigenschaften</string>
+    <string name="app_name">LÜGEN</string>
+    <string name="action_settings">.</string>
 
     <!-- MainActivity -->
     <string name="player_name">Spielername</string>
-    <string name="create_match">Spiel erstellen</string>
-    <string name="join_match">Spiel beitreten</string>
-
-    <!-- CreateMatchActivity -->
-    <string name="title_activity_create_match">LÜGEN - Spiel erstellen</string>
-    <string name="start_match">Testspiel starten</string>
-
-    <!-- JoinMatchActivity -->
-    <string name="title_activity_join_match">LÜGEN - Spiel beitreten</string>
 
     <!-- RulesActivity -->
     <string name="title_activity_rules">LÜGEN - Regeln</string>
+
     +    <string name="rules">"Der Spieler hat die Möglichkeit einen Namen auszuwählen und einem Bluetooth-Spiel beizutreten oder selbst ein Bluetooth-Spiel zu erstellen. An einem Bluetooth-Spiel müssen mindestens 2 Spieler (Host + 1 Client) bzw. können maximal 4 Spieler (Host + max. 3 Clients) teilnehmen.\r\n\n Jeder Spieler bekommt 10 zufällige Karten. Der Host beginnt mit dem ersten Spielzug und nennt eine Karte (Typ und Wert) und legt diese ab. Reihum legt nun jeder weitere Spieler eine Karte ab, die entweder den gleichen Typ oder gleichen Wert haben muss.\r\n\n Wenn ein Spieler keine entsprechende Karte hat oder sie nicht spielen will, kann dieser 'lügen' und eine falsche Karte hinlegen.\r\n\n Der nachfolgende Spieler kann einfach weiterspielen, hat aber auch die Möglichkeit diese Karte aufzudecken um so zu überprüfen, ob der vorhergehende Spieler gelogen hat. Hat der vorhergende Spieler eine richtige Karte gespielt, muss der aufdeckende Spieler alle Karten aufnehmen, andernfalls hat der vorhergehende Spieler gelogen und muss somit alle Karten aufnehmen.\r\n\n Gewonnen hat, wer zuerst keine Karten mehr hat."</string>
-
-    <!-- TestMatchActivity -->
-    <string name="title_activity_test_match">TestMatchActivity</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_host_btmatch">HostBTMatchActivity</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_join_btmatch">JoinBTMatchActivity</string>
 
 </resources>

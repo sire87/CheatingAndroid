@@ -66,7 +66,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
      * Starts a new Match.
      */
     public void startMatch() {
-        // TODO: send player data to all connected devices
+        // TODO: send player data to all connected devices ???
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);

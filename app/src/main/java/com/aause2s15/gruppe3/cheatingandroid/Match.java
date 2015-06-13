@@ -47,7 +47,7 @@ public class Match {
      */
     public void addPlayer(Player p, int index) {
         this.players.add(p);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 7; i++) {
             this.players.get(index).drawCard(this.cardDeck);
         }
     }
@@ -173,5 +173,19 @@ public class Match {
      * @return the card deck
      */
     public CardDeck getCardDeck() {return this.cardDeck;}
+
+    /**
+     * Returns the id of a player with no cards left. Returns -1 if there is no such player.
+     *
+     * @return the id of a player with no cards left if there is one, otherwise -1
+     */
+    public int playerWithNoCardsExists() {
+        for (int i = 0; i < this.players.size(); i++){
+            if (this.players.get(i).getPlayerCards().size() == 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
 }

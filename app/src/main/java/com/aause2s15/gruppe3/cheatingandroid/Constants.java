@@ -20,6 +20,7 @@ public interface Constants {
     int CARD_DECK = 6;
     int PLAYER_MOVE = 7;
     int PLAYER_PICKUP = 8;
+    int PLAYER_WON = 9;
 
     // Key names received from the CheatingAndroidService Handler
     String DEVICE_NAME = "device_name";
