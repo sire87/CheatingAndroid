@@ -382,35 +382,39 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         String playedCardTag = tmp.length > 1 ? tmp[1] : "";
         String calledCardTag = tmp.length > 2 ? tmp[2] : "";
 
-        if (playerID == getPreviousPlayerID()){
-            this.active = true;
+        // otherwise don't do anything because move was already made!
+        if (playerID != this.playerID){
+
+            if (playerID == getPreviousPlayerID()){
+                this.active = true;
+            }
+
+            Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
+            Card calledCard = this.match.getCallableCardDeck().getCard(calledCardTag);
+
+            if (calledCard == null) {
+                calledCard = this.match.getCardDeck().getCard(calledCardTag);
+            }
+
+            // update match data
+            this.match.getPlayer(playerID).playCard(playedCard);
+            this.match.getStackedCards().add(playedCard);
+            this.match.setPlayedCard(playedCard);
+            this.match.setCalledCard(calledCard);
+
+            // render called card
+            ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.match.getCalledCard().getImage());
+
+            // render played card / stacked cards
+            playedCard.getImageView().setImageResource(R.drawable.card_56);
+            ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(playedCard.getImageView());
+
+            // toasting info
+            previousPlayerLastCard();
+            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
+
+            renderMatch();
         }
-
-        Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
-        Card calledCard = this.match.getCallableCardDeck().getCard(calledCardTag);
-
-        if (calledCard == null) {
-            calledCard = this.match.getCardDeck().getCard(calledCardTag);
-        }
-
-        // update match data
-        this.match.getPlayer(playerID).playCard(playedCard);
-        this.match.getStackedCards().add(playedCard);
-        this.match.setPlayedCard(playedCard);
-        this.match.setCalledCard(calledCard);
-
-        // render called card
-        ((ImageView) findViewById(R.id.calledCard)).setImageResource(this.match.getCalledCard().getImage());
-
-        // render played card / stacked cards
-        playedCard.getImageView().setImageResource(R.drawable.card_56);
-        ((ViewGroup) findViewById(R.id.cardStackContainer)).addView(playedCard.getImageView());
-
-        // toasting info
-        previousPlayerLastCard();
-        Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
-
-        renderMatch();
     }
 
     /**
@@ -420,7 +424,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public void processPlayerPickupMessage(String pickup) {
         int playerPickupID = Integer.parseInt(pickup);
-        pickUpCards(playerPickupID);
+
+        try {
+            pickUpCards(playerPickupID);
+        }
+        catch (Exception e) {}
     }
 
     /**
@@ -432,6 +440,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         int playerWonID = Integer.parseInt(won);
         String name = players.get(playerWonID).getPlayerName();
         String myName = players.get(this.playerID).getPlayerName();
+
         if (name.equals(myName)) {
             Toast.makeText(this, "Gratulation! Du hast das Spiel gewonnen!", Toast.LENGTH_LONG).show();
         }
@@ -439,6 +448,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
         }
         this.active=false;
+
     }
 
     /**
