@@ -142,6 +142,24 @@ public class CheatingAndroidService {
     }
 
     /**
+     * Stop all threads
+     */
+    public synchronized void stop() {
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
+        }
+        if (mAcceptThread != null) {
+            mAcceptThread.cancel();
+            mAcceptThread = null;
+        }
+    }
+
+    /**
      * Write to the ConnectedThread in an unsynchronized manner
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
@@ -161,6 +179,18 @@ public class CheatingAndroidService {
                 r.write(out);
             } catch (Exception e) {}
         }
+    }
+
+    /**
+     * Indicate that connection was lost and notify the UI Activity
+     */
+    private void connectionLost(){
+        Message msg = mHandler.obtainMessage(Constants.MESSAGE_CONNECTION_LOST);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.CONNECTION_LOST, "Ein Verbindungsfehler trat auf. Das Spiel muss leider beendet werden.");
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+        resetPlayerData();
     }
 
     /**
@@ -307,6 +337,7 @@ public class CheatingAndroidService {
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 
                 } catch (IOException e) {
+                    connectionLost();
                     break;}
             }
         }
@@ -364,6 +395,10 @@ public class CheatingAndroidService {
      */
     public String getPlayerData() {
         return this.playerData;
+    }
+
+    public void resetPlayerData() {
+        this.playerData = "";
     }
 
     /**

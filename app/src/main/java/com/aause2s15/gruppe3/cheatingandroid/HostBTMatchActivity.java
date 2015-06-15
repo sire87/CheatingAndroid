@@ -35,6 +35,12 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     refreshConnectedDevices();
                     break;
+                case Constants.MESSAGE_CONNECTION_LOST:
+                    // connection was lost > toast it!
+                    String tmp = msg.getData().getString("connection_lost");
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    mService.stop();
+                    finish();
                 case Constants.MESSAGE_READ:
                     // message from client with player data > store it in service class
                     byte[] readBuf = (byte[]) msg.obj;

@@ -41,6 +41,12 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
+                case Constants.MESSAGE_CONNECTION_LOST:
+                    // connection was lost > toast it!
+                    String tmp = msg.getData().getString("connection_lost");
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    mService.stop();
+                    finish();
                 case Constants.MESSAGE_READ:
                     // welcome message with player data from host > store data and start game
                     byte[] readBuf = (byte[]) msg.obj;

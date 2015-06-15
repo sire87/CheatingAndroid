@@ -37,7 +37,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private String cardDeckString = "";
     private int playerID;
     private int previousPlayerID;
-    private int nextPlayerID;
+    private int nextPlayerID; // TODO: DELETE WHEN NOT NEEDED ANYWHERE
     private boolean active = false;
 
     private View selectedPlayerCard;
@@ -60,6 +60,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     cardDeckString = cardDeckString+receivedMessage;
                     findViewById(R.id.b_deal_cards).setVisibility(View.VISIBLE);
                     break;
+                case Constants.MESSAGE_CONNECTION_LOST:
+                    // connection was lost > toast it!
+                    String tmp = msg.getData().getString("connection_lost");
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    mService.stop();
             }
         }
     };
@@ -73,6 +78,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     interpretMessage(receivedMessage);
                     break;
+                case Constants.MESSAGE_CONNECTION_LOST:
+                    // connection was lost > toast it!
+                    String tmp = msg.getData().getString("connection_lost");
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    mService.stop();
+                    returnToMainMenu();
             }
         }
     };
@@ -115,6 +126,14 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(cardDeckHandler);
         parsePlayerData();
+    }
+
+    /**
+     * Returns to main menu.
+     */
+    public void returnToMainMenu() {
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
     }
 
     /**
