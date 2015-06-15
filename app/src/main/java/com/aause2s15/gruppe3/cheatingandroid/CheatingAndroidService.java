@@ -184,7 +184,7 @@ public class CheatingAndroidService {
     /**
      * Indicate that connection was lost and notify the UI Activity
      */
-    private void connectionLost(){
+    public void connectionLost(){
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_CONNECTION_LOST);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.CONNECTION_LOST, "Ein Verbindungsfehler trat auf. Das Spiel muss leider beendet werden.");
