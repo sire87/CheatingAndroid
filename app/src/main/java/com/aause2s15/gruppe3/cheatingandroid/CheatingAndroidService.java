@@ -157,6 +157,7 @@ public class CheatingAndroidService {
             mAcceptThread.cancel();
             mAcceptThread = null;
         }
+        resetPlayerData();
     }
 
     /**

@@ -40,8 +40,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private String cardDeckString = "";
     private int playerID;
     private int previousPlayerID;
-    private int nextPlayerID; // TODO: DELETE WHEN NOT NEEDED ANYWHERE
+    private int nextPlayerID; // TODO: DELETE IF NOT NEEDED ANYWHERE
     private boolean active = false;
+    private boolean host = false;
 
     private View selectedPlayerCard;
     private View selectedCallableCard;
@@ -68,6 +69,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     String tmp = msg.getData().getString("connection_lost");
                     Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
                     mService.stop();
+                    returnToMainMenu();
             }
         }
     };
@@ -78,6 +80,30 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 case Constants.MESSAGE_READ:
                     // message from host > update message state
                     byte[] readBuf = (byte[]) msg.obj;
+                    String receivedMessage = new String(readBuf, 0, msg.arg1);
+                    try {
+                        interpretMessage(receivedMessage);
+                    }
+                    catch (Exception e) {}
+                    break;
+                case Constants.MESSAGE_CONNECTION_LOST:
+                    // connection was lost > toast it!
+                    String tmp = msg.getData().getString("connection_lost");
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    mService.stop();
+                    returnToMainMenu();
+            }
+        }
+    };
+
+    private final Handler hostHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    // message from host > update message state
+                    byte[] readBuf = (byte[]) msg.obj;
+                    mService.write(readBuf); // send message to all clients
+                    // TODO: find method to extract client that has sent the message
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     interpretMessage(receivedMessage);
                     break;
@@ -90,8 +116,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             }
         }
     };
-
-    // TODO - VERY IMPORTANT: HOST HANDLER !!!
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +139,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         switch (host) {
             case Constants.HOST:
                 this.active = true;
+                this.host = true;
                 break;
             case Constants.CLIENT:
                 this.active = false;
@@ -218,7 +243,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         renderMatch();
 
         // CHANGE HANDLER
-        mService.setHandler(clientHandler);
+        if (host) {
+            mService.setHandler(hostHandler);
+        }
+        else {
+            mService.setHandler(clientHandler);
+        }
     }
 
     /**
@@ -318,13 +348,23 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         int messageCode = Integer.parseInt(msg.substring(0, 1));
         switch (messageCode) {
             case Constants.PLAYER_MOVE:
-                processPlayerMoveMessage(msg.substring(1));
+                try {
+                    processPlayerMoveMessage(msg.substring(1));
+                }
+                catch (NullPointerException e) {}
                 break;
             case Constants.PLAYER_PICKUP:
-                processPlayerPickupMessage(msg.substring(1));
+                try {
+                    processPlayerPickupMessage(msg.substring(1));
+                }
+                catch (NullPointerException e) {}
                 break;
             case Constants.PLAYER_WON:
-                processPlayerWonMessage(msg.substring(1));
+                try {
+                    processPlayerWonMessage(msg.substring(1));
+                }
+                catch (NullPointerException e) {}
+                break;
             default:
                 break;
         }
