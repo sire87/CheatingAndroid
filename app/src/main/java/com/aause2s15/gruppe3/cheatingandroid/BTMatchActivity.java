@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private String cardDeckString = "";
     private int playerID;
     private int previousPlayerID;
-    private int nextPlayerID; // TODO: DELETE IF NOT NEEDED ANYWHERE
+    // private int nextPlayerID;
     private boolean active = false;
     private boolean host = false;
 
@@ -68,8 +69,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
                     Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    mService.stop();
-                    returnToMainMenu();
+                    returnToMainMenu(null);
             }
         }
     };
@@ -90,8 +90,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
                     Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    mService.stop();
-                    returnToMainMenu();
+                    returnToMainMenu(null);
             }
         }
     };
@@ -103,7 +102,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     // message from host > update message state
                     byte[] readBuf = (byte[]) msg.obj;
                     mService.write(readBuf); // send message to all clients
-                    // TODO: find method to extract client that has sent the message
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     interpretMessage(receivedMessage);
                     break;
@@ -111,8 +109,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
                     Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    mService.stop();
-                    returnToMainMenu();
+                    returnToMainMenu(null);
             }
         }
     };
@@ -139,17 +136,18 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         switch (host) {
             case Constants.HOST:
                 this.active = true;
+                findViewById(R.id.txt_active).setVisibility(View.VISIBLE);
                 this.host = true;
                 break;
             case Constants.CLIENT:
                 this.active = false;
-                findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
                 findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
+                findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
                 break;
             default:
                 this.active = false;
+                findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
                 Toast.makeText(this, "Keine BT-Verbindung!", Toast.LENGTH_SHORT).show();
-                findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
         }
         mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(cardDeckHandler);
@@ -158,8 +156,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
     /**
      * Returns to main menu.
+     *
+     * @param v the view of the end button
      */
-    public void returnToMainMenu() {
+    public void returnToMainMenu(View v) {
+        mService.stop();
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
     }
@@ -203,7 +204,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
     /**
      * Toasts player info (id, name, address) when match is started.
-     * TODO: not needed anymore...
      */
     public void toastPlayerInfo() {
         for (int i = 0; i <this.players.size(); i++) {
@@ -218,11 +218,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     /**
      * Initializes a new match. Sets own player id and the id of the previous and next player.
      *
-     * @param v the view of the dealCards button // TODO: view not needed
+     * @param v the view of the dealCards button
      */
     public void initMatch(View v) {
 
         findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
+
         this.match = new Match(this);
 
         if (this.cardDeckString.equals("")) {
@@ -237,18 +238,19 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
         this.previousPlayerID = getPreviousPlayerID();
-        this.nextPlayerID = getNextPlayerID();
-
-        // RENDERING CARDS
-        renderMatch();
+        // this.nextPlayerID = getNextPlayerID();
 
         // CHANGE HANDLER
-        if (host) {
+        if (this.host) {
             mService.setHandler(hostHandler);
         }
         else {
             mService.setHandler(clientHandler);
         }
+
+        // RENDERING CARDS
+        renderMatch();
+        if (this.host)syncDeckWithClients();
     }
 
     /**
@@ -273,13 +275,10 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      * Generates a string containing the shuffled card deck and sends it to the other players so
      * that the card deck can be synchronized. Called only by the host of the match when the match
      * is started.
-     *
-     * @param v the view of the sync button // TODO: view not needed...
      */
-    public void syncDeckWithClients(View v) {
+    public void syncDeckWithClients() {
         byte[] send = (Constants.CARD_DECK + cardDeckString).getBytes();
         mService.write(send);
-        findViewById(R.id.b_sync).setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -387,6 +386,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
             if (playerID == getPreviousPlayerID()){
                 this.active = true;
+                findViewById(R.id.txt_active).setVisibility(View.VISIBLE);
             }
 
             Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
@@ -427,6 +427,13 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
         try {
             pickUpCards(playerPickupID);
+            String name = players.get(playerPickupID).getPlayerName();
+            if (name.equals(players.get(this.playerID).getPlayerName())){
+                Toast.makeText(this, "Die gespielte Karte war NICHT korrekt! Du musst alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this, name+" musste alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+            }
         }
         catch (Exception e) {}
     }
@@ -442,13 +449,23 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         String myName = players.get(this.playerID).getPlayerName();
 
         if (name.equals(myName)) {
-            Toast.makeText(this, "Gratulation! Du hast das Spiel gewonnen!", Toast.LENGTH_LONG).show();
+            ((TextView)findViewById(R.id.txt_win)).setText("Gratulation! Du hast das Spiel gewonnen!");
         }
         else {
-            Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
+            ((TextView)findViewById(R.id.txt_win)).setText(name+" hat das Spiel gewonnen!");
         }
         this.active=false;
+        findViewById(R.id.txt_win).setVisibility(View.VISIBLE);
+        findViewById(R.id.bt_end).setVisibility(View.VISIBLE);
 
+        findViewById(R.id.b_flip_card).setVisibility(View.INVISIBLE);
+        findViewById(R.id.b_play_card).setVisibility(View.INVISIBLE);
+        findViewById(R.id.playerCardContainer).setVisibility(View.INVISIBLE);
+        findViewById(R.id.callableCardContainer).setVisibility(View.INVISIBLE);
+        findViewById(R.id.callableText).setVisibility(View.INVISIBLE);
+        findViewById(R.id.tr_cards).setVisibility(View.INVISIBLE);
+        findViewById(R.id.tr_txt).setVisibility(View.INVISIBLE);
+        findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -466,7 +483,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         ViewGroup playerCardContainer = (ViewGroup) findViewById(R.id.playerCardContainer);
         playerCardContainer.removeAllViews();
 
-        // TODO: find solution: offsetX not suitable for all devices
+        // TODO: offsetX not suitable for all devices
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int maxWidth = displayMetrics.widthPixels;
         float offsetX = 0;
@@ -546,10 +563,11 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     public void playCard(View v) {
 
         if (this.active && previousPlayerLastCard()) {
-            String name = players.get(this.previousPlayerID).getPlayerName();
-            Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
             syncPlayerWon(previousPlayerID);
+            String tmp = Integer.toString(previousPlayerID);
+            processPlayerWonMessage(tmp);
             this.active=false;
+            findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
         }
 
         else if ((this.active && this.selectedPlayerCard != null && this.selectedCallableCard !=null)
@@ -591,6 +609,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
             // RENDERING
             this.active = false;
+            findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
             ((ViewGroup)findViewById(R.id.callableCardContainer)).removeAllViews();
             renderMatch();
 
@@ -643,7 +662,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public void flipCard(View v) {
 
-        if (!this.match.getCardFlipped() && this.match.getStackedCards().size()>0) {
+        if (!this.match.getCardFlipped() && this.match.getStackedCards().size()>0 && this.active) {
 
             int index = this.match.getStackedCards().size() - 1;
             Card flippedCard = this.match.getStackedCards().get(index);
@@ -651,9 +670,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             ImageView imgFlippedCard = flippedCard.getImageView();
             imgFlippedCard.setImageResource(flippedCard.getImage());
             if (validCard() && previousPlayerLastCard()) {
-                String name = players.get(this.previousPlayerID).getPlayerName();
-                Toast.makeText(this, name+" hat das Spiel gewonnen!", Toast.LENGTH_LONG).show();
                 syncPlayerWon(previousPlayerID);
+                String tmp = Integer.toString(previousPlayerID);
+                processPlayerWonMessage(tmp);
             }
             else if (validCard()) {
                 Toast.makeText(this, "Die gespielte Karte war korrekt! Du musst alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();

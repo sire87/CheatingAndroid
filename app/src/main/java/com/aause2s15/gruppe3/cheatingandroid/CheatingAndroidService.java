@@ -22,8 +22,6 @@ import java.util.UUID;
  */
 public class CheatingAndroidService {
 
-    // TODO: prevent devices from connecting multiple times!
-
     // CA specific
     private static final CheatingAndroidService INSTANCE = new CheatingAndroidService();
     private String lastConnectedDevice = "keine Verbindung";
@@ -188,7 +186,7 @@ public class CheatingAndroidService {
     public void connectionLost(){
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_CONNECTION_LOST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.CONNECTION_LOST, "Ein Verbindungsfehler trat auf. Das Spiel muss leider beendet werden.");
+        bundle.putString(Constants.CONNECTION_LOST, "Verbindung beendet: Spiel beendet");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         resetPlayerData();

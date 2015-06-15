@@ -33,6 +33,8 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     // new device connected > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    findViewById(R.id.start_bt_game).setVisibility(View.VISIBLE);
+                    findViewById(R.id.bt_connected).setFadingEdgeLength(View.VISIBLE);
                     refreshConnectedDevices();
                     break;
                 case Constants.MESSAGE_CONNECTION_LOST:
@@ -72,7 +74,6 @@ public class HostBTMatchActivity extends ActionBarActivity {
      * Starts a new Match.
      */
     public void startMatch() {
-        // TODO: send player data to all connected devices ???
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
@@ -109,6 +110,17 @@ public class HostBTMatchActivity extends ActionBarActivity {
         ListView connectedListView = (ListView) findViewById(R.id.bt_connected_devices);
         mConnectedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         connectedListView.setAdapter(mConnectedDevicesArrayAdapter);
+    }
+
+    /**
+     * Returns to main menu.
+     *
+     * @param v the view of the abort button
+     */
+    public void returnToMainMenu(View v) {
+        mService.stop();
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
     }
 
     /**

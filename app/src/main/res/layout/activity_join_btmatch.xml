@@ -14,8 +14,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/b_test"
-        android:layout_toStartOf="@+id/b_test" />
+        android:layout_toLeftOf="@+id/txt_connected_to_var"
+        android:layout_toStartOf="@+id/txt_connected_to_var" />
 
     <Button
         android:layout_width="wrap_content"
@@ -27,14 +27,48 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Verbunden mit: "
+        android:id="@+id/txt_connected_to_fix"
+        android:layout_alignTop="@+id/txt_connected_to_var"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/txt_connected_to_var"
+        android:text="DUMMY TEXT"
+        android:layout_alignBottom="@+id/bt_scan"
+        android:layout_toRightOf="@+id/txt_connected_to_fix"
+        android:layout_toEndOf="@+id/txt_connected_to_fix"
+        android:visibility="invisible"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Warte auf Spielstart..."
+        android:id="@+id/txt_waiting"
+        android:layout_below="@+id/txt_connected_to_var"
+        android:layout_alignLeft="@+id/txt_connected_to_var"
+        android:layout_alignStart="@+id/txt_connected_to_var"
+        android:visibility="invisible"
+        android:textStyle="italic" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sende Spieler Daten an Host"
-        android:onClick="sendClientPlayerDataToHost"
-        android:id="@+id/b_test"
-        android:layout_alignParentTop="true"
+        android:text="Abbrechen"
+        android:id="@+id/bt_cancel_join"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="returnToMainMenu" />
 
 </RelativeLayout>

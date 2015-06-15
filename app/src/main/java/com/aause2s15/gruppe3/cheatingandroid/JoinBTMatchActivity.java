@@ -40,6 +40,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     // connected to host > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    sendClientPlayerDataToHost();
                     break;
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
@@ -83,7 +84,12 @@ public class JoinBTMatchActivity extends ActionBarActivity {
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
             try {
                 mService.connect(device);
-
+                ((TextView)findViewById(R.id.txt_connected_to_var)).setText(device.getName());
+                findViewById(R.id.txt_connected_to_var).setVisibility(View.VISIBLE);
+                findViewById(R.id.txt_connected_to_fix).setVisibility(View.VISIBLE);
+                findViewById(R.id.txt_waiting).setVisibility(View.VISIBLE);
+                findViewById(R.id.bt_new_devices).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bt_scan).setVisibility(View.INVISIBLE);
             } catch (Exception e) {
                 toast(e.getMessage());
             }
@@ -115,17 +121,14 @@ public class JoinBTMatchActivity extends ActionBarActivity {
 
     /**
      * Sends a message to the host containing player name and player MAC address.
-     *
-     * @param v the view of the send player data to host button // TODO: not needed anymore...
      */
-    public void sendClientPlayerDataToHost(View v) {
+    public void sendClientPlayerDataToHost() {
         Intent intent = getIntent();
         String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         String playerAddress = mBluetoothAdapter.getAddress();
         String playerData = playerName+"."+playerAddress+"-";
         byte[] send = playerData.getBytes();
         mService.write(send);
-        findViewById(R.id.b_test).setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -174,6 +177,17 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+    }
+
+    /**
+     * Returns to main menu.
+     *
+     * @param v the view of the abort button
+     */
+    public void returnToMainMenu(View v) {
+        mService.stop();
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
     }
 
     @Override
