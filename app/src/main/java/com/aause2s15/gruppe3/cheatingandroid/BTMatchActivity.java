@@ -41,7 +41,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private String cardDeckString = "";
     private int playerID;
     private int previousPlayerID;
-    // private int nextPlayerID;
+    private int nextPlayerID;
     private boolean active = false;
     private boolean host = false;
 
@@ -238,7 +238,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
         this.previousPlayerID = getPreviousPlayerID();
-        // this.nextPlayerID = getNextPlayerID();
+
+        // TESTING TODO: DELETE IF NO NEEDED ANYMORE
+        this.nextPlayerID = getNextPlayerID();
+        Toast.makeText(this, "Meine ID "+this.playerID, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "vorherige ID "+this.previousPlayerID, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "nächste ID "+this.nextPlayerID, Toast.LENGTH_LONG).show();
 
         // CHANGE HANDLER
         if (this.host) {
