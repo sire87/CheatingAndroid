@@ -61,14 +61,4 @@
         android:visibility="invisible"
         android:textStyle="italic" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Abbrechen"
-        android:id="@+id/bt_cancel_join"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="returnToMainMenu" />
-
 </RelativeLayout>

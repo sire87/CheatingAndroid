@@ -186,7 +186,7 @@ public class CheatingAndroidService {
     public void connectionLost(){
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_CONNECTION_LOST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.CONNECTION_LOST, "Verbindung beendet: Spiel beendet");
+        bundle.putString(Constants.CONNECTION_LOST, "Das Spiel wurde beendet");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         resetPlayerData();

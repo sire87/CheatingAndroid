@@ -41,7 +41,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     private String cardDeckString = "";
     private int playerID;
     private int previousPlayerID;
-    private int nextPlayerID;
     private boolean active = false;
     private boolean host = false;
 
@@ -135,19 +134,15 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
         switch (host) {
             case Constants.HOST:
-                this.active = true;
-                findViewById(R.id.txt_active).setVisibility(View.VISIBLE);
+                setActive(1);
                 this.host = true;
                 break;
             case Constants.CLIENT:
-                this.active = false;
+                setActive(0);
                 findViewById(R.id.b_deal_cards).setVisibility(View.INVISIBLE);
-                findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
                 break;
             default:
-                this.active = false;
-                findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
-                Toast.makeText(this, "Keine BT-Verbindung!", Toast.LENGTH_SHORT).show();
+                break;
         }
         mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(cardDeckHandler);
@@ -160,11 +155,14 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      * @param v the view of the end button
      */
     public void returnToMainMenu(View v) {
-        mService.stop();
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
+        finish();
     }
 
+    /**
+     * Called when back button is clicked.
+     */
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -172,7 +170,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 .setCancelable(false)
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mService.connectionLost();
+                        returnToMainMenu(null);
                     }
                 })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
@@ -210,8 +208,8 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             Player p = this.players.get(i);
             String name = p.getPlayerName();
             String address = p.getPlayerAddress();
-            String info = "ID: "+i+" Name: "+name+" Adresse: "+address;
-            Toast.makeText(this, info, Toast.LENGTH_LONG).show();
+            String info = "Spieler "+i+": Name = "+name+" Adresse = "+address;
+            Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -239,13 +237,13 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
         this.previousPlayerID = getPreviousPlayerID();
 
-        // TESTING TODO: DELETE IF NO NEEDED ANYMORE
-        this.nextPlayerID = getNextPlayerID();
-        Toast.makeText(this, "Meine ID "+this.playerID, Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "vorherige ID "+this.previousPlayerID, Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "nächste ID "+this.nextPlayerID, Toast.LENGTH_LONG).show();
+/*        // TESTING TODO: DELETE IF NO NEEDED ANYMORE
+        int nextPlayerID = getNextPlayerID();
+        Toast.makeText(this, "Meine ID: "+this.playerID, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "vorherige ID: "+this.previousPlayerID, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "nächste ID: "+nextPlayerID, Toast.LENGTH_LONG).show();*/
+        toastPlayerInfo();
 
-        // CHANGE HANDLER
         if (this.host) {
             mService.setHandler(hostHandler);
         }
@@ -253,8 +251,8 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             mService.setHandler(clientHandler);
         }
 
-        // RENDERING CARDS
         renderMatch();
+
         if (this.host)syncDeckWithClients();
     }
 
@@ -390,8 +388,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         if (playerID != this.playerID){
 
             if (playerID == getPreviousPlayerID()){
-                this.active = true;
-                findViewById(R.id.txt_active).setVisibility(View.VISIBLE);
+                setActive(1); // now it is this players turn
             }
 
             Card playedCard = this.match.getCardDeck().getCard(playedCardTag);
@@ -459,18 +456,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         else {
             ((TextView)findViewById(R.id.txt_win)).setText(name+" hat das Spiel gewonnen!");
         }
-        this.active=false;
-        findViewById(R.id.txt_win).setVisibility(View.VISIBLE);
-        findViewById(R.id.bt_end).setVisibility(View.VISIBLE);
-
-        findViewById(R.id.b_flip_card).setVisibility(View.INVISIBLE);
-        findViewById(R.id.b_play_card).setVisibility(View.INVISIBLE);
-        findViewById(R.id.playerCardContainer).setVisibility(View.INVISIBLE);
-        findViewById(R.id.callableCardContainer).setVisibility(View.INVISIBLE);
-        findViewById(R.id.callableText).setVisibility(View.INVISIBLE);
-        findViewById(R.id.tr_cards).setVisibility(View.INVISIBLE);
-        findViewById(R.id.tr_txt).setVisibility(View.INVISIBLE);
-        findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
+        setActive(-1);
     }
 
     /**
@@ -571,8 +557,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             syncPlayerWon(previousPlayerID);
             String tmp = Integer.toString(previousPlayerID);
             processPlayerWonMessage(tmp);
-            this.active=false;
-            findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
+            setActive(-1);
         }
 
         else if ((this.active && this.selectedPlayerCard != null && this.selectedCallableCard !=null)
@@ -613,8 +598,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             this.selectedCallableCard = null;
 
             // RENDERING
-            this.active = false;
-            findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
+            setActive(0);
             ((ViewGroup)findViewById(R.id.callableCardContainer)).removeAllViews();
             renderMatch();
 
@@ -692,7 +676,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     }
 
     /**
-     * Checks if flipped card matches called card
+     * Checks if flipped card matches the called card.
      *
      * @return true if card is valid, otherwise false
      */
@@ -703,6 +687,44 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             return this.match.getFlippedCard().getTag().substring(1).equals(this.match.getCalledCard().getTag().substring(1));
         }
         return true;
+    }
+
+    /**
+     * Sets this player to active or inactive.
+     *
+     * @param b integer -1 indicating game ending, 0 sets player inactive, 1 to active
+     */
+    public void setActive(int b) {
+        if (b == -1) {
+            this.active = false;
+            findViewById(R.id.txt_win).setVisibility(View.VISIBLE);
+            findViewById(R.id.bt_end).setVisibility(View.VISIBLE);
+            findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
+            findViewById(R.id.b_flip_card).setVisibility(View.INVISIBLE);
+            findViewById(R.id.b_play_card).setVisibility(View.INVISIBLE);
+            findViewById(R.id.img_arrow).setVisibility(View.INVISIBLE);
+            findViewById(R.id.callableText).setVisibility(View.INVISIBLE);
+            findViewById(R.id.playerCardContainer).setVisibility(View.INVISIBLE);
+            findViewById(R.id.callableCardContainer).setVisibility(View.INVISIBLE);
+            findViewById(R.id.tr_cards).setVisibility(View.INVISIBLE);
+            findViewById(R.id.tr_txt).setVisibility(View.INVISIBLE);
+        }
+        else if (b == 0) {
+            this.active = false;
+            findViewById(R.id.txt_active).setVisibility(View.INVISIBLE);
+            findViewById(R.id.b_flip_card).setVisibility(View.INVISIBLE);
+            findViewById(R.id.b_play_card).setVisibility(View.INVISIBLE);
+            findViewById(R.id.img_arrow).setVisibility(View.INVISIBLE);
+            findViewById(R.id.callableText).setVisibility(View.INVISIBLE);
+        }
+        else if (b == 1) {
+            this.active = true;
+            findViewById(R.id.txt_active).setVisibility(View.VISIBLE);
+            findViewById(R.id.b_flip_card).setVisibility(View.VISIBLE);
+            findViewById(R.id.b_play_card).setVisibility(View.VISIBLE);
+            findViewById(R.id.img_arrow).setVisibility(View.VISIBLE);
+            findViewById(R.id.callableText).setVisibility(View.VISIBLE);
+        }
     }
 
     /**

@@ -1,9 +1,11 @@
 package com.aause2s15.gruppe3.cheatingandroid;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
@@ -46,8 +48,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
                     Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    mService.stop();
-                    finish();
+                    returnToMainMenu(null);
                 case Constants.MESSAGE_READ:
                     // welcome message with player data from host > store data and start game
                     byte[] readBuf = (byte[]) msg.obj;
@@ -147,6 +148,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
+        finish();
     }
 
     /**
@@ -180,14 +182,36 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     }
 
     /**
+     * Called when back button is clicked.
+     */
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Willst du abbrechen?")
+                .setCancelable(false)
+                .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        returnToMainMenu(null);
+                    }
+                })
+                .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    /**
      * Returns to main menu.
      *
      * @param v the view of the abort button
      */
     public void returnToMainMenu(View v) {
-        mService.stop();
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
+        finish();
     }
 
     @Override

@@ -51,13 +51,4 @@
         android:layout_alignLeft="@+id/bt_connected"
         android:layout_alignStart="@+id/bt_connected" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Abbrechen"
-        android:id="@+id/bt_cancel_host"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="returnToMainMenu" />
 </RelativeLayout>
