@@ -78,7 +78,6 @@ public class HostBTMatchActivity extends ActionBarActivity {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
-        finish();
     }
 
     /**
@@ -142,9 +141,9 @@ public class HostBTMatchActivity extends ActionBarActivity {
      * @param v the view of the abort button
      */
     public void returnToMainMenu(View v) {
+        mService.stop();
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
-        finish();
     }
 
     /**

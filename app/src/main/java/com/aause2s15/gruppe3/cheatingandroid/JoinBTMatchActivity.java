@@ -148,7 +148,6 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
-        finish();
     }
 
     /**
@@ -172,6 +171,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
+        mService.resetPlayerData();
         this.mPairedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         this.mNewDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         showDevices();
@@ -179,6 +179,12 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(mReceiver);
     }
 
     /**
@@ -211,7 +217,6 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     public void returnToMainMenu(View v) {
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
-        finish();
     }
 
     @Override

@@ -155,9 +155,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      * @param v the view of the end button
      */
     public void returnToMainMenu(View v) {
+        mService.stop();
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
-        finish();
     }
 
     /**
@@ -170,7 +170,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 .setCancelable(false)
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        returnToMainMenu(null);
+                        mService.connectionLost();
                     }
                 })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {

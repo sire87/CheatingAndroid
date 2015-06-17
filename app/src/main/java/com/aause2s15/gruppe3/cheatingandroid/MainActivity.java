@@ -90,6 +90,7 @@ public class MainActivity extends ActionBarActivity {
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finish();
+                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
@@ -125,7 +126,6 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
         } else {
             startActivity(i);
-            finish();
         }
     }
 
@@ -143,7 +143,6 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
         } else {
             startActivity(i);
-            finish();
         }
     }
 }

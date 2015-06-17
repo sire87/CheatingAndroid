@@ -72,10 +72,10 @@ public class CheatingAndroidService {
      */
     public synchronized void start() {
         // TODO: TESTING
-        if (mSockets != null) {
+        if (mSockets.size()>0) {
             closeAllSockets();
         }
-        if (mConnectedThreads != null) {
+        if (mConnectedThreads.size()>0) {
             cancelAllConnectedTheads();
         }
         if (!playerData.equals("")) {
