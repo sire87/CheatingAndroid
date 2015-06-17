@@ -71,6 +71,17 @@ public class CheatingAndroidService {
      * session in listening (server) mode. Called by the Activity onResume()
      */
     public synchronized void start() {
+        // TODO: TESTING
+        if (mSockets != null) {
+            closeAllSockets();
+        }
+        if (mConnectedThreads != null) {
+            cancelAllConnectedTheads();
+        }
+        if (!playerData.equals("")) {
+            resetPlayerData();
+        }
+
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -396,6 +407,9 @@ public class CheatingAndroidService {
         return this.playerData;
     }
 
+    /**
+     * Resets player data.
+     */
     public void resetPlayerData() {
         this.playerData = "";
     }
@@ -407,6 +421,25 @@ public class CheatingAndroidService {
      */
     public String getPlayerAddress() {
         return mBluetoothAdapter.getAddress();
+    }
+
+    /**
+     * Closes all sockets.
+     */
+    public void closeAllSockets() {
+        for (int i = 0; i < mSockets.size(); i++) {
+            try {
+                mSockets.get(i).close();
+            } catch (IOException e) {}
+        }
+        mSockets.clear();
+    }
+
+    /**
+     * Cancels all connected threads
+     */
+    public void cancelAllConnectedTheads() {
+        mConnectedThreads.clear();
     }
 
 }

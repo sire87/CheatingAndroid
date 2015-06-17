@@ -21,7 +21,6 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity {
 
     public final static String EXTRA_MESSAGE = "com.aause2s15.gruppe3.cheatingandroid";
-    private CheatingAndroidService mService;
 
     // Bluetooth related stuff
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -55,10 +54,6 @@ public class MainActivity extends ActionBarActivity {
         String defaultPlayerName = mBluetoothAdapter.getName();
         EditText playerName = (EditText) findViewById(R.id.etxt_playername);
         playerName.setText(defaultPlayerName);
-
-        mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
-        mService.start();
-        mService.resetPlayerData();
     }
 
     @Override
@@ -114,7 +109,6 @@ public class MainActivity extends ActionBarActivity {
     public void rules (View v){
         Intent i = new Intent(this, RulesActivity.class);
         startActivity(i);
-        finish();
     }
 
     /**
@@ -131,6 +125,7 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
         } else {
             startActivity(i);
+            finish();
         }
     }
 
