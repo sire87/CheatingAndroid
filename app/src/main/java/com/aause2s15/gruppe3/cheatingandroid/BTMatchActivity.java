@@ -146,7 +146,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
         mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(cardDeckHandler);
+
         parsePlayerData();
+        toastPlayerInfo();
     }
 
     /**
@@ -237,15 +239,14 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
         this.previousPlayerID = getPreviousPlayerID();
 
-/*        // TESTING TODO: DELETE IF NO NEEDED ANYMORE
+        // TESTING TODO: DELETE IF NO NEEDED ANYMORE
         int nextPlayerID = getNextPlayerID();
         Toast.makeText(this, "Meine ID: "+this.playerID, Toast.LENGTH_LONG).show();
         Toast.makeText(this, "vorherige ID: "+this.previousPlayerID, Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "nächste ID: "+nextPlayerID, Toast.LENGTH_LONG).show();*/
-        toastPlayerInfo();
+        Toast.makeText(this, "nächste ID: "+nextPlayerID, Toast.LENGTH_LONG).show();
 
         if (this.host) {
-            mService.setHandler(hostHandler);
+            mService.setHandler(clientHandler);
         }
         else {
             mService.setHandler(clientHandler);
@@ -383,6 +384,14 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         int playerID = tmp.length > 0 ? Integer.parseInt(tmp[0]) : 0;
         String playedCardTag = tmp.length > 1 ? tmp[1] : "";
         String calledCardTag = tmp.length > 2 ? tmp[2] : "";
+
+        // if host receives message, send to all clients
+        if (this.host) {
+            String messageCode = Integer.toString(Constants.PLAYER_MOVE);
+            String moveData = messageCode+playerID+"."+playedCardTag+"."+calledCardTag;
+            byte[] send = moveData.getBytes();
+            mService.write(send);
+        }
 
         // otherwise don't do anything because move was already made!
         if (playerID != this.playerID){
@@ -874,6 +883,15 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    /**
+     * Toasts  a specified message.
+     *
+     * @param message the message to be toasted
+     */
+    public void toast(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
     }
 
 }

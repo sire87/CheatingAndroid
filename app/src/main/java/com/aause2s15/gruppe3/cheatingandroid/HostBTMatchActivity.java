@@ -26,6 +26,8 @@ public class HostBTMatchActivity extends ActionBarActivity {
 
     private CheatingAndroidService mService;
     private BluetoothAdapter mBluetoothAdapter;
+    private String name;
+    private String address;
     private ArrayAdapter<String> mConnectedDevicesArrayAdapter;
 
     private final Handler mHandler = new Handler() {
@@ -35,7 +37,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     // new device connected > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    findViewById(R.id.start_bt_game).setVisibility(View.VISIBLE);
+                    findViewById(R.id.sync).setVisibility(View.VISIBLE);
                     findViewById(R.id.bt_connected).setFadingEdgeLength(View.VISIBLE);
                     refreshConnectedDevices();
                     break;
@@ -44,14 +46,6 @@ public class HostBTMatchActivity extends ActionBarActivity {
                     String tmp = msg.getData().getString("connection_lost");
                     Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
                     returnToMainMenu(null);
-                case Constants.MESSAGE_READ:
-                    // message from client with player data > store it in service class
-                    byte[] readBuf = (byte[]) msg.obj;
-                    String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    mService.addPlayerData(receivedMessage);
-                    String playerData = mService.getPlayerData();
-                    Toast.makeText(getApplicationContext(), playerData, Toast.LENGTH_SHORT).show();
-                    break;
             }
         }
     };
@@ -64,17 +58,35 @@ public class HostBTMatchActivity extends ActionBarActivity {
      */
     public void sendMessageToClients(View v) {
         if (mConnectedDevicesArrayAdapter.getCount() > 0){
-            String welcome = mService.getPlayerData();
-            byte[] send = welcome.getBytes();
+            String playerData = this.name+"."+this.address+"-";
+            for (int i = 0; i < mService.mDeviceAddresses.size(); i++) {
+                String name = mService.mDeviceNames.get(i);
+                String address = mService.mDeviceAddresses.get(i);
+                playerData = playerData+name+"."+address+"-";
+            }
+            byte[] send = playerData.getBytes();
             mService.write(send);
-            startMatch();
+            mService.setPlayerData(playerData);
+            toast(mService.getPlayerData());
+            findViewById(R.id.bt_start_game).setVisibility(View.VISIBLE);
+//            startMatch();
+
         }
+    }
+
+    /**
+     * Toasts  a specified message.
+     *
+     * @param message the message to be toasted
+     */
+    public void toast(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
     }
 
     /**
      * Starts a new Match.
      */
-    public void startMatch() {
+    public void startMatch(View v) {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
@@ -90,23 +102,23 @@ public class HostBTMatchActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_btmatch);
 
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);
+        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Intent intent = getIntent();
+        String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        mBluetoothAdapter.setName(playerName);
 
         this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
         mService.start(); // start listening
 
-        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        String name = mBluetoothAdapter.getName();
-        String address = mBluetoothAdapter.getAddress();
-        ((TextView)findViewById(R.id.bt_name_address)).setText("Warte auf Verbindung\n\n" +
-                "Spiel-Name: "+name+"\nSpiel-Adresse: "+address);
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(discoverableIntent);
 
-        Intent intent = getIntent();
-        String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        mService.addPlayerData(playerName+"."+address+"-");
+        this.name = mBluetoothAdapter.getName();
+        this.address = mBluetoothAdapter.getAddress();
+        ((TextView) findViewById(R.id.bt_name_address)).setText("Warte auf Verbindung\n\n" +
+                "Spiel-Name: " + this.name + "\nSpiel-Adresse: " + this.address);
 
         ListView connectedListView = (ListView) findViewById(R.id.bt_connected_devices);
         mConnectedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);

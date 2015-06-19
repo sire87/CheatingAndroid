@@ -20,13 +20,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Starte Spiel"
+        android:text="Synchronisieren"
         android:onClick="sendMessageToClients"
-        android:id="@+id/start_bt_game"
+        android:id="@+id/sync"
+        android:visibility="invisible"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:visibility="invisible" />
+        android:layout_toLeftOf="@+id/bt_start_game"
+        android:layout_toStartOf="@+id/bt_start_game" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,12 +43,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/bt_connected_devices"
-        android:layout_above="@+id/start_bt_game"
+        android:layout_above="@+id/sync"
         android:layout_below="@+id/bt_connected"
         android:headerDividersEnabled="false"
         android:layout_toEndOf="@+id/bt_name_address"
         android:layout_toRightOf="@+id/bt_name_address"
         android:layout_alignLeft="@+id/bt_connected"
         android:layout_alignStart="@+id/bt_connected" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Starte Spiel"
+        android:id="@+id/bt_start_game"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/bt_connected_devices"
+        android:layout_alignEnd="@+id/bt_connected_devices"
+        android:visibility="invisible"
+        android:onClick="startMatch" />
 
 </RelativeLayout>

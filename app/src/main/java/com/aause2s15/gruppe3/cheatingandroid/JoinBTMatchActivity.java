@@ -42,7 +42,6 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     // connected to host > toast it!
                     String mConnectedDeviceName = msg.getData().getString("device_name");
                     Toast.makeText(getApplicationContext(), "Verbunden mit: " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    sendClientPlayerDataToHost();
                     break;
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
@@ -51,14 +50,16 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                     returnToMainMenu(null);
                 case Constants.MESSAGE_READ:
                     // welcome message with player data from host > store data and start game
-                    byte[] readBuf = (byte[]) msg.obj;
-                    String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    mService.addPlayerData(receivedMessage);
-                    startMatch();
+                    try {
+                        byte[] readBuf = (byte[]) msg.obj;
+                        String receivedMessage = new String(readBuf, 0, msg.arg1);
+                        mService.setPlayerData(receivedMessage);
+                        toast(mService.getPlayerData());
+                        findViewById(R.id.bt_temp).setVisibility(View.VISIBLE);
+                    } catch (NullPointerException e) {}
                     break;
             }
         }
-
     };
 
     // Create a BroadcastReceiver for ACTION_FOUND
@@ -144,7 +145,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     /**
      * Called if the host clicks on the start match button. Starts BTMatchActivity.
      */
-    public void startMatch() {
+    public void startMatch(View v) {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
@@ -156,7 +157,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
      * @param message the message to be toasted
      */
     public void toast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -169,9 +170,13 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         setContentView(R.layout.activity_join_btmatch);
 
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Intent intent = getIntent();
+        String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        mBluetoothAdapter.setName(playerName);
+
         this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
-        mService.resetPlayerData();
+
         this.mPairedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         this.mNewDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         showDevices();

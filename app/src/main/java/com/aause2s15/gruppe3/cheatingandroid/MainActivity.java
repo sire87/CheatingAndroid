@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -23,7 +26,7 @@ public class MainActivity extends ActionBarActivity {
     public final static String EXTRA_MESSAGE = "com.aause2s15.gruppe3.cheatingandroid";
 
     // Bluetooth related stuff
-    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothAdapter mBluetoothAdapter;
 
     // Intent request codes
     private static final int REQUEST_ENABLE_BT = 3;
@@ -54,6 +57,15 @@ public class MainActivity extends ActionBarActivity {
         String defaultPlayerName = mBluetoothAdapter.getName();
         EditText playerName = (EditText) findViewById(R.id.etxt_playername);
         playerName.setText(defaultPlayerName);
+
+        try {
+            PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+//            int versionNumber = pinfo.versionCode;
+            String versionName = pinfo.versionName;
+            TextView version = (TextView)findViewById(R.id.txt_version);
+            version.setText(versionName);
+        }
+        catch (PackageManager.NameNotFoundException e) {}
     }
 
     @Override
@@ -125,6 +137,7 @@ public class MainActivity extends ActionBarActivity {
         if (message.isEmpty()) {
             Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
         } else {
+            mBluetoothAdapter.setName(message);
             startActivity(i);
         }
     }
@@ -142,6 +155,7 @@ public class MainActivity extends ActionBarActivity {
         if (message.isEmpty()) {
             Toast.makeText(this, "Bitte gib zunächst deinen Namen an", Toast.LENGTH_SHORT).show();
         } else {
+            mBluetoothAdapter.setName(message);
             startActivity(i);
         }
     }

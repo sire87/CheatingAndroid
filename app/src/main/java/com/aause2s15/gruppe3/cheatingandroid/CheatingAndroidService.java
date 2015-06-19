@@ -37,7 +37,8 @@ public class CheatingAndroidService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
 
-    private ArrayList<String> mDeviceAddresses = new ArrayList<String>();
+    public ArrayList<String> mDeviceAddresses = new ArrayList<String>(); // TODO: PRIVATE
+    public ArrayList<String> mDeviceNames = new ArrayList<String>(); // TODO: PRIVATE
     private ArrayList<ConnectedThread> mConnectedThreads = new ArrayList<ConnectedThread>();
     private ArrayList<BluetoothSocket> mSockets= new ArrayList<BluetoothSocket>();
 
@@ -71,16 +72,6 @@ public class CheatingAndroidService {
      * session in listening (server) mode. Called by the Activity onResume()
      */
     public synchronized void start() {
-        // TODO: TESTING
-        if (mSockets.size()>0) {
-            closeAllSockets();
-        }
-        if (mConnectedThreads.size()>0) {
-            cancelAllConnectedTheads();
-        }
-        if (!playerData.equals("")) {
-            resetPlayerData();
-        }
 
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
@@ -166,7 +157,6 @@ public class CheatingAndroidService {
             mAcceptThread.cancel();
             mAcceptThread = null;
         }
-        resetPlayerData();
     }
 
     /**
@@ -200,7 +190,6 @@ public class CheatingAndroidService {
         bundle.putString(Constants.CONNECTION_LOST, "Das Spiel wurde beendet");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
-        resetPlayerData();
     }
 
     /**
@@ -232,8 +221,10 @@ public class CheatingAndroidService {
                     socket = mmServerSocket.accept();
                     if (socket != null) {
                         String address = socket.getRemoteDevice().getAddress();
+                        String name = socket.getRemoteDevice().getName();
                         mSockets.add(socket);
                         mDeviceAddresses.add(address);
+                        mDeviceNames.add(name);
                         connected(socket, socket.getRemoteDevice());
                     }
                 }
@@ -347,7 +338,7 @@ public class CheatingAndroidService {
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 
                 } catch (IOException e) {
-                    connectionLost();
+//                    connectionLost();
                     break;}
             }
         }
@@ -390,12 +381,12 @@ public class CheatingAndroidService {
     }
 
     /**
-     * Adds player data (player name and MAC address)
+     * Sets player data (player name and MAC address) to specified string
      *
-     * @param playerData a string containing name and MAC address of a player
+     * @param playerData a string containing name and MAC address of players
      */
-    public void addPlayerData(String playerData){
-        this.playerData= this.playerData+playerData;
+    public void setPlayerData(String playerData) {
+        this.playerData = playerData;
     }
 
     /**
@@ -408,38 +399,12 @@ public class CheatingAndroidService {
     }
 
     /**
-     * Resets player data.
-     */
-    public void resetPlayerData() {
-        this.playerData = "";
-    }
-
-    /**
      * Returns the own MAC address.
      *
      * @return a string containig the own MAC address
      */
     public String getPlayerAddress() {
         return mBluetoothAdapter.getAddress();
-    }
-
-    /**
-     * Closes all sockets.
-     */
-    public void closeAllSockets() {
-        for (int i = 0; i < mSockets.size(); i++) {
-            try {
-                mSockets.get(i).close();
-            } catch (IOException e) {}
-        }
-        mSockets.clear();
-    }
-
-    /**
-     * Cancels all connected threads
-     */
-    public void cancelAllConnectedTheads() {
-        mConnectedThreads.clear();
     }
 
 }
