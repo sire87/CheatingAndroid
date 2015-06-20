@@ -37,8 +37,8 @@ public class CheatingAndroidService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
 
-    public ArrayList<String> mDeviceAddresses = new ArrayList<String>(); // TODO: PRIVATE
-    public ArrayList<String> mDeviceNames = new ArrayList<String>(); // TODO: PRIVATE
+    private ArrayList<String> mDeviceAddresses = new ArrayList<String>();
+    private ArrayList<String> mDeviceNames = new ArrayList<String>();
     private ArrayList<ConnectedThread> mConnectedThreads = new ArrayList<ConnectedThread>();
     private ArrayList<BluetoothSocket> mSockets= new ArrayList<BluetoothSocket>();
 
@@ -145,6 +145,25 @@ public class CheatingAndroidService {
      * Stop all threads
      */
     public synchronized void stop() {
+
+        // clear up everything
+        setPlayerData("");
+        mDeviceNames.clear();
+        mDeviceAddresses.clear();
+
+        for (int i = 0; i < mSockets.size(); i++) {
+            try {
+                mSockets.get(i).close();
+            } catch (IOException e) {}
+        }
+        mSockets.clear();
+
+        for (int i = 0; i < mConnectedThreads.size(); i++) {
+            mConnectedThreads.get(i).cancel();
+        }
+        mConnectedThreads.clear();
+
+        // standard
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
@@ -405,6 +424,24 @@ public class CheatingAndroidService {
      */
     public String getPlayerAddress() {
         return mBluetoothAdapter.getAddress();
+    }
+
+    /**
+     * Returns connected device names.
+     *
+     * @return an array list containing connected device names
+     */
+    public ArrayList<String> getmDeviceNames() {
+        return this.mDeviceNames;
+    }
+
+    /**
+     * Returns connected device addresses.
+     *
+     * @return an array list containing connected device addresses
+     */
+    public ArrayList<String> getmDeviceAddresses() {
+        return this.mDeviceAddresses;
     }
 
 }

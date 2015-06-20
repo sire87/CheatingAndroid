@@ -46,8 +46,8 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
-                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    returnToMainMenu(null);
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                    returnToMainMenu();
                 case Constants.MESSAGE_READ:
                     // welcome message with player data from host > store data and start game
                     try {
@@ -81,7 +81,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
             mBluetoothAdapter.cancelDiscovery();
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
-            // Toast.makeText(getApplicationContext(), "Adresse: "+address, Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(), "Adresse: "+address, Toast.LENGTH_SHORT).show();
             // now connect to that device
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
             try {
@@ -122,18 +122,6 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     }
 
     /**
-     * Sends a message to the host containing player name and player MAC address.
-     */
-    public void sendClientPlayerDataToHost() {
-        Intent intent = getIntent();
-        String playerName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        String playerAddress = mBluetoothAdapter.getAddress();
-        String playerData = playerName+"."+playerAddress+"-";
-        byte[] send = playerData.getBytes();
-        mService.write(send);
-    }
-
-    /**
      * Starts searching for discoverable bluetooth deveces.
      *
      * @param v the view of the start discovery button
@@ -149,6 +137,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.CLIENT);
         startActivity(intent);
+        this.finish();
     }
 
     /**
@@ -157,7 +146,7 @@ public class JoinBTMatchActivity extends ActionBarActivity {
      * @param message the message to be toasted
      */
     public void toast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -200,11 +189,11 @@ public class JoinBTMatchActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Willst du abbrechen?")
+        builder.setMessage("Willst du das Spiel beenden?")
                 .setCancelable(false)
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        returnToMainMenu(null);
+                        returnToMainMenu();
                     }
                 })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
@@ -218,12 +207,11 @@ public class JoinBTMatchActivity extends ActionBarActivity {
 
     /**
      * Returns to main menu.
-     *
-     * @param v the view of the abort button
      */
-    public void returnToMainMenu(View v) {
-        Intent i = new Intent(this,MainActivity.class);
-        startActivity(i);
+    public void returnToMainMenu() {
+//        Intent i = new Intent(this,MainActivity.class);
+//        startActivity(i);
+        this.finish();
     }
 
     @Override

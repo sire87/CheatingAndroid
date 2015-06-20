@@ -47,7 +47,7 @@ public class Match {
      */
     public void addPlayer(Player p, int index) {
         this.players.add(p);
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 10; i++) {
             this.players.get(index).drawCard(this.cardDeck);
         }
     }

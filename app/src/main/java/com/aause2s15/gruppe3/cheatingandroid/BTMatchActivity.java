@@ -67,7 +67,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
-                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                     returnToMainMenu(null);
             }
         }
@@ -88,7 +88,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
-                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                     returnToMainMenu(null);
             }
         }
@@ -139,8 +139,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public void returnToMainMenu(View v) {
         mService.stop();
-        Intent i = new Intent(this,MainActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(this,MainActivity.class);
+//        startActivity(i);
+        this.finish();
     }
 
     /**
@@ -178,7 +179,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             try {
                 this.players.add(new Player(playerName, playerAddress));
             } catch (Exception e) {
-                Toast.makeText(this, "Es trat ein Problem beim Parsen der Spielerdaten auf.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Es trat ein Problem beim Parsen der Spielerdaten auf.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -222,9 +223,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
         // TESTING TODO: DELETE IF NO NEEDED ANYMORE
         int nextPlayerID = getNextPlayerID();
-        Toast.makeText(this, "Meine ID: "+this.playerID, Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "vorherige ID: "+this.previousPlayerID, Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "nächste ID: "+nextPlayerID, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Meine ID: "+this.playerID, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "vorherige ID: "+this.previousPlayerID, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "nächste ID: "+nextPlayerID, Toast.LENGTH_SHORT).show();
 
         if (this.host) {
             mService.setHandler(clientHandler);
@@ -315,7 +316,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public boolean previousPlayerLastCard() {
         if (this.match.getPlayer(previousPlayerID).getPlayerCards().size()==0){
-            Toast.makeText(this, "Letzte Karte gespielt!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Letzte Karte gespielt!", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
@@ -882,7 +883,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      * @param message the message to be toasted
      */
     public void toast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
 }

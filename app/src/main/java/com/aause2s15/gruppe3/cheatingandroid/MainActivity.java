@@ -97,12 +97,11 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Willst du die App verlassen?")
+        builder.setMessage("Willst du das Spiel beenden?")
                 .setCancelable(false)
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finish();
-                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
@@ -139,6 +138,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             mBluetoothAdapter.setName(message);
             startActivity(i);
+            this.finish();
         }
     }
 
@@ -157,6 +157,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             mBluetoothAdapter.setName(message);
             startActivity(i);
+            this.finish();
         }
     }
 }

@@ -44,8 +44,8 @@ public class HostBTMatchActivity extends ActionBarActivity {
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
                     String tmp = msg.getData().getString("connection_lost");
-                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    returnToMainMenu(null);
+                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                    returnToMainMenu();
             }
         }
     };
@@ -59,9 +59,9 @@ public class HostBTMatchActivity extends ActionBarActivity {
     public void sendMessageToClients(View v) {
         if (mConnectedDevicesArrayAdapter.getCount() > 0){
             String playerData = this.name+"."+this.address+"-";
-            for (int i = 0; i < mService.mDeviceAddresses.size(); i++) {
-                String name = mService.mDeviceNames.get(i);
-                String address = mService.mDeviceAddresses.get(i);
+            for (int i = 0; i < mService.getmDeviceAddresses().size(); i++) {
+                String name = mService.getmDeviceNames().get(i);
+                String address = mService.getmDeviceAddresses().get(i);
                 playerData = playerData+name+"."+address+"-";
             }
             byte[] send = playerData.getBytes();
@@ -80,7 +80,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
      * @param message the message to be toasted
      */
     public void toast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -90,6 +90,7 @@ public class HostBTMatchActivity extends ActionBarActivity {
         Intent intent = new Intent(this, BTMatchActivity.class);
         intent.putExtra("HOST", Constants.HOST);
         startActivity(intent);
+        this.finish();
     }
 
     /**
@@ -108,11 +109,12 @@ public class HostBTMatchActivity extends ActionBarActivity {
         mBluetoothAdapter.setName(playerName);
 
         this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
-        mService.setHandler(mHandler);
+        mService.stop();
         mService.start(); // start listening
+        mService.setHandler(mHandler);
 
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 60);
         startActivity(discoverableIntent);
 
         this.name = mBluetoothAdapter.getName();
@@ -131,11 +133,11 @@ public class HostBTMatchActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Willst du abbrechen?")
+        builder.setMessage("Willst du das Spiel beenden?")
                 .setCancelable(false)
                 .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        returnToMainMenu(null);
+                        returnToMainMenu();
                     }
                 })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
@@ -149,13 +151,12 @@ public class HostBTMatchActivity extends ActionBarActivity {
 
     /**
      * Returns to main menu.
-     *
-     * @param v the view of the abort button
      */
-    public void returnToMainMenu(View v) {
+    public void returnToMainMenu() {
         mService.stop();
-        Intent i = new Intent(this,MainActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(this,MainActivity.class);
+//        startActivity(i);
+        this.finish();
     }
 
     /**
