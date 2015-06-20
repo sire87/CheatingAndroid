@@ -177,6 +177,8 @@ public class JoinBTMatchActivity extends ActionBarActivity {
         this.mService = ((CheatingAndroidApplication)this.getApplicationContext()).caService;
         mService.setHandler(mHandler);
 
+        discoverDevices(null);
+
         this.mPairedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         this.mNewDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         showDevices();

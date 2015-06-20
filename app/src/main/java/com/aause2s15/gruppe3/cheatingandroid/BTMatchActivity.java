@@ -94,25 +94,6 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     };
 
-    private final Handler hostHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_READ:
-                    // message from host > update message state
-                    byte[] readBuf = (byte[]) msg.obj;
-                    mService.write(readBuf); // send message to all clients
-                    String receivedMessage = new String(readBuf, 0, msg.arg1);
-                    interpretMessage(receivedMessage);
-                    break;
-                case Constants.MESSAGE_CONNECTION_LOST:
-                    // connection was lost > toast it!
-                    String tmp = msg.getData().getString("connection_lost");
-                    Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_LONG).show();
-                    returnToMainMenu(null);
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -422,7 +403,10 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
 
             // toasting info
             previousPlayerLastCard();
-            Toast.makeText(this, "Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.", Toast.LENGTH_SHORT).show();
+
+            if (this.active) {
+                toast("Schüttle dein Gerät, wenn du glaubst, dass dieser Spielzug nicht korrekt war.");
+            }
 
             renderMatch();
         }
@@ -440,10 +424,10 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             pickUpCards(playerPickupID);
             String name = players.get(playerPickupID).getPlayerName();
             if (name.equals(players.get(this.playerID).getPlayerName())){
-                Toast.makeText(this, "Die gespielte Karte war NICHT korrekt! Du musst alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                toast("Die gespielte Karte war NICHT korrekt! Du musst alle Karten aufnehmen!");
             }
             else {
-                Toast.makeText(this, name+" musste alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                toast(name+" musste alle Karten aufnehmen!");
             }
         }
         catch (Exception e) {}
@@ -458,6 +442,13 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         int playerWonID = Integer.parseInt(won);
         String name = players.get(playerWonID).getPlayerName();
         String myName = players.get(this.playerID).getPlayerName();
+
+        if (this.host) {
+            String messageCode = Integer.toString(Constants.PLAYER_WON);
+            String tmp = Integer.toString(playerWonID);
+            byte[] send = (messageCode+tmp).getBytes();
+            mService.write(send);
+        }
 
         if (name.equals(myName)) {
             ((TextView)findViewById(R.id.txt_win)).setText("Gratulation! Du hast das Spiel gewonnen!");
