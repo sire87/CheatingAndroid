@@ -2,8 +2,10 @@ package com.aause2s15.gruppe3.cheatingandroid;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 /**
  * RulesActivity Class
@@ -17,6 +19,8 @@ public class RulesActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rules);
+        TextView txt = (TextView)findViewById(R.id.txt_rules);
+        txt.setMovementMethod(new ScrollingMovementMethod());
     }
 
     @Override
