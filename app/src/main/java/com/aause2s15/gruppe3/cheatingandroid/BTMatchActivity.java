@@ -22,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -62,7 +61,9 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                     byte[] readBuf = (byte[]) msg.obj;
                     String receivedMessage = new String(readBuf, 0, msg.arg1);
                     cardDeckString = cardDeckString+receivedMessage;
-                    findViewById(R.id.b_deal_cards).setVisibility(View.VISIBLE);
+                    if (cardDeckString.length() > 1137) {
+                        initMatch(null);
+                    }
                     break;
                 case Constants.MESSAGE_CONNECTION_LOST:
                     // connection was lost > toast it!
@@ -73,7 +74,8 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         }
     };
 
-    private final Handler clientHandler = new Handler() {
+    private final Handler messageHandler = new Handler() {
+
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
@@ -179,7 +181,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
             try {
                 this.players.add(new Player(playerName, playerAddress));
             } catch (Exception e) {
-                Toast.makeText(this, "Es trat ein Problem beim Parsen der Spielerdaten auf.", Toast.LENGTH_SHORT).show();
+                toast("Es trat ein Problem beim Parsen der Spielerdaten auf.");
             }
         }
     }
@@ -191,9 +193,10 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         for (int i = 0; i <this.players.size(); i++) {
             Player p = this.players.get(i);
             String name = p.getPlayerName();
-            String address = p.getPlayerAddress();
-            String info = "Spieler "+i+": Name = "+name+" Adresse = "+address;
-            Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
+//            String address = p.getPlayerAddress();
+//            String fullInfo = "Spieler "+i+": Name = "+name+" Adresse = "+address;
+            String shortInfo = "Spieler "+i+": "+name;
+            toast(shortInfo);
         }
     }
 
@@ -221,18 +224,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
         this.playerID = this.match.getPlayerID(mService.getPlayerAddress());
         this.previousPlayerID = getPreviousPlayerID();
 
-        // TESTING TODO: DELETE IF NO NEEDED ANYMORE
-        int nextPlayerID = getNextPlayerID();
-        Toast.makeText(this, "Meine ID: "+this.playerID, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "vorherige ID: "+this.previousPlayerID, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "nächste ID: "+nextPlayerID, Toast.LENGTH_SHORT).show();
-
-        if (this.host) {
-            mService.setHandler(clientHandler);
-        }
-        else {
-            mService.setHandler(clientHandler);
-        }
+        mService.setHandler(messageHandler);
 
         renderMatch();
 
@@ -316,7 +308,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public boolean previousPlayerLastCard() {
         if (this.match.getPlayer(previousPlayerID).getPlayerCards().size()==0){
-            Toast.makeText(this, "Letzte Karte gespielt!", Toast.LENGTH_SHORT).show();
+            toast("Letzte Karte gespielt!");
             return true;
         }
         return false;
@@ -554,7 +546,7 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
      */
     public void playCard(View v) {
 
-        if (this.active && previousPlayerLastCard()) {
+        if (this.active && previousPlayerLastCard() && this.selectedPlayerCard != null) {
             syncPlayerWon(previousPlayerID);
             String tmp = Integer.toString(previousPlayerID);
             processPlayerWonMessage(tmp);
@@ -665,12 +657,12 @@ public class BTMatchActivity extends ActionBarActivity implements View.OnClickLi
                 processPlayerWonMessage(tmp);
             }
             else if (validCard()) {
-                Toast.makeText(this, "Die gespielte Karte war korrekt! Du musst alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                toast("Die gespielte Karte war korrekt! Du musst alle Karten aufnehmen!");
                 pickUpCards(this.playerID);
             }
             else {
                 String name = players.get(this.previousPlayerID).getPlayerName();
-                Toast.makeText(this, "Die gespielte Karte war NICHT korrekt! "+name+" muss alle Karten aufnehmen!", Toast.LENGTH_SHORT).show();
+                toast("Die gespielte Karte war NICHT korrekt! "+name+" muss alle Karten aufnehmen!");
                 pickUpCards(this.previousPlayerID);
             }
         }

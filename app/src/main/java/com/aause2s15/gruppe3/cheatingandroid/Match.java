@@ -32,7 +32,7 @@ public class Match {
     public Match(Context context) {
         this.callableCardDeck = new CardDeck(context, 0);
         this.cardDeck = new CardDeck(context, 1);
-        this.cardDeck.shuffle(5);
+        this.cardDeck.shuffle(2);
         this.stackedCards = new ArrayList<>(10);
         this.cardFlipped = false;
         this.players = new ArrayList<>(4);
@@ -83,15 +83,6 @@ public class Match {
      */
     public Player getPlayer(int i) {
         return this.players.get(i);
-    }
-
-    /**
-     * Returns the players of a match.
-     *
-     * @return an ArrayList with all Player objects of the match
-     */
-    public ArrayList<Player> getPlayers() {
-        return this.players;
     }
 
     /**
@@ -173,19 +164,5 @@ public class Match {
      * @return the card deck
      */
     public CardDeck getCardDeck() {return this.cardDeck;}
-
-    /**
-     * Returns the id of a player with no cards left. Returns -1 if there is no such player.
-     *
-     * @return the id of a player with no cards left if there is one, otherwise -1
-     */
-    public int playerWithNoCardsExists() {
-        for (int i = 0; i < this.players.size(); i++){
-            if (this.players.get(i).getPlayerCards().size() == 0) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
 }

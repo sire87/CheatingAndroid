@@ -99,7 +99,6 @@ public class Card implements Comparable<Card> {
         return this.value;
     }
 
-
     /**
      * Compares a card to another card and returns an integer with a value dependent on the order
      * of the specified card and the order of the other card.

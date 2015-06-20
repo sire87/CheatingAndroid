@@ -67,20 +67,10 @@ public class HostBTMatchActivity extends ActionBarActivity {
             byte[] send = playerData.getBytes();
             mService.write(send);
             mService.setPlayerData(playerData);
-            toast(mService.getPlayerData());
             findViewById(R.id.bt_start_game).setVisibility(View.VISIBLE);
-//            startMatch();
+            startMatch(null);
 
         }
-    }
-
-    /**
-     * Toasts  a specified message.
-     *
-     * @param message the message to be toasted
-     */
-    public void toast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
     /**

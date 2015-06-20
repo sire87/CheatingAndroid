@@ -54,9 +54,10 @@ public class JoinBTMatchActivity extends ActionBarActivity {
                         byte[] readBuf = (byte[]) msg.obj;
                         String receivedMessage = new String(readBuf, 0, msg.arg1);
                         mService.setPlayerData(receivedMessage);
-                        toast(mService.getPlayerData());
+//                        toast(mService.getPlayerData());
                         findViewById(R.id.bt_temp).setVisibility(View.VISIBLE);
                     } catch (NullPointerException e) {}
+                    startMatch(null);
                     break;
             }
         }
